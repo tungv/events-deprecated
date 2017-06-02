@@ -1,0 +1,43 @@
+{
+  "name": "@tungv/events-store",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
+    "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
+    "start": "micro",
+    "debug": "node --inspect ./node_modules/.bin/micro",
+    "test": "jest --forceExit --coverage"
+  },
+  "dependencies": {
+    "redis-functional": "0.1.0",
+    "es6-promisify": "^5.0.0",
+    "micro": "^7.3.3",
+    "micro-boom": "^1.1.0",
+    "msgpack": "^1.0.2",
+    "redis": "^2.7.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-jest": "^20.0.3",
+    "babel-preset-env": "^1.5.1",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "jest": "^20.0.4"
+  },
+  "babel": {
+    "presets": [
+      "stage-3",
+      [
+        "env",
+        {
+          "exclude": [
+            "transform-async-to-generator",
+            "transform-regenerator"
+          ]
+        }
+      ],
+      "flow"
+    ]
+  }
+}
