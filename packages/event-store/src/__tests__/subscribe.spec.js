@@ -1,3 +1,4 @@
+/* @flow */
 import micro from 'micro';
 
 import { delay } from 'awaiting';
@@ -52,7 +53,6 @@ describe('subscribe endpoint', () => {
   it('should subscribe', async () => {
     const pubClient = createClient();
     const service = makeSubscribe({
-      redis: {},
       history: { size: 10 },
     });
     const server = micro(service);
