@@ -4,7 +4,9 @@
   "main": "src",
   "dependencies": {
     "curry": "^1.2.0",
-    "es6-promisify": "^5.0.0",
+    "es6-promisify": "^5.0.0"
+  },
+  "peerDependencies": {
     "redis": "^2.7.1"
   }
 }
