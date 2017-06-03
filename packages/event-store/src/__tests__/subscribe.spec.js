@@ -50,7 +50,7 @@ describe('subscribe endpoint', () => {
     await a.delay(100);
 
     pubClient.publish('events', '1:{"type":"first"}');
-    pubClient.publish('events', '2:{"type":"second","payload":123}');
+    pubClient.publish('events', `2:{"type":"second","payload":123}`);
     await a.delay(100);
     stream.abort();
     const val = await promise;

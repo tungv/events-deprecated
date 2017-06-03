@@ -63,7 +63,7 @@ function flush(response) {
 }
 
 const toOutput = event => `id: ${event.id}
-event: ${event.type}
+event: INCMSG
 data: ${JSON.stringify(event)}
 
 `;
