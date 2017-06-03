@@ -17,7 +17,8 @@ const commit = async (redisClient, event: Event) => {
     local event = ARGV[1];
     local counter = redis.call('HLEN', KEYS[1]) + 1;
 
-    redis.call('HSET', KEYS[1], counter, event)
+    redis.call('HSET', KEYS[1], counter, event);
+    redis.call('PUBLISH', 'events', counter .. ':' .. event);
     return counter;
   `;
 

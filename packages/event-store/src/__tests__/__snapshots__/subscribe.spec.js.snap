@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`subscribe endpoint should subscribe 1`] = `
+Array [
+  ":ok
+
+",
+  "id: 1
+event: first
+data: {\\"id\\":1,\\"type\\":\\"first\\"}
+
+",
+  "id: 2
+event: second
+data: {\\"id\\":2,\\"type\\":\\"second\\",\\"payload\\":123}
+
+",
+]
+`;

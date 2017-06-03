@@ -6,11 +6,8 @@ import commit from '../commit';
 import redisClient from '../redis-client';
 
 describe('commit endpoint', () => {
-  beforeEach((done) => {
-    flushdb(redisClient, done);
-  });
-
   it('should commit', async () => {
+    await flushdb(redisClient);
     const transformReq = jest.fn(obj => ({
       type: 'transformed_type',
       payload: { key: 'transformed_value' },
