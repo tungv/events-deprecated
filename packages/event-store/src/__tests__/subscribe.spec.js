@@ -53,6 +53,7 @@ describe('subscribe endpoint', () => {
   it('should subscribe', async () => {
     const pubClient = createClient();
     const service = makeSubscribe({
+      namespc: 'test',
       history: { size: 10 },
     });
     const server = micro(service);
@@ -80,6 +81,7 @@ describe('subscribe endpoint', () => {
   it('should work with 2 clients', async () => {
     const pubClient = createClient();
     const service = makeSubscribe({
+      namespc: 'test',
       redis: {},
       history: { size: 10 },
     });

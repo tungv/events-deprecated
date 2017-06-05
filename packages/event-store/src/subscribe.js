@@ -22,13 +22,13 @@ function flush(response) {
   }
 }
 
-const toOutput = event => `id: ${event.id}
+const toOutput = events => `id: ${events[0].id}
 event: INCMSG
-data: ${JSON.stringify(event)}
+data: ${JSON.stringify(events)}
 
 `;
 
-export default ({ redis, history, debug }: SubscribeConfig) => {
+export default ({ redis, history, debug, namespc }: SubscribeConfig) => {
   const subClient = createClient(redis);
 
   // prepare cache
@@ -67,7 +67,7 @@ export default ({ redis, history, debug }: SubscribeConfig) => {
     })
     .onValue(addToCache);
 
-  subClient.subscribe('events');
+  subClient.subscribe(`${namespc}::events`);
 
   const addClient = (src, opts, match, req, res) => {
     req.socket.setTimeout(0);
@@ -91,10 +91,15 @@ export default ({ redis, history, debug }: SubscribeConfig) => {
 
     flush(res);
 
-    const subscription = src.filter(x => x).map(toOutput).observe(block => {
-      debug && console.log('send to %s %s', req.url, block);
-      res.write(block);
-    });
+    const subscription = src
+      .filter(x => x)
+      .bufferWithTimeOrCount(500, 20)
+      .filter(b => b.length)
+      .map(toOutput)
+      .observe(block => {
+        debug && console.log('send to %s %s', req.url, block);
+        res.write(block);
+      });
 
     const removeClient = once(() => {
       debug && console.log('removing', req.url);

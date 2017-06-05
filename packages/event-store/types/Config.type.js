@@ -28,11 +28,13 @@ type RedisConfig = {
 } & RedisAddress;
 
 export type CommitConfig = {
+  namespc: string,
   redis?: RedisConfig,
   debug?: boolean,
 };
 
 export type SubscribeConfig = {
+  namespc: string,
   redis?: RedisConfig,
   history: { size: number },
   debug?: boolean,

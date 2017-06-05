@@ -16,7 +16,7 @@ describe('commit endpoint', () => {
       },
     };
 
-    const service = commit({});
+    const service = commit({ namespc: 'test' });
 
     const actual = await service(req);
     expect(actual).toEqual({
@@ -40,7 +40,7 @@ describe('commit endpoint', () => {
       },
     };
 
-    const service = commit({});
+    const service = commit({ namespc: 'test' });
 
     return expect(service(req)).rejects.toMatchSnapshot();
   });

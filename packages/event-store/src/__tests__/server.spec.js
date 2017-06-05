@@ -7,6 +7,7 @@ jest.unmock('micro');
 describe('serverFactory', () => {
   it('should return a server instance', () => {
     const config = {
+      namespc: 'test',
       history: { size: 10 },
     };
 
