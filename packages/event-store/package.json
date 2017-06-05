@@ -1,6 +1,6 @@
 {
   "name": "http-event",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "bin": {
     "http-event": "./build/http-event"
   },
