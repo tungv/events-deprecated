@@ -1,6 +1,6 @@
 {
   "name": "http-event",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "bin": {
     "http-event": "./build/http-event"
   },
@@ -23,7 +23,7 @@
     "mitt": "^1.1.2",
     "msgpack": "^1.0.2",
     "redis": "^2.7.1",
-    "redis-functional": "^0.2.0",
+    "redis-functional": "^0.2.2",
     "rxjs": "^5.4.0",
     "sse-channel": "^2.0.6",
     "through2": "^2.0.3",
