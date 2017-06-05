@@ -20,15 +20,8 @@
     "micro": "^7.3.3",
     "micro-boom": "^1.1.0",
     "microrouter": "^2.1.1",
-    "mitt": "^1.1.2",
-    "msgpack": "^1.0.2",
     "redis": "^2.7.1",
-    "redis-functional": "^0.2.2",
-    "rxjs": "^5.4.0",
-    "sse-channel": "^2.0.6",
-    "through2": "^2.0.3",
-    "through2-filter": "^2.0.0",
-    "through2-map": "^3.0.0"
+    "redis-functional": "^0.2.2"
   },
   "devDependencies": {
     "awaiting": "^3.0.0",
@@ -37,11 +30,7 @@
     "babel-preset-env": "^1.5.1",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-3": "^6.24.1",
-    "event-source-polyfill": "^0.0.9",
-    "eventsource": "^1.0.2",
-    "got": "^7.0.0",
     "jest": "^20.0.4",
-    "jsdom": "^11.0.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "test-listen": "^1.0.2"
