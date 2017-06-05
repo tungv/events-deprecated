@@ -3,14 +3,14 @@ import { createError } from 'micro-boom';
 import { json } from 'micro';
 import redis from 'redis';
 
+import type { CommitConfig } from '../types/Config.type';
+import { createClient } from './redis-client';
 import runLua from './runLua';
 
 type Event = {
   type: string,
   payload: mixed,
 };
-
-const client = redis.createClient();
 
 const commit = async (redisClient, event: Event) => {
   const lua = `
@@ -28,17 +28,20 @@ const commit = async (redisClient, event: Event) => {
   });
 };
 
-type TransformFunction = (any, http$IncomingMessage) => Event;
 
-export default (transformReq: TransformFunction) => async (req: any) => {
-  const body = await json(req);
-  const event = transformReq(body, req);
+export default ({ redis }: CommitConfig) => {
+  const client = createClient(redis);
 
-  if (typeof event.type !== 'string') {
-    throw createError(422, 'Missing type');
-  }
+  return async (req: any) => {
+    const event = await json(req);
 
-  const id = await commit(client, event);
+    if (typeof event.type !== 'string') {
+      throw createError(422, 'Missing type');
+    }
 
-  return { ...event, id };
-};
+    const id = await commit(client, event);
+
+    return { ...event, id };
+  };
+
+}

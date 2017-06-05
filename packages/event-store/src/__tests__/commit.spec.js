@@ -23,27 +23,20 @@ describe('commit endpoint', () => {
       },
     };
 
-    const service = commit(transformReq);
+    const service = commit({});
 
     const actual = await service(req);
     expect(actual).toEqual({
       id: 1,
-      type: 'transformed_type',
-      payload: { key: 'transformed_value' },
-      meta: {
-        client: 'test_client',
-      },
+      type: 'test',
+      payload: { key: 'value' },
     });
 
-    expect(transformReq).toBeCalledWith(req.body, req);
     expect(await hgetall('events', redisClient)).toEqual({
       '1': JSON.stringify({
-        type: 'transformed_type',
-        payload: { key: 'transformed_value' },
-        meta: {
-          client: 'test_client',
-        },
-      })
-    })
+        type: 'test',
+        payload: { key: 'value' },
+      }),
+    });
   });
 });
