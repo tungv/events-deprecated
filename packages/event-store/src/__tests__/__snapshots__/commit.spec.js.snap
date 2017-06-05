@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`commit endpoint should throw 422 if no type is sent 1`] = `[Error: Missing type]`;

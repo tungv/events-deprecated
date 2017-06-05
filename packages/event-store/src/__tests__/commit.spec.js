@@ -8,13 +8,6 @@ import redisClient from '../redis-client';
 describe('commit endpoint', () => {
   it('should commit', async () => {
     await flushdb(redisClient);
-    const transformReq = jest.fn(obj => ({
-      type: 'transformed_type',
-      payload: { key: 'transformed_value' },
-      meta: {
-        client: 'test_client',
-      },
-    }));
 
     const req = {
       body: {
@@ -38,5 +31,17 @@ describe('commit endpoint', () => {
         payload: { key: 'value' },
       }),
     });
+  });
+
+  it('should throw 422 if no type is sent', async () => {
+    const req = {
+      body: {
+        payload: { key: 'value' },
+      },
+    };
+
+    const service = commit({});
+
+    return expect(service(req)).rejects.toMatchSnapshot();
   });
 });
