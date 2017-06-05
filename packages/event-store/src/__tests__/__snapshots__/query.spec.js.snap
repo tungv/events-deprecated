@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`query endpoint should query 1`] = `
+Array [
+  Object {
+    "payload": 5,
+    "type": "test",
+  },
+  Object {
+    "payload": 6,
+    "type": "test",
+  },
+  Object {
+    "payload": 7,
+    "type": "test",
+  },
+  Object {
+    "payload": 8,
+    "type": "test",
+  },
+  Object {
+    "payload": 9,
+    "type": "test",
+  },
+  Object {
+    "payload": 10,
+    "type": "test",
+  },
+]
+`;
