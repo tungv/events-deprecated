@@ -4,28 +4,21 @@ this is under development
 
 # Usage
 
-```js
-const server = createServer({
-  // specify the storage
-  redis: { host: 'localhost', port: 6379, db: 1, prefix: 'test_' },
+```bash
+npm i -g http-event
 
-  // specify transform function
-  // here is where you put application logic how to store event
-  // this may be omit and just use the standard transformation
-  commit: (body, req) => {
-    if (req.headers['X-Client-ID']) {
-      throw new Error('X-Client-ID must present in headers')
-    }
+# command usage
+http-event --help
+>  Usage: http-event [options]
+>
+>  Options:
+>
+>    -h, --help           output usage information
+>    -V, --version        output the version number
+>    -n, --name [name]    instance name
+>    -r, --redis [redis]  redis config: example: redis://192.168.1.1:6379/1
+>    -p, --port [port]    http server port. Defaults to 3000
 
-    return {
-      type: body.type,
-      payload: body.payload,
-      meta: {
-        client: req.headers['X-Client-ID'],
-      }
-    };
-  }
-});
-
-server.listen(3000)
+# run
+http-event -r localhost -p 3000 -n MyEventStoreDemo
 ```
