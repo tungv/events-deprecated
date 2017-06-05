@@ -1,11 +1,11 @@
 {
   "name": "http-event",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.2.0",
   "bin": {
-    "hevent"
+    "http-event": "./build/http-event"
   },
   "scripts": {
+    "prepublish": "rm -rf build; yarn build",
     "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
     "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
     "start": "micro",
@@ -23,7 +23,7 @@
     "mitt": "^1.1.2",
     "msgpack": "^1.0.2",
     "redis": "^2.7.1",
-    "redis-functional": "0.1.0",
+    "redis-functional": "^0.2.0",
     "rxjs": "^5.4.0",
     "sse-channel": "^2.0.6",
     "through2": "^2.0.3",
