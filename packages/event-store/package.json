@@ -1,7 +1,10 @@
 {
-  "name": "@tungv/events-store",
+  "name": "http-event",
   "version": "0.1.0",
   "private": true,
+  "bin": {
+    "hevent"
+  },
   "scripts": {
     "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
     "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
