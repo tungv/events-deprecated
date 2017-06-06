@@ -8,7 +8,7 @@ import subscribe from './subscribe';
 
 export default (config: Config) => {
   const committer = commit(config);
-  const subscriber = subscribe(config);
+  const {service: subscriber, unsubscribe} = subscribe(config);
 
   const service = router(
     get('/subscribe', subscriber),
@@ -16,6 +16,8 @@ export default (config: Config) => {
   );
 
   const server = micro(service);
+
+  server.on('close', unsubscribe);
 
   return server;
 }

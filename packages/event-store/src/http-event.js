@@ -8,8 +8,13 @@ import factory from '.';
 program
   .version(pkg.version)
   .option('-n, --name [name]', 'instance name')
-  .option('-r, --redis [redis]', 'redis config: example: redis://192.168.1.1:6379/1')
+  .option(
+    '-r, --redis [redis]',
+    'redis config: example: redis://192.168.1.1:6379/1'
+  )
   .option('-p, --port [port]', 'http server port. Defaults to 3000')
+  .option('-T, --burst-time [time]', 'buffer time (in milliseconds) before emitting, defaults to 500ms')
+  .option('-C, --burst-count [count]', 'buffer count before emitting, defaults to 20 events')
   .parse(process.argv);
 
 if (!program.redis) {
@@ -18,9 +23,17 @@ if (!program.redis) {
 }
 
 console.log('initializing server');
-const server = factory({ namespc: program.name, redis: program.redis, history: { size: 10 } })
+const server = factory({
+  namespc: program.name,
+  redis: program.redis,
+  history: { size: 10 },
+  burst: {
+    time: program.burstTime || 500,
+    count: program.burstCount || 20,
+  }
+});
 
 console.log('starting event store on port', program.port);
 server.listen(program.port);
 
-console.log('server started')
+console.log('server started');
