@@ -10,7 +10,7 @@
     "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
     "start": "micro",
     "debug": "node --inspect ./node_modules/.bin/micro",
-    "test": "jest --forceExit --coverage",
+    "test": "REDIS_URL=redis://localhost:6379/4 jest --forceExit --coverage",
     "post": "ab -p assets/test.json -T application/json -c 200 -n 1000 localhost:3000/commit"
   },
   "dependencies": {

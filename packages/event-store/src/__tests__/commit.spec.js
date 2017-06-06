@@ -16,7 +16,10 @@ describe('commit endpoint', () => {
       },
     };
 
-    const service = commit({ namespc: 'test-commit' });
+    const service = commit({
+      redis: { url: process.env.REDIS_URL },
+      namespc: 'test-commit',
+    });
 
     const actual = await service(req);
     expect(actual).toEqual({
@@ -40,7 +43,10 @@ describe('commit endpoint', () => {
       },
     };
 
-    const service = commit({ namespc: 'test-commit' });
+    const service = commit({
+      redis: { url: process.env.REDIS_URL },
+      namespc: 'test-commit',
+    });
 
     return expect(service(req)).rejects.toMatchSnapshot();
   });

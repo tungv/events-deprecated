@@ -48,7 +48,9 @@ describe('subscribe endpoint', () => {
     const pubClient = createClient();
     const {service, unsubscribe} = makeSubscribe({
       namespc: 'test-sub',
-      redis: {},
+      redis: {
+        url: process.env.REDIS_URL,
+      },
       history: { size: 10 },
       burst: { time: 10, count: 1 },
     });

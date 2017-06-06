@@ -23,6 +23,7 @@ describe('subscribe with last-event-id', () => {
     await del(redisClient, `${namespc}::events`);
 
     const { service, unsubscribe } = makeSubscribe({
+      redis: { url: process.env.REDIS_URL },
       namespc: namespc,
       history: { size: 10 },
       burst: { time: 10, count: 10 },
@@ -70,6 +71,7 @@ describe('subscribe with last-event-id', () => {
     await del(redisClient, `${namespc}::events`);
 
     const { service, unsubscribe } = makeSubscribe({
+      redis: { url: process.env.REDIS_URL },
       namespc: namespc,
       history: { size: 3 },
       burst: { time: 10, count: 10 },
@@ -96,7 +98,7 @@ describe('subscribe with last-event-id', () => {
 
     // console.log('commit 11');
     await commit(redisClient, { type: 'test', payload: 11 }, namespc);
-    await delay(10);
+    await delay(20);
 
     // console.log('commit 12');
     await commit(redisClient, { type: 'test', payload: 12 }, namespc);

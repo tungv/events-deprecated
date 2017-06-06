@@ -18,16 +18,19 @@ describe('query endpoint', () => {
         end
       `,
       { argv: [], keys: [] }
-    )
+    );
 
     const req = {
       query: {
-        lastEventId: 5
+        lastEventId: 5,
       },
-      headers: {}
+      headers: {},
     };
 
-    const service = query({ namespc: 'test-query' });
+    const service = query({
+      redis: { url: process.env.REDIS_URL },
+      namespc: 'test-query',
+    });
 
     const actual = await service(req);
     expect(actual).toMatchSnapshot();
