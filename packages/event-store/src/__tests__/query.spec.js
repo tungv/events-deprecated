@@ -1,5 +1,5 @@
 /* @flow */
-import flushdb from 'redis-functional/flushdb';
+import del from 'redis-functional/del';
 import hgetall from 'redis-functional/hgetall';
 
 import query from '../query';
@@ -8,13 +8,13 @@ import runLua from '../runLua';
 
 describe('query endpoint', () => {
   it('should query', async () => {
-    await flushdb(redisClient);
+    await del(redisClient, 'test-query::events');
 
     await runLua(
       redisClient,
       `
         for id=1,10 do
-          redis.call('HSET', 'test::events', id, '{"type": "test", "payload":'..id..'}')
+          redis.call('HSET', 'test-query::events', id, '{"type": "test", "payload":'..id..'}')
         end
       `,
       { argv: [], keys: [] }
@@ -27,7 +27,7 @@ describe('query endpoint', () => {
       headers: {}
     };
 
-    const service = query({ namespc: 'test' });
+    const service = query({ namespc: 'test-query' });
 
     const actual = await service(req);
     expect(actual).toMatchSnapshot();

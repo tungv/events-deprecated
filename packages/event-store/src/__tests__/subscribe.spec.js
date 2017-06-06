@@ -53,8 +53,10 @@ describe('subscribe endpoint', () => {
   it('should subscribe', async () => {
     const pubClient = createClient();
     const service = makeSubscribe({
-      namespc: 'test',
+      namespc: 'test-sub',
       history: { size: 10 },
+      debug: true,
+      burst: { time: 10, count: 10 },
     });
     const server = micro(service);
     const url = await listen(server);
@@ -67,8 +69,8 @@ describe('subscribe endpoint', () => {
     const promise = takeEvents(4, data$);
     await delay(100);
 
-    pubClient.publish('events', '1:{"type":"first"}');
-    pubClient.publish('events', `2:{"type":"second","payload":123}`);
+    pubClient.publish('test-sub::events', '1:{"type":"first"}');
+    pubClient.publish('test-sub::events', `2:{"type":"second","payload":123}`);
     await delay(100);
 
     abort();
@@ -81,9 +83,10 @@ describe('subscribe endpoint', () => {
   it('should work with 2 clients', async () => {
     const pubClient = createClient();
     const service = makeSubscribe({
-      namespc: 'test',
+      namespc: 'test-sub',
       redis: {},
       history: { size: 10 },
+      burst: { time: 10, count: 1 },
     });
     const server = micro(service);
     const url = await listen(server);
@@ -98,13 +101,13 @@ describe('subscribe endpoint', () => {
     // publish 2 events
     // client 1 will wait until the end
     // client 2 will abort early after the first event
-    pubClient.publish('events', '1:{"type":"first"}');
+    pubClient.publish('test-sub::events', '1:{"type":"first"}');
 
     await delay(10);
     http2.abort();
 
     await delay(10);
-    pubClient.publish('events', `2:{"type":"second"}`);
+    pubClient.publish('test-sub::events', `2:{"type":"second"}`);
 
     await delay(10);
     http1.abort();

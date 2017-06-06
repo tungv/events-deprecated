@@ -7,12 +7,7 @@ Array [
 ",
   "id: 1
 event: INCMSG
-data: {\\"id\\":1,\\"type\\":\\"first\\"}
-
-",
-  "id: 2
-event: INCMSG
-data: {\\"id\\":2,\\"type\\":\\"second\\",\\"payload\\":123}
+data: [{\\"id\\":1,\\"type\\":\\"first\\"},{\\"id\\":2,\\"type\\":\\"second\\",\\"payload\\":123}]
 
 ",
 ]

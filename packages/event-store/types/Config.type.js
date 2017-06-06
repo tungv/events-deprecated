@@ -38,6 +38,10 @@ export type SubscribeConfig = {
   redis?: RedisConfig,
   history: { size: number },
   debug?: boolean,
+  burst: {
+    time: number,
+    count: number,
+  }
 };
 
 export type Config = CommitConfig & SubscribeConfig;

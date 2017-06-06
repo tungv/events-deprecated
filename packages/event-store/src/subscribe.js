@@ -28,7 +28,7 @@ data: ${JSON.stringify(events)}
 
 `;
 
-export default ({ redis, history, debug, namespc }: SubscribeConfig) => {
+export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
   const subClient = createClient(redis);
 
   // prepare cache
@@ -93,7 +93,7 @@ export default ({ redis, history, debug, namespc }: SubscribeConfig) => {
 
     const subscription = src
       .filter(x => x)
-      .bufferWithTimeOrCount(500, 20)
+      .bufferWithTimeOrCount(burst.time, burst.count)
       .filter(b => b.length)
       .map(toOutput)
       .observe(block => {
