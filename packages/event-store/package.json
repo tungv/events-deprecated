@@ -49,5 +49,12 @@
       ],
       "flow"
     ]
+  },
+  "jest": {
+    "testRegex": "/__tests__/.*\\.spec\\.js$",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/build/"
+    ]
   }
 }

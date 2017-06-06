@@ -3,48 +3,12 @@ import micro from 'micro';
 
 import { delay } from 'awaiting';
 import listen from 'test-listen';
-import request from 'request';
 
 import { createClient } from '../redis-client';
+import fromURL from './fromURL';
 import makeSubscribe from '../subscribe';
 
-const kefir = require('kefir');
-
 jest.unmock('micro');
-
-const fromURL = url => {
-  const stream = request(url);
-
-  const data$ = kefir.stream(emitter => {
-    const emitString = data => {
-      emitter.emit(String(data));
-    };
-
-    const errorString = data => {
-      emitter.error(String(data));
-    };
-
-    const end = () => {
-      emitter.end();
-    };
-
-    stream.on('data', emitString);
-    stream.on('error', errorString);
-    stream.on('end', end);
-
-    return () => {
-      stream.removeListener('data', emitString);
-      stream.removeListener('error', errorString);
-      stream.removeListener('end', end);
-      stream.end();
-    };
-  });
-
-  return {
-    data$,
-    abort: () => stream.abort(),
-  };
-};
 
 const takeEvents = (count, stream) =>
   stream.take(count).scan((prev, next) => prev.concat(next), []).toPromise();
