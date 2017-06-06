@@ -1,6 +1,6 @@
 {
   "name": "http-event",
-  "version": "0.2.4-0",
+  "version": "0.2.4-1",
   "bin": {
     "http-event": "./build/http-event"
   },
@@ -21,7 +21,7 @@
     "micro-boom": "^1.1.0",
     "microrouter": "^2.1.1",
     "redis": "^2.7.1",
-    "redis-functional": "^0.2.2"
+    "redis-functional": "^0.2.4-1"
   },
   "devDependencies": {
     "awaiting": "^3.0.0",
