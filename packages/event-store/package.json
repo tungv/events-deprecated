@@ -2,10 +2,10 @@
   "name": "http-event",
   "version": "0.2.5",
   "bin": {
-    "http-event": "./build/http-event"
+    "http-event": "./build/http-event.js"
   },
   "scripts": {
-    "prepublish": "rm -rf build; yarn build",
+    "prepare": "rm -rf build; yarn build",
     "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
     "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
     "start": "micro",
