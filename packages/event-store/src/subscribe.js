@@ -1,14 +1,11 @@
 /* @flow */
 import kefir from 'kefir';
-import mitt from 'mitt';
 import once from 'lodash/fp/once';
 import range from 'lodash/fp/range';
 
-// import { parse } from 'querystring';
-import { query } from './query';
-
-import { createClient } from './redis-client';
 import type { SubscribeConfig } from '../types/Config.type';
+import { createClient } from './redis-client';
+import { query } from './query';
 
 const tryParse = raw => {
   try {
@@ -32,6 +29,7 @@ data: ${JSON.stringify(events)}
 
 export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
   const subClient = createClient(redis);
+  const queryClient = createClient(redis);
 
   // prepare cache
   const MAX_SIZE = history.size;
@@ -44,15 +42,15 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     const newSize = list.unshift(message.id);
     cache[message.id] = message;
 
-    debug && console.log('HISTORY', list);
-    debug && console.log('CACHE', cache);
-
     if (newSize > MAX_SIZE) {
       const expired = list.splice(MAX_SIZE);
       expired.forEach(removingId => {
         delete cache[removingId];
       });
     }
+
+    debug && console.log('HISTORY', list);
+    debug && console.log('CACHE\n', cache);
   };
 
   const message$ = kefir
@@ -81,10 +79,6 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     });
 
     res.write(':ok\n\n');
-
-    if (opts.initial.length) {
-      res.write(toOutput(opts.initial));
-    }
 
     // cast to integer
     const retry = opts.retry | 0;
@@ -117,19 +111,31 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
   };
 
   const getInitialValues = lastEventId => {
-    if (lastEventId) {
-      // history[0] is the latest id
-      const current = list[0];
-      const oldestInCache = list[list.length - 1];
-      if (oldestInCache > lastEventId + 1) {
-        console.error('too old');
-      }
-
-      debug && console.log('current', current);
-      return range(lastEventId + 1, current).map(id => cache[id]);
+    if (!lastEventId) {
+      return kefir.never();
     }
 
-    return [];
+    // history[0] is the latest id
+    const current = list[0];
+    const oldestInCache = list[list.length - 1];
+
+    debug && console.log('current', current);
+    if (oldestInCache <= lastEventId + 1) {
+      return kefir
+        .constant(range(lastEventId + 1, current).map(id => cache[id]))
+        .flatten();
+    }
+
+    debug && console.error('too old, getting more from redis');
+    const fromCache$ = kefir
+      .constant(range(oldestInCache, current + 1).map(id => cache[id]))
+
+    const fromRedis$ = kefir
+      .fromPromise(
+        query(queryClient, namespc, lastEventId + 1, oldestInCache - 1)
+      );
+
+    return kefir.concat([fromRedis$, fromCache$]).flatten();
   };
 
   const service = async (req: any, res: any) => {
@@ -140,16 +146,13 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
       const initialValues = getInitialValues(lastEventId);
 
       debug && console.log('lastEventId', lastEventId);
-      debug && console.log('initialValues', initialValues);
 
       // const url = req.url;
       // const query = parse(url.split('?')[1]);
 
       addClient(
-        message$,
-        {
-          initial: initialValues,
-        },
+        kefir.concat([initialValues, message$]),
+        {},
         {},
         req,
         res

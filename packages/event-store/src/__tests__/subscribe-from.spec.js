@@ -17,12 +17,13 @@ const takeEvents = (count, stream) =>
 
 describe('subscribe with last-event-id', () => {
   it('should send past event in cache', async () => {
+    const namespc = 'test-event-id';
     const pubClient = createClient();
 
-    await del(redisClient, 'test-event-id::events');
+    await del(redisClient, `${namespc}::events`);
 
     const { service, unsubscribe } = makeSubscribe({
-      namespc: 'test-event-id',
+      namespc: namespc,
       history: { size: 10 },
       burst: { time: 10, count: 10 },
     });
@@ -33,7 +34,7 @@ describe('subscribe with last-event-id', () => {
     // commit 10 events (fitted in cache size)
     await Promise.all(
       range(1, 10).map(i =>
-        commit(redisClient, { type: 'test', payload: i }, 'test-event-id')
+        commit(redisClient, { type: 'test', payload: i }, namespc)
       )
     );
 
@@ -50,8 +51,58 @@ describe('subscribe with last-event-id', () => {
     const promise = takeEvents(4, data$);
     await delay(100);
 
-    await commit(redisClient, { type: 'test', payload: 11 }, 'test-event-id');
+    await commit(redisClient, { type: 'test', payload: 11 }, namespc);
     await delay(100);
+
+    abort();
+    server.close();
+    unsubscribe();
+    const val = await promise;
+    pubClient.quit();
+
+    expect(val).toMatchSnapshot();
+  });
+
+  it('should send past event from redis if cache missed', async () => {
+    const namespc = 'test-old-event';
+    const pubClient = createClient();
+
+    await del(redisClient, `${namespc}::events`);
+
+    const { service, unsubscribe } = makeSubscribe({
+      namespc: namespc,
+      history: { size: 3 },
+      burst: { time: 10, count: 10 },
+    });
+    const server = micro(service);
+    const url = await listen(server);
+    await delay(100);
+
+    // commit 10 events (fitted in cache size)
+    await Promise.all(
+      range(0, 10).map(i =>
+        commit(redisClient, { type: 'test', payload: i + 1 }, namespc)
+      )
+    );
+
+    await delay(100);
+    const headers = {
+      'Last-Event-ID': '3',
+    };
+
+    const { data$, abort } = fromURL({ url, headers });
+
+    const promise = takeEvents(5, data$);
+
+    // console.log('commit 11');
+    await commit(redisClient, { type: 'test', payload: 11 }, namespc);
+    await delay(10);
+
+    // console.log('commit 12');
+    await commit(redisClient, { type: 'test', payload: 12 }, namespc);
+
+    // delay 10 for last burst
+    await delay(20);
 
     abort();
     server.close();

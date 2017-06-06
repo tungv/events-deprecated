@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`subscribe with last-event-id should send past event from redis if cache missed 1`] = `
+Array [
+  ":ok
+
+",
+  "id: 4
+event: INCMSG
+data: [{\\"id\\":4,\\"type\\":\\"test\\",\\"payload\\":4},{\\"id\\":5,\\"type\\":\\"test\\",\\"payload\\":5},{\\"id\\":6,\\"type\\":\\"test\\",\\"payload\\":6},{\\"id\\":7,\\"type\\":\\"test\\",\\"payload\\":7},{\\"id\\":8,\\"type\\":\\"test\\",\\"payload\\":8},{\\"id\\":9,\\"type\\":\\"test\\",\\"payload\\":9},{\\"id\\":10,\\"type\\":\\"test\\",\\"payload\\":10},{\\"id\\":11,\\"type\\":\\"test\\",\\"payload\\":11}]
+
+",
+  "id: 12
+event: INCMSG
+data: [{\\"id\\":12,\\"type\\":\\"test\\",\\"payload\\":12}]
+
+",
+]
+`;
+
 exports[`subscribe with last-event-id should send past event in cache 1`] = `
 Array [
   ":ok

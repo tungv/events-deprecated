@@ -8,7 +8,7 @@ const queryLua = `
 local function getKeys(from, to, key)
   local newArray = {};
   for id=from,to do
-    table.insert(newArray, redis.call('hget', key, id));
+    table.insert(newArray, {id, redis.call('hget', key, id)});
   end
 
   return newArray
@@ -20,11 +20,16 @@ local to = tonumber(ARGV[2]) or redis.call('HLEN', KEYS[1]);
 return getKeys(from, to, KEYS[1])
 `;
 
-const query = async (client: RedisClientType, namespc: string, ...argv: number[]) => {
-  return runLua(client, queryLua, {
+export const query = async (client: RedisClientType, namespc: string, ...argv: number[]) => {
+  const array = await runLua(client, queryLua, {
     keys: [`${namespc}::events`],
     argv: argv.map(String),
   });
+
+  return array.map(([id, event]) => ({
+    id,
+    ...JSON.parse(event),
+  }));
 };
 
 export default (config: CommitConfig) => {
@@ -35,6 +40,6 @@ export default (config: CommitConfig) => {
     const events = await query(client, config.namespc, lastEventId);
 
     // we trust the input from commit. otherwise we have to do a try-parse
-    return events.map(JSON.parse);
+    return events;
   };
 };
