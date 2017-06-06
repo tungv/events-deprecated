@@ -52,10 +52,9 @@ const takeEvents = (count, stream) =>
 describe('subscribe endpoint', () => {
   it('should subscribe', async () => {
     const pubClient = createClient();
-    const service = makeSubscribe({
+    const { service, unsubscribe } = makeSubscribe({
       namespc: 'test-sub',
       history: { size: 10 },
-      debug: true,
       burst: { time: 10, count: 10 },
     });
     const server = micro(service);
@@ -75,6 +74,7 @@ describe('subscribe endpoint', () => {
 
     abort();
     server.close();
+    unsubscribe();
     const val = await promise;
     pubClient.quit();
     expect(val).toMatchSnapshot();
@@ -82,7 +82,7 @@ describe('subscribe endpoint', () => {
 
   it('should work with 2 clients', async () => {
     const pubClient = createClient();
-    const service = makeSubscribe({
+    const {service, unsubscribe} = makeSubscribe({
       namespc: 'test-sub',
       redis: {},
       history: { size: 10 },
@@ -111,6 +111,8 @@ describe('subscribe endpoint', () => {
 
     await delay(10);
     http1.abort();
+
+    unsubscribe();
 
     const val1 = await promise1;
     const val2 = await promise2;

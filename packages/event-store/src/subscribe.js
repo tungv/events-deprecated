@@ -67,8 +67,6 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     })
     .onValue(addToCache);
 
-  subClient.subscribe(`${namespc}::events`);
-
   const addClient = (src, opts, match, req, res) => {
     req.socket.setTimeout(0);
     req.socket.setNoDelay(true);
@@ -112,7 +110,7 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     res.on('finish', removeClient);
   };
 
-  return async (req: any, res: any) => {
+  const service = async (req: any, res: any) => {
     debug && console.log('connected', req.url);
     try {
       const url = req.url;
@@ -122,5 +120,15 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     } catch (ex) {
       console.log('ex', ex);
     }
+  };
+
+  subClient.subscribe(`${namespc}::events`);
+
+  return {
+    service,
+    unsubscribe: () => {
+      console.log('unsubscribing from redis');
+      subClient.unsubscribe(`${namespc}::events`);
+    },
   };
 };
