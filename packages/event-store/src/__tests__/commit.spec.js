@@ -25,7 +25,7 @@ describe('commit endpoint', () => {
       payload: { key: 'value' },
     });
 
-    expect(await hgetall('events', redisClient)).toEqual({
+    expect(await hgetall('test-commit::events', redisClient)).toEqual({
       '1': JSON.stringify({
         type: 'test',
         payload: { key: 'value' },
