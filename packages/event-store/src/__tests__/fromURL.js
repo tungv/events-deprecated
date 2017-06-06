@@ -1,7 +1,7 @@
 import request from 'request';
 import kefir from 'kefir';
 
-const fromURL = url => {
+const fromURL = (url, headers) => {
   const stream = request(url);
 
   const data$ = kefir.stream(emitter => {

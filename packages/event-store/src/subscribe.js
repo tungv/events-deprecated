@@ -2,8 +2,10 @@
 import kefir from 'kefir';
 import mitt from 'mitt';
 import once from 'lodash/fp/once';
+import range from 'lodash/fp/range';
 
-import { parse } from 'querystring';
+// import { parse } from 'querystring';
+import { query } from './query';
 
 import { createClient } from './redis-client';
 import type { SubscribeConfig } from '../types/Config.type';
@@ -80,6 +82,10 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
 
     res.write(':ok\n\n');
 
+    if (opts.initial.length) {
+      res.write(toOutput(opts.initial));
+    }
+
     // cast to integer
     const retry = opts.retry | 0;
 
@@ -110,15 +116,47 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     res.on('finish', removeClient);
   };
 
-  const service = async (req: any, res: any) => {
-    debug && console.log('connected', req.url);
-    try {
-      const url = req.url;
-      const query = parse(url.split('?')[1]);
+  const getInitialValues = lastEventId => {
+    if (lastEventId) {
+      // history[0] is the latest id
+      const current = list[0];
+      const oldestInCache = list[list.length - 1];
+      if (oldestInCache > lastEventId + 1) {
+        console.error('too old');
+      }
 
-      addClient(message$, {}, query, req, res);
+      debug && console.log('current', current);
+      return range(lastEventId + 1, current).map(id => cache[id]);
+    }
+
+    return [];
+  };
+
+  const service = async (req: any, res: any) => {
+    try {
+      debug && console.log('connected', req.url);
+      const lastEventId = Number(req.headers['last-event-id']);
+
+      const initialValues = getInitialValues(lastEventId);
+
+      debug && console.log('lastEventId', lastEventId);
+      debug && console.log('initialValues', initialValues);
+
+      // const url = req.url;
+      // const query = parse(url.split('?')[1]);
+
+      addClient(
+        message$,
+        {
+          initial: initialValues,
+        },
+        {},
+        req,
+        res
+      );
     } catch (ex) {
-      console.log('ex', ex);
+      console.log(ex);
+      throw ex;
     }
   };
 

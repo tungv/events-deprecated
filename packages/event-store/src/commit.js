@@ -4,7 +4,7 @@ import { json } from 'micro';
 import redis from 'redis';
 
 import type { CommitConfig } from '../types/Config.type';
-import { createClient } from './redis-client';
+import { createClient, RedisClientType } from './redis-client';
 import runLua from './runLua';
 
 type Event = {
@@ -12,7 +12,7 @@ type Event = {
   payload: mixed,
 };
 
-const commit = async (redisClient, event: Event, namespc) => {
+export const commit = async (redisClient: RedisClientType, event: Event, namespc: string) => {
   const lua = `
     local event = ARGV[1];
     local counter = redis.call('HLEN', KEYS[1]) + 1;

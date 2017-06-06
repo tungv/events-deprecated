@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`subscribe with last-event-id should send past event in cache 1`] = `
+Array [
+  ":ok
+
+",
+  "id: 6
+event: INCMSG
+data: [{\\"id\\":6,\\"type\\":\\"test\\",\\"payload\\":6},{\\"id\\":7,\\"type\\":\\"test\\",\\"payload\\":7},{\\"id\\":8,\\"type\\":\\"test\\",\\"payload\\":8}]
+
+",
+  "id: 10
+event: INCMSG
+data: [{\\"id\\":10,\\"type\\":\\"test\\",\\"payload\\":11}]
+
+",
+]
+`;
