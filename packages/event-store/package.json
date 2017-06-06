@@ -14,6 +14,7 @@
     "post": "ab -p assets/test.json -T application/json -c 200 -n 1000 localhost:3000/commit"
   },
   "dependencies": {
+    "commander": "^2.9.0",
     "es6-promisify": "^5.0.0",
     "kefir": "^3.7.2",
     "lodash": "^4.17.4",
