@@ -1,8 +1,8 @@
 /* @flow */
-import { createError } from 'micro-boom';
+import { createError, handleErrors } from 'micro-boom';
 import { router, get, post } from 'microrouter';
-import micro from 'micro';
 import makeCors from 'micro-cors';
+import micro from 'micro';
 
 const cors = makeCors();
 
@@ -14,13 +14,13 @@ export default (config: Config) => {
   const committer = commit(config);
   const {service: subscriber, unsubscribe} = subscribe(config);
 
-  const service = cors(router(
+  const service = handleErrors(cors(router(
     get('/subscribe', subscriber),
     post('/commit', committer),
     () => {
       throw createError(404)
     }
-  ));
+  )), config.debug);
 
   const server = micro(service);
 
