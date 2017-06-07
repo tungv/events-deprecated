@@ -15,15 +15,15 @@ type Event = {
 export const commit = async (redisClient: RedisClientType, event: Event, namespc: string) => {
   const lua = `
     local event = ARGV[1];
-    local counter = redis.call('HLEN', KEYS[1]) + 1;
+    local counter = redis.call('INCR', KEYS[1]);
 
-    redis.call('HSET', KEYS[1], counter, event);
+    redis.call('HSET', KEYS[2], counter, event);
     redis.call('PUBLISH', ARGV[2]..'::events', counter .. ':' .. event);
     return counter;
   `;
 
   return runLua(redisClient, lua, {
-    keys: [`${namespc}::events`],
+    keys: [`${namespc}::id`, `${namespc}::events`],
     argv: [JSON.stringify(event), namespc],
   });
 };
