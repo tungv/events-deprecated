@@ -11,7 +11,7 @@
     "start": "micro",
     "debug": "node --inspect ./node_modules/.bin/micro",
     "test": "REDIS_URL=redis://localhost:6379/4 jest --forceExit --coverage",
-    "post": "ab -p assets/test.json -T application/json -c 200 -n 1000 localhost:3000/commit"
+    "post": "ab -p assets/test.json -T application/json -c 50 -n 500 localhost:3000/commit"
   },
   "dependencies": {
     "commander": "^2.9.0",

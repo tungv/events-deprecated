@@ -4,6 +4,8 @@ import { router, get, post } from 'microrouter';
 import makeCors from 'micro-cors';
 import micro from 'micro';
 
+import { createClient } from '../build/redis-client';
+
 const cors = makeCors();
 
 import type { Config } from '../types/Config.type';
@@ -11,6 +13,7 @@ import commit from './commit';
 import subscribe from './subscribe';
 
 export default (config: Config) => {
+  const statusClient = createClient(config.redis, { debug: true });
   const committer = commit(config);
   const {service: subscriber, unsubscribe} = subscribe(config);
 
