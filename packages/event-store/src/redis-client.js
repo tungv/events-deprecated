@@ -1,35 +1,50 @@
 import redis from 'redis';
+import clui from 'clui';
+
+let countdown = new clui.Spinner();
+let started;
 
 export const createClient = (config, { debug } = { debug: false }) => {
   const client = redis.createClient({
     ...config,
     retry_strategy: ({ attempt, total_retry_time, error, time_connected }) => {
       if (attempt > 20) {
-        return
+        return;
       }
 
       return Math.min(attempt * 100, 3000);
-    }
+    },
   });
 
   client.on('connect', () => {
-    debug && console.log('client connected');
-  })
+    if (debug) {
+      started = false;
+      countdown.stop();
+    }
+  });
 
   client.on('reconnecting', ({ delay, attempt }) => {
-    debug && console.log('attempting (%d) to reconnect in %dms', attempt, delay);
-  })
+    if (debug) {
+      countdown.message(
+        `attempting (${attempt}) to reconnect in ${delay}ms...`
+      );
+      if (!started) {
+        started = true;
+        countdown.start();
+      }
+    }
+  });
 
   process.on('exit', () => {
-    debug && console.log('client is quiting forcefully')
+    debug && console.log('client is quiting forcefully');
     client.end(true);
-  })
+  });
 
   return client;
 };
 
 const defaultClient = createClient({
-  url: process.env.REDIS_URL
+  url: process.env.REDIS_URL,
 });
 
 export default defaultClient;
