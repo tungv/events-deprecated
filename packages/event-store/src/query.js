@@ -5,19 +5,15 @@ import type { CommitConfig } from '../types/Config.type';
 import runLua from './runLua';
 
 const queryLua = `
-local function getKeys(from, to, key)
-  local newArray = {};
-  for id=from,to do
-    table.insert(newArray, {id, redis.call('hget', key, id)});
-  end
-
-  return newArray
-end
-
 local from = tonumber(ARGV[1]);
 local to = tonumber(ARGV[2]) or redis.call('HLEN', KEYS[1]);
+local newArray = {};
 
-return getKeys(from, to, KEYS[1])
+for id=from,to do
+  table.insert(newArray, {id, redis.call('hget', KEYS[1], id)});
+end
+
+return newArray
 `;
 
 export const query = async (client: RedisClientType, namespc: string, ...argv: number[]) => {
