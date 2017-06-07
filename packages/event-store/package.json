@@ -20,7 +20,9 @@
     "lodash": "^4.17.4",
     "micro": "^7.3.3",
     "micro-boom": "^1.1.0",
+    "micro-cors": "^0.0.4",
     "microrouter": "^2.1.1",
+    "pm2": "^2.4.6",
     "redis": "^2.7.1",
     "redis-functional": "^0.2.4-1"
   },

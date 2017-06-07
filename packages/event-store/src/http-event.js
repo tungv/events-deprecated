@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /* @flow */
 import program from 'commander';
-import pkg from '../package.json';
+
 import factory from '.';
+import pkg from '../package.json';
 
 // [redis:]//[[user][:password@]][host][:port][/db-number][?db=db-number[&password=bar[&option=value]]]
 
