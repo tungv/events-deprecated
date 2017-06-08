@@ -21,7 +21,7 @@ function flush(response) {
   }
 }
 
-const toOutput = events => `id: ${events[0].id}
+const toOutput = events => `id: ${events[events.length - 1].id}
 event: INCMSG
 data: ${JSON.stringify(events)}
 
