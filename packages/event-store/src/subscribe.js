@@ -122,7 +122,7 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     debug && console.log('current', current);
     if (oldestInCache <= lastEventId + 1) {
       return kefir
-        .constant(range(lastEventId + 1, current).map(id => cache[id]))
+        .constant(range(lastEventId + 1, current + 1).map(id => cache[id]))
         .flatten();
     }
 

@@ -16,11 +16,12 @@ const takeEvents = (count, stream) =>
   stream.take(count).scan((prev, next) => prev.concat(next), []).toPromise();
 
 describe('subscribe with last-event-id', () => {
-  it('should send past event in cache', async () => {
+  it.only('should send past event in cache', async () => {
     const namespc = 'test-event-id';
     const pubClient = createClient();
 
     await del(redisClient, `${namespc}::events`);
+    await del(redisClient, `${namespc}::id`);
 
     const { service, unsubscribe } = makeSubscribe({
       redis: { url: process.env.REDIS_URL },
@@ -34,8 +35,8 @@ describe('subscribe with last-event-id', () => {
 
     // commit 10 events (fitted in cache size)
     await Promise.all(
-      range(1, 10).map(i =>
-        commit(redisClient, { type: 'test', payload: i }, namespc)
+      range(0, 10).map(i =>
+        commit(redisClient, { type: 'test', payload: i + 1 }, namespc)
       )
     );
 
@@ -69,6 +70,7 @@ describe('subscribe with last-event-id', () => {
     const pubClient = createClient();
 
     await del(redisClient, `${namespc}::events`);
+    await del(redisClient, `${namespc}::id`);
 
     const { service, unsubscribe } = makeSubscribe({
       redis: { url: process.env.REDIS_URL },

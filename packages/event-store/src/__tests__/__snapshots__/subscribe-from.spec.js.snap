@@ -28,19 +28,14 @@ Array [
   ":ok
 
 ",
-  "id: 15
+  "id: 10
 event: INCMSG
-data: [{\\"id\\":6},{\\"id\\":7},{\\"id\\":8},{\\"id\\":9},{\\"id\\":10},{\\"id\\":11,\\"type\\":\\"test\\",\\"payload\\":1},{\\"id\\":12,\\"type\\":\\"test\\",\\"payload\\":2},{\\"id\\":13,\\"type\\":\\"test\\",\\"payload\\":3},{\\"id\\":14,\\"type\\":\\"test\\",\\"payload\\":4},{\\"id\\":15,\\"type\\":\\"test\\",\\"payload\\":5}]
+data: [{\\"id\\":6,\\"type\\":\\"test\\",\\"payload\\":6},{\\"id\\":7,\\"type\\":\\"test\\",\\"payload\\":7},{\\"id\\":8,\\"type\\":\\"test\\",\\"payload\\":8},{\\"id\\":9,\\"type\\":\\"test\\",\\"payload\\":9},{\\"id\\":10,\\"type\\":\\"test\\",\\"payload\\":10}]
 
 ",
-  "id: 19
+  "id: 11
 event: INCMSG
-data: [{\\"id\\":16,\\"type\\":\\"test\\",\\"payload\\":6},{\\"id\\":17,\\"type\\":\\"test\\",\\"payload\\":7},{\\"id\\":18,\\"type\\":\\"test\\",\\"payload\\":8},{\\"id\\":19,\\"type\\":\\"test\\",\\"payload\\":9}]
-
-",
-  "id: 20
-event: INCMSG
-data: [{\\"id\\":20,\\"type\\":\\"test\\",\\"payload\\":11}]
+data: [{\\"id\\":11,\\"type\\":\\"test\\",\\"payload\\":11}]
 
 ",
 ]
