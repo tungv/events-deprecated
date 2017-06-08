@@ -11,15 +11,18 @@ const cors = makeCors();
 import type { Config } from '../types/Config.type';
 import commit from './commit';
 import subscribe from './subscribe';
+import query from './query'
 
 export default (config: Config) => {
   const statusClient = createClient(config.redis, { debug: true });
   const committer = commit(config);
   const {service: subscriber, unsubscribe} = subscribe(config);
+  const querier = query(config);
 
   const service = handleErrors(cors(router(
     get('/subscribe', subscriber),
     post('/commit', committer),
+    get('/query', querier),
     () => {
       throw createError(404)
     }
