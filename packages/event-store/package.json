@@ -2,7 +2,7 @@
   "name": "http-event",
   "version": "0.4.0",
   "bin": {
-    "http-event": "./build/src/http-event.js"
+    "http-event": "./build/bin/http-event.js"
   },
   "scripts": {
     "prepublish": "rm -rf build; yarn build",
