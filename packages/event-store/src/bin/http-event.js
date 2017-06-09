@@ -7,4 +7,5 @@ program
   .version(pkg.version)
   .command('start [name]', `start a new ${pkg.name} instance`)
   .command('stop [name]', `stop a running ${pkg.name} instance`)
+  .command('list', `list`)
   .parse(process.argv);
