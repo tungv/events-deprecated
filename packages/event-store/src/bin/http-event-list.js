@@ -16,7 +16,7 @@ const print = flow(
   groupBy(p => p.name),
   toArray,
   forEach(processes => {
-    const name = processes[0].name;
+    const name = processes[0].name.slice('http-event-server-'.length);
     const t = new Table({
       head: ['pid', 'uptime', 'ram', 'cpu'],
       style: {
