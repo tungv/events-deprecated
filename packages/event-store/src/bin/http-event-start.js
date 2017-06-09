@@ -28,6 +28,7 @@ pm2.connect(err => {
     if (err) {
       console.error(err);
     } else {
+      console.log('%s started', input.name)
       console.log('running instance(s): %d', apps.length);
     }
   });
