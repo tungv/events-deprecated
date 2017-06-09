@@ -2,7 +2,7 @@
 /* @flow */
 import pm2 from 'pm2';
 
-import input from './parseInput';
+const name = process.argv[2];
 
 pm2.connect(err => {
   if (err) {
@@ -10,7 +10,7 @@ pm2.connect(err => {
     process.exit(2);
   }
 
-  pm2.delete(`http-event-server-${input.name}`, (err, apps) => {
+  pm2.delete(`http-event-server-${name}`, (err, apps) => {
     pm2.disconnect();   // Disconnects from PM2
 
     if (err) {

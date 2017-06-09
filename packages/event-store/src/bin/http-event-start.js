@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 /* @flow */
 import pm2 from 'pm2';
+import chalk from 'chalk'
+import pkg from '../../package.json'
+import parseInput from './parseInput';
 
-import input from './parseInput';
+console.log(chalk.bold(`${pkg.name} start v${pkg.version}`))
+
+const input = parseInput();
 
 pm2.connect(err => {
   if (err) {
@@ -13,7 +18,7 @@ pm2.connect(err => {
   pm2.start({
     script: './build/bin/server.js',
     name: `http-event-server-${input.name}`,
-    args: process.argv,
+    args: process.argv.slice(2),
     exec_mode: 'cluster',
     instances: input.workers || 0,
     max_memory_restart: '100M'

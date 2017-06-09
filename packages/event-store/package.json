@@ -14,6 +14,7 @@
     "post": "ab -p assets/test.json -T application/json -c 50 -n 500 localhost:3000/commit"
   },
   "dependencies": {
+    "chalk": "^1.1.3",
     "clui": "^0.3.1",
     "commander": "^2.9.0",
     "es6-promisify": "^5.0.0",
@@ -25,7 +26,8 @@
     "microrouter": "^2.1.1",
     "pm2": "^2.4.6",
     "redis": "^2.7.1",
-    "redis-functional": "^0.2.4-1"
+    "redis-functional": "^0.2.4-1",
+    "redis-url": "^1.2.1"
   },
   "devDependencies": {
     "awaiting": "^3.0.0",
