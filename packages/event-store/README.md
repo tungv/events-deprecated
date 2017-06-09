@@ -16,6 +16,7 @@ npm i -g http-event
 
     start [name]  start a new http-event instance
     stop [name]   stop a running http-event instance
+    list          list all running instances
     help [cmd]    display help for [cmd]
 
   Options:
