@@ -8,19 +8,22 @@ this is under development
 npm i -g http-event
 
 # command usage
-$ http-event --help
-Usage: http-event [options]
 
-Options:
+  Usage: http-event [options] [command]
 
-  -h, --help                 output usage information
-  -V, --version              output the version number
-  -n, --name [name]          instance name
-  -r, --redis [redis]        redis config: example: redis://192.168.1.1:6379/1
-  -p, --port [port]          http server port. Defaults to 3000
-  -T, --burst-time [time]    buffer time (in milliseconds) before emitting, defaults to 500ms
-  -C, --burst-count [count]  buffer count before emitting, defaults to 20 events
+
+  Commands:
+
+    start [name]  start a new http-event instance
+    stop [name]   stop a running http-event instance
+    help [cmd]    display help for [cmd]
+
+  Options:
+
+    -h, --help     output usage information
+    -V, --version  output the version number
 
 # run
-$ http-event -r localhost -p 3000 -n MyEventStoreDemo
+$ http-event start MyEventStoreDemo -r localhost -p 3000
+$ http-event stop MyEventStoreDemo
 ```
