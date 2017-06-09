@@ -1,8 +1,8 @@
 {
   "name": "http-event",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "bin": {
-    "http-event": "./build/http-event.js"
+    "http-event": "./build/src/http-event.js"
   },
   "scripts": {
     "prepublish": "rm -rf build; yarn build",
