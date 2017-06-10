@@ -5,17 +5,17 @@ this is under development
 # Usage
 
 ```bash
-npm i -g http-event
+npm i -g @events/server
 
 # command usage
 
-  Usage: http-event [options] [command]
+  Usage: events-server [options] [command]
 
 
   Commands:
 
-    start [name]  start a new http-event instance
-    stop [name]   stop a running http-event instance
+    start [name]  start a new events-server instance
+    stop [name]   stop a running events-server instance
     list          list all running instances
     help [cmd]    display help for [cmd]
 
@@ -25,6 +25,6 @@ npm i -g http-event
     -V, --version  output the version number
 
 # run
-$ http-event start MyEventStoreDemo -r localhost -p 3000
-$ http-event stop MyEventStoreDemo
+$ events-server start MyEventStoreDemo -r localhost -p 3000
+$ events-server stop MyEventStoreDemo
 ```

@@ -12,11 +12,11 @@ import { pick, forEach, map, toArray, flow, filter, groupBy } from 'lodash/fp';
 console.log(chalk.bold(`${pkg.name} list v${pkg.version}`));
 
 const print = flow(
-  filter(p => p.name.startsWith('http-event-server-')),
+  filter(p => p.name.startsWith('events-server-')),
   groupBy(p => p.name),
   toArray,
   forEach(processes => {
-    const name = processes[0].name.slice('http-event-server-'.length);
+    const name = processes[0].name.slice('events-server-'.length);
     const t = new Table({
       head: ['pid', 'uptime', 'ram', 'cpu'],
       style: {

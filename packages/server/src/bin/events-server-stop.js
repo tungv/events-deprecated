@@ -14,7 +14,7 @@ pm2.connect(err => {
     process.exit(2);
   }
 
-  pm2.delete(`http-event-server-${name}`, (err, apps) => {
+  pm2.delete(`events-server-${name}`, (err, apps) => {
     pm2.disconnect();   // Disconnects from PM2
 
     if (err) {

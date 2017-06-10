@@ -16,7 +16,7 @@ export default () => {
   program
     .usage(
       `[name] [options].
-  Example: ${chalk.italic.cyan('http-event MyDemoInstance -p 3000 -r redis://localhost:6379/1')}`
+  Example: ${chalk.italic.cyan('events-server MyDemoInstance -p 3000 -r redis://localhost:6379/1')}`
     )
     .option(
       '-r, --redis [redis]',
@@ -40,7 +40,7 @@ export default () => {
     .parse(process.argv);
 
   const name = program.args[0];
-  
+
   if (!name) {
     console.error(chalk.bold.red('please speficy an instance name'));
     program.outputHelp(chalk.gray);

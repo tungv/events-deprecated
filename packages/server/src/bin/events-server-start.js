@@ -17,7 +17,7 @@ pm2.connect(err => {
 
   pm2.start({
     script: './build/bin/server.js',
-    name: `http-event-server-${input.name}`,
+    name: `events-server-${input.name}`,
     args: process.argv.slice(2),
     exec_mode: 'cluster',
     instances: input.workers || 0,
