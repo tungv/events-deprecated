@@ -1,11 +1,11 @@
 {
   "name": "@events/server",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "bin": {
     "events-server": "./build/bin/events-server.js"
   },
   "scripts": {
-    "prepublish": "rm -rf build; yarn build",
+    "prepare": "rm -rf build; yarn build",
     "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
     "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
     "start": "micro",
