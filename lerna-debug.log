@@ -1,0 +1,75 @@
+0 silly input [ 'publish' ]
+1 silly flags { _: [ 'publish' ], sort: true, concurrency: 4 }
+2 verbose rootPath /Users/tung/projects/event-store
+3 info version 2.0.0-rc.5
+4 silly isInitialized
+5 silly isInitialized true
+6 silly existsSync /Users/tung/projects/event-store/VERSION
+7 silly initialize attempt
+8 info current version 0.0.0
+9 silly getUpdates
+10 info Checking for updated packages...
+11 silly hasTags
+12 verbose hasTags true
+13 silly getLastTag
+14 verbose getLastTag v0.7.0
+15 info Comparing with tag v0.7.0
+16 silly getLastTaggedCommitInBranch
+17 silly getLastTag
+18 verbose getLastTag v0.7.0
+19 verbose getLastTaggedCommitInBranch e98adfbda77e013ec30733783d02618eb5437d6e
+20 silly describeTag e98adfbda77e013ec30733783d02618eb5437d6e
+21 silly describeTag v0.7.0
+22 silly diffSinceIn v0.7.0 /Users/tung/projects/event-store/packages/event-store
+23 silly diff
+24 silly diffSinceIn v0.7.0 /Users/tung/projects/event-store/packages/functional-redis
+25 silly diff
+26 silly collectDependents
+27 silly collectUpdates
+28 info No updated packages to publish.
+29 silly initialize success
+30 silly execute attempt
+31 silly isDetachedHead
+32 silly getCurrentBranch
+33 verbose getCurrentBranch master
+34 verbose isDetachedHead false
+35 silly addFile /Users/tung/projects/event-store/lerna.json
+36 silly commit vundefined
+37 verbose commit [ 'commit', '-m', 'vundefined' ]
+38 error execute Error: On branch master
+38 error execute Your branch is ahead of 'origin/master' by 3 commits.
+38 error execute   (use "git push" to publish your local commits)
+38 error execute Untracked files:
+38 error execute 	lerna-debug.log
+38 error execute
+38 error execute nothing added to commit but untracked files present
+38 error execute
+38 error execute     at Function.module.exports.sync (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/node_modules/execa/index.js:277:26)
+38 error execute     at Function.execSync (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/ChildProcessUtilities.js:59:30)
+38 error execute     at Function.commit (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/GitUtilities.js:84:39)
+38 error execute     at PublishCommand.gitCommitAndTagVersion (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:591:30)
+38 error execute     at PublishCommand.commitAndTagUpdates (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:562:27)
+38 error execute     at PublishCommand.execute (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:246:16)
+38 error execute     at PublishCommand._attempt (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:265:21)
+38 error execute     at /Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:252:15
+38 error execute     at /Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:274:13
+38 error execute     at PublishCommand.initialize (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:205:9)
+38 error execute  callback with error
+38 error execute  Error: On branch master
+38 error execute Your branch is ahead of 'origin/master' by 3 commits.
+38 error execute   (use "git push" to publish your local commits)
+38 error execute Untracked files:
+38 error execute 	lerna-debug.log
+38 error execute
+38 error execute nothing added to commit but untracked files present
+38 error execute
+38 error execute     at Function.module.exports.sync (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/node_modules/execa/index.js:277:26)
+38 error execute     at Function.execSync (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/ChildProcessUtilities.js:59:30)
+38 error execute     at Function.commit (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/GitUtilities.js:84:39)
+38 error execute     at PublishCommand.gitCommitAndTagVersion (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:591:30)
+38 error execute     at PublishCommand.commitAndTagUpdates (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:562:27)
+38 error execute     at PublishCommand.execute (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:246:16)
+38 error execute     at PublishCommand._attempt (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:265:21)
+38 error execute     at /Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:252:15
+38 error execute     at /Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:274:13
+38 error execute     at PublishCommand.initialize (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:205:9)
