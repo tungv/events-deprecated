@@ -1,8 +1,8 @@
 {
-  "name": "http-event",
+  "name": "@events/server",
   "version": "0.6.3",
   "bin": {
-    "http-event": "./build/bin/http-event.js"
+    "events-server": "./build/bin/events-server.js"
   },
   "scripts": {
     "prepublish": "rm -rf build; yarn build",
@@ -65,5 +65,8 @@
       "/node_modules/",
       "/build/"
     ]
+  },
+  "pkg": {
+    "scripts": "build/**/*.js"
   }
 }
