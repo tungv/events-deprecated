@@ -20,6 +20,7 @@ export const createClient = (config, { debug } = { debug: false }) => {
     if (debug) {
       started = false;
       countdown.stop();
+      console.log('connected');
     }
   });
 

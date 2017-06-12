@@ -9,7 +9,7 @@ const input = parseInput();
 console.log('initializing server');
 const server = factory({
   namespc: input.name,
-  redis: input.redis,
+  redis: { url: input.redis },
   history: { size: 10 },
   burst: {
     time: input.burstTime || 500,
