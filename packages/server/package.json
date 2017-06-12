@@ -1,6 +1,6 @@
 {
   "name": "@events/server",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "bin": {
     "events-server": "./build/bin/events-server.js"
   },
