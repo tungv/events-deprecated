@@ -37,6 +37,10 @@ export default () => {
       '-w, --workers [worker_count]',
       'specify the number of processes running in background, defaults to as many as the CPU cores'
     )
+    .option(
+      '-D, --no-daemon',
+      'keep the process running and terminate all instance if the main process is terminated'
+    )
     .parse(process.argv);
 
   const name = program.args[0];
@@ -78,7 +82,6 @@ redis config:
   }
 
   program.name = name;
-
   program.port = program.port || 3000;
   program.brustTime = program.brustTime || 500;
   program.brustCount = program.brustCount || 20;
