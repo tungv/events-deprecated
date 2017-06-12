@@ -3,13 +3,14 @@
 import factory from '..';
 import parseInput from './parseInput';
 import pkg from '../../package.json';
+import { parse } from 'redis-url'
 
 const input = parseInput();
 
 console.log('initializing server');
 const server = factory({
   namespc: input.name,
-  redis: { url: input.redis },
+  redis: parse(input.redis),
   history: { size: 10 },
   burst: {
     time: input.burstTime || 500,
