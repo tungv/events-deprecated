@@ -4,7 +4,7 @@ import { router, get, post } from 'microrouter';
 import makeCors from 'micro-cors';
 import micro from 'micro';
 
-import { createClient } from '../build/redis-client';
+import { createClient } from './redis-client';
 
 const cors = makeCors();
 
