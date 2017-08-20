@@ -17,6 +17,7 @@ type State = {
 
 type Props = {
   onComplete: Function,
+  pattern: string,
 };
 
 class StopCLI extends Component {
@@ -60,7 +61,13 @@ class StopCLI extends Component {
     const apps = await list();
     disconnect();
 
-    if (apps.length === 0) {
+    const filterFn = this.props.pattern
+      ? app => app.name.toLowerCase().includes(this.props.pattern.toLowerCase())
+      : () => true;
+
+    const filteredApps = apps.filter(filterFn);
+
+    if (filteredApps.length === 0) {
       this.setState({
         error: 'No apps are running. Aborting.',
         step: 'ABORTED',
@@ -71,7 +78,7 @@ class StopCLI extends Component {
       return;
     }
 
-    this.setState({ apps, step: 'SELECT_APP' });
+    this.setState({ apps: filteredApps, step: 'SELECT_APP' });
   }
 
   render(props: Props, state: State) {
@@ -79,6 +86,14 @@ class StopCLI extends Component {
     return (
       <div>
         <Banner command="stop" />
+        {props.pattern &&
+          <div>
+            Filter:{' '}
+            <Text bold cyan italic>
+              {props.pattern}
+            </Text>
+            <br />
+          </div>}
         {step === 'LOADING' &&
           <div>
             <Spinner green /> Loading Apps...
