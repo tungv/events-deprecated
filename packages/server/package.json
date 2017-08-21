@@ -5,6 +5,7 @@
     "events-server": "./build/bin/events-server.js",
     "es": "./build/bin/events-server.js"
   },
+  "main": "./build/index.js",
   "scripts": {
     "prepare": "rm -rf build; yarn build",
     "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
@@ -59,10 +60,7 @@
       [
         "env",
         {
-          "exclude": [
-            "transform-async-to-generator",
-            "transform-regenerator"
-          ],
+          "exclude": ["transform-async-to-generator", "transform-regenerator"],
           "targets": {
             "node": 8
           }
@@ -82,10 +80,7 @@
   },
   "jest": {
     "testRegex": "/__tests__/.*\\.spec\\.js$",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/build/"
-    ]
+    "testPathIgnorePatterns": ["/node_modules/", "/build/"]
   },
   "pkg": {
     "scripts": "build/**/*.js"

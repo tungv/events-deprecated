@@ -57,3 +57,8 @@ export const stopApp = (app: string) => {
     // });
   });
 };
+
+export const exists = async (appName: string) => {
+  const apps = await list();
+  return apps.some(a => a.name === appName);
+};
