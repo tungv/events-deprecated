@@ -1,6 +1,6 @@
 {
   "name": "@events/cli",
-  "version": "0.8.4",
+  "version": "0.8.4-interactive.1",
   "dependencies": {
     "@events/server": "^0.8.3",
     "ink": "^0.3.1",
