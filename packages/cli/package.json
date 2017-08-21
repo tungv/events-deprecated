@@ -1,7 +1,7 @@
 {
   "name": "@events/cli",
   "private": false,
-  "version": "0.8.4-interactive.3",
+  "version": "0.8.4-interactive.4",
   "dependencies": {
     "@events/server": "^0.8.3",
     "ink": "^0.3.1",
@@ -29,7 +29,7 @@
   },
   "bin": {
     "events-server": "./build/es.js",
-    "es": "./build/es.js"
+    "es-beta": "./build/es.js"
   },
   "main": "build/es.js"
 }
