@@ -1,9 +1,9 @@
 {
   "name": "@events/cli",
   "private": false,
-  "version": "0.8.4-interactive.6",
+  "version": "0.8.4-interactive.7",
   "dependencies": {
-    "@events/server": "^0.8.4-interactive.1",
+    "@events/server": "^0.8.4-interactive.7",
     "detect-port": "^1.2.1",
     "ink": "^0.3.1",
     "ink-checkbox-list": "^1.3.1",

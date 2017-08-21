@@ -1,6 +1,6 @@
 {
   "name": "@events/server",
-  "version": "0.8.4-interactive.1",
+  "version": "0.8.4-interactive.7",
   "bin": {
     "events-server": "./build/bin/events-server.js",
     "es": "./build/bin/events-server.js"
@@ -60,7 +60,10 @@
       [
         "env",
         {
-          "exclude": ["transform-async-to-generator", "transform-regenerator"],
+          "exclude": [
+            "transform-async-to-generator",
+            "transform-regenerator"
+          ],
           "targets": {
             "node": 8
           }
@@ -80,7 +83,10 @@
   },
   "jest": {
     "testRegex": "/__tests__/.*\\.spec\\.js$",
-    "testPathIgnorePatterns": ["/node_modules/", "/build/"]
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/build/"
+    ]
   },
   "pkg": {
     "scripts": "build/**/*.js"
