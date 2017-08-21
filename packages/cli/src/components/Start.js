@@ -142,11 +142,10 @@ export default class Start extends Component {
       return;
     }
 
-    const args = buildArgs(this.state);
     this.setState({ status: 'STARTING', currentQuestion: null }, async () => {
       const apps = await startApp(
         this.state.name,
-        args,
+        this.state,
         Number(this.state.workers),
         true
       );
@@ -197,12 +196,8 @@ export default class Start extends Component {
           {state.name} started {state.apps.length} instance(s) on port{' '}
           {state.port}.
         </Text>
-        <Quit />
+        <Quit exitCode={0} />
       </div>
     );
   }
 }
-
-const buildArgs = ({ name, redis, port, burstTime, burstCount }: State) => {
-  return `--name ${name} --redis ${redis} --port ${port} --burstTime ${burstTime} --burstCount ${burstCount}`;
-};

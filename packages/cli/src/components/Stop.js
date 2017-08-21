@@ -119,7 +119,7 @@ class StopCLI extends Component {
               {error}
             </Text>
           </div>}
-        {step === 'COMPLETED' && <Quit />}
+        {step === 'COMPLETED' && <Quit exitCode={error ? 1 : 0} />}
       </div>
     );
   }

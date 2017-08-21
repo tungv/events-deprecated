@@ -3,6 +3,14 @@ import { filter, flow, groupBy, map, toArray } from 'lodash/fp';
 import pm2 from 'pm2';
 import path from 'path';
 
+type Args = {
+  name: string,
+  redis: string,
+  port: string,
+  burstTime: string,
+  burstCount: string,
+};
+
 const getEventsServerApps = flow(
   filter(p => p.name.startsWith('events-server-')),
   groupBy(p => p.name),
@@ -64,9 +72,12 @@ export const exists = async (appName: string) => {
   return apps.some(a => a.name === appName);
 };
 
+const buildArgs = ({ name, redis, port, burstTime, burstCount }: Args) =>
+  `--name ${name} --redis ${redis} --port ${port} --burstTime ${burstTime} --burstCount ${burstCount}`;
+
 export const startApp = async (
   name: string,
-  args: string,
+  args: Args,
   workers: number,
   daemon: boolean
 ) => {
@@ -76,7 +87,7 @@ export const startApp = async (
       {
         script: path.resolve(__dirname, '../server.js'),
         name: `events-server-${name}`,
-        args,
+        args: buildArgs(args),
         exec_mode: 'cluster',
         instances: workers || 1,
         max_memory_restart: '100M',

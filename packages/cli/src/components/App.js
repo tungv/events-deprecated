@@ -6,8 +6,9 @@
 import { Component, h } from 'ink';
 
 import Banner from './Banner';
-import Stop from './Stop';
 import Start from './Start';
+import StartNonInteractive from './StartNonInteractive';
+import Stop from './Stop';
 import Usage from './Usage';
 
 type CommandEnum = 'stop' | 'start' | 'help';
@@ -40,7 +41,8 @@ class App extends Component {
         <Banner command={command} />
         {command === 'help' && <Usage onCommandSelected={this.changeCommand} />}
         {command === 'stop' && <Stop />}
-        {command === 'start' && <Start args={args} />}
+        {command === 'start' && !args.yes && <Start args={args} />}
+        {command === 'start' && args.yes && <StartNonInteractive args={args} />}
       </div>
     );
   }
