@@ -73,31 +73,45 @@ export default class StartNonInteractive extends Component {
   }
   render(props, state) {
     const validationCompleted = 'hasError' in state;
-
-    if (!validationCompleted) {
-      return (
-        <div>
-          {QUESTIONS.map(prop =>
+    const validationElement = (
+      <div>
+        {QUESTIONS.map(prop => {
+          const error = state[prop].errors;
+          return (
             <div key={prop}>
-              <Text>
-                <Text>{prop}</Text>: <Text bold>{state[prop].value}</Text>
-              </Text>
-              <Text>
-                {' '}{'errors' in state[prop]
-                  ? state[prop].errors
+              <Text
+                dim={validationCompleted && !error}
+                green={validationCompleted && !error}
+              >
+                {!validationCompleted && '\u00A0\u00A0\u00A0\u00A0'}
+                {validationCompleted && !error && '\u00A0✔\u00A0\u00A0'}
+                {validationCompleted && error && '\u00A0✘\u00A0\u00A0'}
+                <Text>{prop}</Text>: <Text bold>{state[prop].value}</Text>{' '}
+                {validationCompleted
+                  ? <Text italic>
+                      {error &&
+                        <span>
+                          ({error})
+                        </span>}
+                    </Text>
                   : <Text green>
                       <Spinner /> validating...
                     </Text>}
               </Text>
             </div>
-          )}
-        </div>
-      );
+          );
+        })}
+      </div>
+    );
+
+    if (!validationCompleted) {
+      return validationElement;
     }
 
     if (state.hasError) {
       return (
         <div>
+          {validationElement}
           <Text red>
             Invalid request. Please check your params
             <Quit exitCode={1} />
@@ -109,6 +123,7 @@ export default class StartNonInteractive extends Component {
     if (!state.app) {
       return (
         <div>
+          {validationElement}
           <span>
             <Spinner /> Starting...
           </span>
@@ -117,11 +132,14 @@ export default class StartNonInteractive extends Component {
     }
 
     return (
-      <ProcessRunning
-        app={state.app}
-        port={state.port.value}
-        keepAlive={state.noDaemon.value}
-      />
+      <div>
+        {validationElement}
+        <ProcessRunning
+          app={state.app}
+          port={props.args.port}
+          keepAlive={props.args.noDaemon}
+        />
+      </div>
     );
   }
 }
