@@ -33,18 +33,19 @@ export default class ProcessRunning extends Component {
     });
   }
 
-  render() {
-    const { port, app: { name, instances } } = this.props;
-    const { running, keepAlive, stopping } = this.state;
+  render(props, state) {
+    const { port, app: { name, instances } } = props;
+    const { running, keepAlive, stopping } = state;
 
     return (
       <div>
         {running
           ? <Text green>
-              {name} started {instances.length} instance(s) on port {port}.
+              <Text bold>{name}</Text> started {instances.length} instance(s) on
+              port {port}.
             </Text>
           : <Text green>
-              {name} has stopped.
+              <Text bold>{name}</Text> has stopped.
             </Text>}
         <br />
         {keepAlive &&
