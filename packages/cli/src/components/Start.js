@@ -7,10 +7,11 @@ import { Component, Text, h } from 'ink';
 import Spinner from 'ink-spinner';
 import TextInput from 'ink-text-input';
 
-import { startApp } from '../utils/async-pm2';
-import validate from '../utils/validations';
+import { connect, startApp, stopApp } from '../utils/async-pm2';
 import PrintJSON from './PrintJSON';
+import ProcessRunning from './ProcessRunning';
 import Quit from './Quit';
+import validate from '../utils/validations';
 
 type StartArgs = {
   _: string[],
@@ -20,6 +21,7 @@ type StartArgs = {
   burstTime?: number,
   burstCount?: number,
   workers?: number,
+  noDaemon: boolean,
 };
 
 type Props = {
@@ -36,24 +38,23 @@ type State = {
   burstTime: string,
   burstCount: string,
   workers: string,
-  apps: Array<{
-    pid: number,
-  }>,
+  app: EventsServerApp,
 };
 
 type QuestionEnum = 'name' | 'redis' | 'port';
 
+const QUESTIONS = [
+  'name',
+  'redis',
+  'port',
+  'burstTime',
+  'burstCount',
+  'workers',
+];
+
 const nextQuestions = question => {
-  const questions = [
-    'name',
-    'redis',
-    'port',
-    'burstTime',
-    'burstCount',
-    'workers',
-  ];
-  const currentIndex = questions.indexOf(question);
-  return questions[currentIndex + 1];
+  const currentIndex = QUESTIONS.indexOf(question);
+  return QUESTIONS[currentIndex + 1];
 };
 
 const defaultsOf = question => {
@@ -142,25 +143,55 @@ export default class Start extends Component {
       return;
     }
 
-    this.setState({ status: 'STARTING', currentQuestion: null }, async () => {
-      const apps = await startApp(
-        this.state.name,
-        this.state,
-        Number(this.state.workers),
-        true
-      );
-      this.setState({ status: 'STARTED', apps });
-    });
+    this.setState(
+      {
+        status: 'STARTING',
+        currentQuestion: null,
+        daemon: this.props.args.noDaemon,
+      },
+      async () => {
+        const app = await startApp(
+          this.state.name,
+          this.state,
+          Number(this.state.workers),
+          !this.props.args.noDaemon
+        );
+        this.setState({ status: 'STARTED', app });
+      }
+    );
   };
 
   render({ args }: Props, state: State) {
+    const summary = (
+      <div>
+        {QUESTIONS.map(
+          (q, index) =>
+            state[q] &&
+            (QUESTIONS.indexOf(state.currentQuestion) > index ||
+              !state.currentQuestion) &&
+            <div>
+              <Text bold dim green>
+                ✔ {labelOf(q)}
+              </Text>:{' '}
+              <Text italic dim green>
+                {state[q]}
+              </Text>
+            </div>
+        )}
+      </div>
+    );
+
+    const error =
+      state.errors &&
+      <div>
+        {state.errors}
+      </div>;
+
     if (state.currentQuestion) {
       return (
         <div>
-          {state.errors &&
-            <div>
-              {state.errors}
-            </div>}
+          {summary}
+          {error}
           <div>
             <Text bold>
               {labelOf(state.currentQuestion)}:{' '}
@@ -184,19 +215,25 @@ export default class Start extends Component {
     if (state.status === 'STARTING') {
       return (
         <div>
-          <Spinner green /> Starting {state.name} ⨉ {state.workers}{' '}
-          instance(s)...
+          {summary}
+          {error}
+          <Text>
+            <Spinner green /> Starting {state.name} ⨉ {state.workers}{' '}
+            instance(s)...
+          </Text>
         </div>
       );
     }
 
     return (
       <div>
-        <Text green>
-          {state.name} started {state.apps.length} instance(s) on port{' '}
-          {state.port}.
-        </Text>
-        <Quit exitCode={0} />
+        {summary}
+        {error}
+        <ProcessRunning
+          app={state.app}
+          keepAlive={args.noDaemon}
+          port={state.port}
+        />
       </div>
     );
   }

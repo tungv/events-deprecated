@@ -35,6 +35,7 @@ const validations = {
       const client = require('redis').createClient(url);
       return new Promise(resolve => {
         client.ping(err => {
+          client.quit();
           if (err) {
             resolve(errors);
           } else {

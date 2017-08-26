@@ -98,17 +98,17 @@ export const startApp = async (
           return;
         }
 
+        const app = {
+          name,
+          instances: apps,
+        };
+
+        resolve(app);
+
         if (daemon) {
           disconnect();
-          resolve(apps);
           return;
         }
-
-        process.on('SIGINT', async () => {
-          await stopApp(name);
-          disconnect();
-          process.exit(0);
-        });
       }
     );
   });
