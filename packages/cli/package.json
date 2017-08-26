@@ -1,7 +1,7 @@
 {
   "name": "@events/cli",
   "private": false,
-  "version": "0.8.4-interactive.7",
+  "version": "0.8.4-interactive.8",
   "dependencies": {
     "@events/server": "^0.8.4-interactive.7",
     "detect-port": "^1.2.1",
