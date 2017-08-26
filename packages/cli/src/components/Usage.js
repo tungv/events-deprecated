@@ -12,7 +12,7 @@ import SelectInput from 'ink-select-input';
 import Quit from './Quit';
 
 const commands = [
-  ['start', 'start a new events server instance', '[name] [redisUrl]'],
+  ['start', 'start a new events server instance'],
   ['stop', 'stop a running events server instance', '[name]'],
   ['list', 'list all running instances'],
 ];
