@@ -1,6 +1,6 @@
 {
   "name": "@events/server",
-  "version": "0.8.4-interactive.7",
+  "version": "0.8.4-interactive.9",
   "main": "./build/index.js",
   "scripts": {
     "prepare": "rm -rf build; yarn build",
@@ -9,7 +9,7 @@
     "start": "micro",
     "debug": "node --inspect ./node_modules/.bin/micro",
     "test": "REDIS_URL=redis://localhost:6379/4 jest --forceExit --coverage",
-    "post": "ab -p assets/test.json -T application/json -c 50 -n 500 localhost:3000/commit"
+    "post": "ab -p assets/test.json -T application/json -c 50 -n 500 localhost:8080/commit"
   },
   "dependencies": {
     "clui": "^0.3.6",
