@@ -11,10 +11,12 @@
     "ink-console": "^1.0.0",
     "ink-select-input": "^1.0.0",
     "ink-spinner": "^1.0.0",
+    "ink-table": "^0.0.3",
     "ink-text-input": "^1.1.0",
     "lodash": "^4.17.4",
     "mri": "^1.1.0",
     "pm2": "^2.6.1",
+    "pretty-bytes": "^4.0.2",
     "redis": "^2.8.0"
   },
   "devDependencies": {
