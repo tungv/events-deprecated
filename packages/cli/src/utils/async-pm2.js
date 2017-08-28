@@ -72,7 +72,7 @@ export const exists = async (appName: string) => {
   return apps.some(a => a.name === appName);
 };
 
-const buildArgs = ({ name, redis, port, burstTime, burstCount }: Args) =>
+export const buildArgs = ({ name, redis, port, burstTime, burstCount }: Args) =>
   `--name ${name} --redis ${redis} --port ${port} --burstTime ${burstTime} --burstCount ${burstCount}`;
 
 export const startApp = async (

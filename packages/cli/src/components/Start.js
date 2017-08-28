@@ -7,7 +7,7 @@ import { Component, Text, h } from 'ink';
 import Spinner from 'ink-spinner';
 import TextInput from 'ink-text-input';
 
-import { connect, startApp, stopApp } from '../utils/async-pm2';
+import { buildArgs, connect, startApp, stopApp } from '../utils/async-pm2';
 import PrintJSON from './PrintJSON';
 import ProcessRunning from './ProcessRunning';
 import Quit from './Quit';
@@ -212,6 +212,16 @@ export default class Start extends Component {
       );
     }
 
+    const guideElem = (
+      <div>
+        <Text italic>Next time you can use this to start similar app:</Text>
+        <br />
+        <Text ilatic bold>
+          es start {buildArgs(this.state)} --workers {this.state.workers} --yes
+        </Text>
+      </div>
+    );
+
     if (state.status === 'STARTING') {
       return (
         <div>
@@ -221,6 +231,7 @@ export default class Start extends Component {
             <Spinner green /> Starting {state.name} ⨉ {state.workers}{' '}
             instance(s)...
           </Text>
+          {guideElem}
         </div>
       );
     }
@@ -229,6 +240,7 @@ export default class Start extends Component {
       <div>
         {summary}
         {error}
+        {guideElem}
         <ProcessRunning
           app={state.app}
           keepAlive={args.noDaemon}
