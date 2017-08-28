@@ -28,7 +28,6 @@
     "babel-cli": "^6.26.0",
     "babel-jest": "^20.0.3",
     "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-env": "^1.6.0",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-3": "^6.24.1",
@@ -43,10 +42,6 @@
       [
         "env",
         {
-          "exclude": [
-            "transform-async-to-generator",
-            "transform-regenerator"
-          ],
           "targets": {
             "node": 8
           }
@@ -54,22 +49,11 @@
       ],
       "flow"
     ],
-    "plugins": [
-      [
-        "transform-react-jsx",
-        {
-          "pragma": "h"
-        }
-      ],
-      "transform-class-properties"
-    ]
+    "plugins": ["transform-class-properties"]
   },
   "jest": {
     "testRegex": "/__tests__/.*\\.spec\\.js$",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/build/"
-    ]
+    "testPathIgnorePatterns": ["/node_modules/", "/build/"]
   },
   "pkg": {
     "scripts": "build/**/*.js"
