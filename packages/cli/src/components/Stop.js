@@ -13,8 +13,10 @@ type State = {
   apps?: EventsServerApp[],
   selectedAppNames: string[],
   error?: string,
-  stoppedApps: string[],
-  preSelectedApps: string[],
+  status: {
+    [name: string]: 'STOPPING' | 'STOPPED',
+  },
+  preSelectedAppIndexes: number[],
 };
 
 type Props = {
@@ -30,6 +32,7 @@ class StopCLI extends Component {
     apps: null,
     step: 'LOADING',
     stoppedApps: [],
+    status: {},
   };
 
   willComplete() {
@@ -38,26 +41,41 @@ class StopCLI extends Component {
     }, 100);
   }
 
-  onAppSelected = async (appNames: string[]) => {
-    if (appNames.length === 0) {
-      this.setState({ error: `No apps selected. Aborting.` });
-      this.willComplete();
-      return;
-    }
-    this.setState({ selectedAppNames: appNames, step: 'STOPPING' });
+  async stopApps(selectedAppNames: string[]) {
+    const status = selectedAppNames.reduce(
+      (obj, name) => Object.assign(obj, { [name]: 'STOPPING' }),
+      {}
+    );
+
+    this.setState({ selectedAppNames, status });
 
     const disconnect = await connect();
     try {
-      for (let name of appNames) {
+      for (let name of selectedAppNames) {
         await stopApp(name);
-        this.setState(state => ({ stoppedApps: [...state.stoppedApps, name] }));
+        this.setState(state => ({
+          status: {
+            ...state.status,
+            [name]: 'STOPPED',
+          },
+        }));
       }
     } catch (ex) {
       this.setState({ error: `PM2 error: ${ex.message}. Aborting.` });
     } finally {
       disconnect();
       this.willComplete();
+      return;
     }
+  }
+
+  onAppSelected = async (appNames: string[]) => {
+    if (appNames.length === 0) {
+      this.setState({ step: 'ABORTED', error: `No apps selected. Aborting.` });
+      return;
+    }
+
+    await this.stopApps(appNames);
   };
 
   async componentWillMount() {
@@ -65,7 +83,7 @@ class StopCLI extends Component {
     const apps = await list();
     disconnect();
 
-    const { args: { _, filter: pattern } } = this.props;
+    const { args: { _, filter: pattern, yes: nonInteractive } } = this.props;
 
     const preSelectedAppName = _[0];
     const stringPattern = pattern ? String(pattern) : '';
@@ -74,7 +92,7 @@ class StopCLI extends Component {
       ? apps.filter(app => minimatch(app.name, stringPattern))
       : apps;
 
-    const preSelectedApps = preSelectedAppName.length
+    const preSelectedAppIndexes = preSelectedAppName.length
       ? filteredApps
           .map((app, index) => {
             if (minimatch(app.name, preSelectedAppName)) {
@@ -94,7 +112,27 @@ class StopCLI extends Component {
       return;
     }
 
-    this.setState({ apps: filteredApps, step: 'SELECT_APP', preSelectedApps });
+    if (nonInteractive && preSelectedAppIndexes.length) {
+      const selectedAppNames = filteredApps
+        .map(
+          (app, i) => (preSelectedAppIndexes.includes(i + 1) ? app.name : '')
+        )
+        .filter(x => x);
+
+      await this.stopApps(selectedAppNames);
+      return;
+    }
+
+    if (nonInteractive && !preSelectedAppIndexes.length) {
+      this.setState({ step: 'ABORTED', error: `No apps selected. Aborting.` });
+      return;
+    }
+
+    this.setState({
+      apps: filteredApps,
+      step: 'SELECT_APP',
+      preSelectedAppIndexes,
+    });
   }
 
   render({ args }: Props, state: State) {
@@ -102,54 +140,75 @@ class StopCLI extends Component {
       step,
       error,
       selectedAppNames,
-      stoppedApps,
-      preSelectedApps,
+      status,
+      preSelectedAppIndexes,
     } = state;
-    return (
-      <div>
-        {args.filter &&
-          <div>
-            Filter:{' '}
-            <Text bold cyan italic>
-              {args.filter}
-            </Text>
-            <br />
-          </div>}
-        {step === 'LOADING' &&
+
+    const filterElem = args.filter
+      ? <div>
+          Filter:{' '}
+          <Text bold cyan italic>
+            {args.filter}
+          </Text>
+          <br />
+        </div>
+      : null;
+
+    if (step === 'LOADING') {
+      return (
+        <div>
+          {filterElem}
           <div>
             <Spinner green /> Loading{args.filter ? ' matching ' : ' '}Apps...
-          </div>}
-        {step === 'SELECT_APP' &&
+          </div>
+        </div>
+      );
+    }
+
+    if (step === 'ABORTED') {
+      return (
+        <div>
+          {filterElem}
+          <div>
+            <Text red>
+              {error}
+            </Text>
+            <Quit exitCode={1} />
+          </div>
+        </div>
+      );
+    }
+
+    if (step === 'SELECT_APP') {
+      return (
+        <div>
+          {filterElem}
           <div>
             <AppSelectInput
-              defaultValues={preSelectedApps}
+              defaultValues={preSelectedAppIndexes}
               apps={state.apps}
               onSelect={this.onAppSelected}
             >
               All{args.filter ? ' matching ' : ' '}apps
             </AppSelectInput>
-          </div>}
-        {step === 'STOPPING' &&
-          <div>
-            {selectedAppNames.map(
-              name =>
-                stoppedApps.indexOf(name) !== -1
-                  ? <div>
-                      <Text green>
-                        ✔ {name} stopped.
-                      </Text>
-                    </div>
-                  : <div>
-                      <Spinner green /> <Text green>Stopping {name}...</Text>
-                    </div>
-            )}
-          </div>}
-        {error &&
-          <div>
-            <Text red bold>
-              {error}
-            </Text>
-          </div>}
+          </div>
+        </div>
+      );
+    }
+
+    // render apps being stopped
+    return (
+      <div>
+        {filterElem}
+        <div>
+          {selectedAppNames.map(name =>
+            <div>
+              {status[name] === 'STOPPING' ? <Spinner green /> : '\u00A0'}{' '}
+              <Text bold>{name}</Text>{' '}
+              {status[name] === 'STOPPING' ? 'is stopping...' : 'has stopped!'}
+            </div>
+          )}
+        </div>
         {step === 'COMPLETED' && <Quit exitCode={error ? 1 : 0} />}
       </div>
     );
