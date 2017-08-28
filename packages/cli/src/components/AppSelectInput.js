@@ -7,6 +7,7 @@ import ConfirmInput from 'ink-confirm-input';
 type Props = {
   apps: EventsServerApp[],
   onSelect: (string[]) => void,
+  children: string,
 };
 
 type State = {
@@ -46,7 +47,13 @@ class AppSelectInput extends Component {
     }
   };
 
-  render({ onSelect, apps }: Props, { selection, confirm }: State) {
+  componentDidMount() {
+    if (this.props.defaultValues) {
+      this.list.setState({ checked: this.props.defaultValues });
+    }
+  }
+
+  render({ onSelect, apps, children }: Props, { selection, confirm }: State) {
     return (
       <div>
         <div>Running apps:</div>
@@ -57,13 +64,16 @@ class AppSelectInput extends Component {
         <br />
         <br />
         <List
+          ref={list => {
+            this.list = list;
+          }}
           onSubmit={this.handleListChange}
           checkedCharacter="◉"
           uncheckedCharacter="◯"
         >
           <ListItem key="all" value="ALL">
             <Text bold italic red>
-              All apps
+              {children}
             </Text>{' '}
             <Text gray>
               ⨉ {apps.reduce((s, a) => s + a.instances.length, 0)} instance(s)

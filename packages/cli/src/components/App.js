@@ -41,7 +41,7 @@ class App extends Component {
       <div>
         <Banner command={command} />
         {command === 'help' && <Usage onCommandSelected={this.changeCommand} />}
-        {command === 'stop' && <Stop />}
+        {command === 'stop' && <Stop args={args} />}
         {command === 'start' && !args.yes && <Start args={args} />}
         {command === 'start' && args.yes && <StartNonInteractive args={args} />}
         {(command === 'list' || command === 'ls') && <List />}

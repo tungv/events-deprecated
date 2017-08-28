@@ -2,6 +2,7 @@
 // @jsx h
 import { Component, Text, h } from 'ink';
 import Spinner from 'ink-spinner';
+import minimatch from 'minimatch';
 
 import { connect, list, stopApp } from '../utils/async-pm2';
 import AppSelectInput from './AppSelectInput';
@@ -13,10 +14,14 @@ type State = {
   selectedAppNames: string[],
   error?: string,
   stoppedApps: string[],
+  preSelectedApps: string[],
 };
 
 type Props = {
-  pattern: string,
+  args: {
+    _: string[],
+    filter?: string,
+  },
 };
 
 class StopCLI extends Component {
@@ -55,16 +60,30 @@ class StopCLI extends Component {
     }
   };
 
-  async componentDidMount() {
+  async componentWillMount() {
     const disconnect = await connect();
     const apps = await list();
     disconnect();
 
-    const filterFn = this.props.pattern
-      ? app => app.name.toLowerCase().includes(this.props.pattern.toLowerCase())
-      : () => true;
+    const { args: { _, filter: pattern } } = this.props;
 
-    const filteredApps = apps.filter(filterFn);
+    const preSelectedAppName = _[0];
+    const stringPattern = pattern ? String(pattern) : '';
+
+    const filteredApps = stringPattern.length
+      ? apps.filter(app => minimatch(app.name, stringPattern))
+      : apps;
+
+    const preSelectedApps = preSelectedAppName.length
+      ? filteredApps
+          .map((app, index) => {
+            if (minimatch(app.name, preSelectedAppName)) {
+              return index + 1;
+            }
+            return 0;
+          })
+          .filter(x => x)
+      : [];
 
     if (filteredApps.length === 0) {
       this.setState({
@@ -75,28 +94,40 @@ class StopCLI extends Component {
       return;
     }
 
-    this.setState({ apps: filteredApps, step: 'SELECT_APP' });
+    this.setState({ apps: filteredApps, step: 'SELECT_APP', preSelectedApps });
   }
 
-  render(props: Props, state: State) {
-    const { step, error, selectedAppNames, stoppedApps } = state;
+  render({ args }: Props, state: State) {
+    const {
+      step,
+      error,
+      selectedAppNames,
+      stoppedApps,
+      preSelectedApps,
+    } = state;
     return (
       <div>
-        {props.pattern &&
+        {args.filter &&
           <div>
             Filter:{' '}
             <Text bold cyan italic>
-              {props.pattern}
+              {args.filter}
             </Text>
             <br />
           </div>}
         {step === 'LOADING' &&
           <div>
-            <Spinner green /> Loading Apps...
+            <Spinner green /> Loading{args.filter ? ' matching ' : ' '}Apps...
           </div>}
         {step === 'SELECT_APP' &&
           <div>
-            <AppSelectInput apps={state.apps} onSelect={this.onAppSelected} />
+            <AppSelectInput
+              defaultValues={preSelectedApps}
+              apps={state.apps}
+              onSelect={this.onAppSelected}
+            >
+              All{args.filter ? ' matching ' : ' '}apps
+            </AppSelectInput>
           </div>}
         {step === 'STOPPING' &&
           <div>
