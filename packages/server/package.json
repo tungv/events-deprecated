@@ -1,6 +1,6 @@
 {
   "name": "@events/server",
-  "version": "1.0.0-0",
+  "version": "1.0.0-1",
   "main": "./build/index.js",
   "scripts": {
     "prepare": "rm -rf build; yarn build",
@@ -49,11 +49,16 @@
       ],
       "flow"
     ],
-    "plugins": ["transform-class-properties"]
+    "plugins": [
+      "transform-class-properties"
+    ]
   },
   "jest": {
     "testRegex": "/__tests__/.*\\.spec\\.js$",
-    "testPathIgnorePatterns": ["/node_modules/", "/build/"]
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/build/"
+    ]
   },
   "pkg": {
     "scripts": "build/**/*.js"
