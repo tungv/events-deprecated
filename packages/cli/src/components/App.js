@@ -12,7 +12,7 @@ import Stop from './Stop';
 import List from './List';
 import Usage from './Usage';
 
-type CommandEnum = 'stop' | 'start' | 'help' | 'list';
+type CommandEnum = 'stop' | 'start' | 'help' | 'list' | 'ls';
 
 type Props = {
   command: CommandEnum,
@@ -44,7 +44,7 @@ class App extends Component {
         {command === 'stop' && <Stop />}
         {command === 'start' && !args.yes && <Start args={args} />}
         {command === 'start' && args.yes && <StartNonInteractive args={args} />}
-        {command === 'list' && <List />}
+        {(command === 'list' || command === 'ls') && <List />}
       </div>
     );
   }
