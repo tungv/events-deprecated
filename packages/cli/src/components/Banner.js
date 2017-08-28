@@ -9,7 +9,7 @@ export default class Banner extends Component {
     return (
       <div>
         <Text bold>
-          {pkg.name} {props.command} @{pkg.version}
+          {pkg.name} {props.command} version {pkg.version}
         </Text>
         <br />
       </div>
