@@ -9,7 +9,7 @@ An HTTP API for committing and subscribing events.
 
 # usage:
 
-I'd recommend you to use npm.im/@events/cli to manage events server instances. However, if you want to programmatically interact with the server, please follow the below example:
+I'd recommend you to use https://npm.im/@events/cli to manage events server instances. However, if you want to programmatically interact with the server, please follow the below example:
 
 ```js
 import factory from '@events/server';
