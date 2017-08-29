@@ -4,9 +4,9 @@ import micro from 'micro';
 import { delay } from 'awaiting';
 import listen from 'test-listen';
 
+import subscribe from '@events/subscriber';
 import del from 'redis-functional/del';
 import { createClient } from '../redis-client';
-import fromURL from './fromURL';
 import { commit } from '../commit';
 import makeSubscribe from '../subscribe';
 
@@ -25,7 +25,7 @@ describe('subscribe endpoint', () => {
     });
     const server = micro(service);
     const url = await listen(server);
-    const { events$, abort } = fromURL(url);
+    const { events$, abort } = subscribe(url);
 
     // 1 -> :ok
     // 2 -> first event
@@ -59,12 +59,12 @@ describe('subscribe endpoint', () => {
     const server = micro(service);
     const url = await listen(server);
 
-    const http1 = fromURL(url + '?client=1');
-    const http2 = fromURL(url + '?client=2');
+    const http1 = subscribe(url + '?client=1');
+    const http2 = subscribe(url + '?client=2');
     await delay(100);
 
-    const promise1 = takeEvents(4, http1.data$);
-    const promise2 = takeEvents(3, http2.data$);
+    const promise1 = takeEvents(4, http1.raw$);
+    const promise2 = takeEvents(3, http2.raw$);
 
     // publish 2 events
     // client 1 will wait until the end
@@ -115,7 +115,7 @@ describe('subscribe endpoint', () => {
 
     const server = micro(service);
     const url = await listen(server);
-    const { events$, abort } = fromURL(url, { 'Last-Event-ID': 1 });
+    const { events$, abort } = subscribe(url, { 'Last-Event-ID': 1 });
 
     const output = await takeEvents(2, events$);
 

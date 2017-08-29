@@ -1,10 +1,11 @@
-import request from 'request';
-import kefir from 'kefir';
+const request = require('request');
+const kefir = require('kefir');
+const parseMessage = require('./parseMessage');
 
-const fromURL = (url, headers = {}) => {
+const subscribe = (url, headers = {}) => {
   const stream = request(url, { headers });
 
-  const data$ = kefir.stream(emitter => {
+  const raw$ = kefir.stream(emitter => {
     const emitString = data => {
       emitter.emit(String(data));
     };
@@ -29,39 +30,16 @@ const fromURL = (url, headers = {}) => {
     };
   });
 
-  const events$ = data$.flatten(string => {
+  const events$ = raw$.flatten(string => {
     const msg = parseMessage(string);
-
     return msg.data || [];
   });
 
   return {
-    data$,
+    raw$,
     events$,
     abort: () => stream.abort(),
   };
 };
 
-export default fromURL;
-
-const toKeyValue = string => {
-  const colonIdx = string.indexOf(':');
-  const key = string.slice(0, colonIdx).trim();
-  const value = string.slice(colonIdx + 1).trim();
-
-  if (!key) {
-    return {};
-  }
-
-  return { [key]: value };
-};
-
-const parseMessage = string => {
-  const lines = string.split('\n').map(toKeyValue);
-  const msg = lines.reduce(Object.assign, {});
-  if (msg.data) {
-    msg.data = JSON.parse(msg.data);
-  }
-
-  return msg;
-};
+module.exports = subscribe;

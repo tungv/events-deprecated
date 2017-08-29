@@ -52,18 +52,35 @@ Array [
 
 exports[`subscribe with last-event-id should send past event in cache 1`] = `
 Array [
-  ":ok
-
-",
-  "id: 10
-event: INCMSG
-data: [{\\"id\\":6,\\"type\\":\\"test\\",\\"payload\\":6},{\\"id\\":7,\\"type\\":\\"test\\",\\"payload\\":7},{\\"id\\":8,\\"type\\":\\"test\\",\\"payload\\":8},{\\"id\\":9,\\"type\\":\\"test\\",\\"payload\\":9},{\\"id\\":10,\\"type\\":\\"test\\",\\"payload\\":10}]
-
-",
-  "id: 11
-event: INCMSG
-data: [{\\"id\\":11,\\"type\\":\\"test\\",\\"payload\\":11}]
-
-",
+  Object {
+    "id": 6,
+    "payload": 6,
+    "type": "test",
+  },
+  Object {
+    "id": 7,
+    "payload": 7,
+    "type": "test",
+  },
+  Object {
+    "id": 8,
+    "payload": 8,
+    "type": "test",
+  },
+  Object {
+    "id": 9,
+    "payload": 9,
+    "type": "test",
+  },
+  Object {
+    "id": 10,
+    "payload": 10,
+    "type": "test",
+  },
+  Object {
+    "id": 11,
+    "payload": 11,
+    "type": "test",
+  },
 ]
 `;
