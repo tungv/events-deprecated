@@ -16,9 +16,9 @@ const takeEvents = (count, stream) =>
   stream.take(count).scan((prev, next) => prev.concat(next), []).toPromise();
 
 describe('subscribe with last-event-id', () => {
-  it.only('should send past event in cache', async () => {
+  it('should send past event in cache', async () => {
     const namespc = 'test-event-id';
-    const pubClient = createClient();
+    const pubClient = createClient({ url: process.env.REDIS_URL });
 
     await del(redisClient, `${namespc}::events`);
     await del(redisClient, `${namespc}::id`);
@@ -44,7 +44,7 @@ describe('subscribe with last-event-id', () => {
       'Last-Event-ID': '5',
     };
 
-    const { data$, abort } = fromURL({ url, headers });
+    const { data$, abort } = fromURL(url, headers);
 
     // 1 -> :ok
     // 2 -> 6,7,8,9,10 events
@@ -67,7 +67,7 @@ describe('subscribe with last-event-id', () => {
 
   it('should send past event from redis if cache missed', async () => {
     const namespc = 'test-old-event';
-    const pubClient = createClient();
+    const pubClient = createClient({ url: process.env.REDIS_URL });
 
     await del(redisClient, `${namespc}::events`);
     await del(redisClient, `${namespc}::id`);
@@ -94,9 +94,9 @@ describe('subscribe with last-event-id', () => {
       'Last-Event-ID': '3',
     };
 
-    const { data$, abort } = fromURL({ url, headers });
+    const { data$, abort, events$ } = fromURL(url, headers);
 
-    const promise = takeEvents(5, data$);
+    const promise = takeEvents(9, events$);
 
     // console.log('commit 11');
     await commit(redisClient, { type: 'test', payload: 11 }, namespc);
@@ -113,7 +113,7 @@ describe('subscribe with last-event-id', () => {
     unsubscribe();
     const val = await promise;
     pubClient.quit();
-
+    expect(val.length).toEqual(9);
     expect(val).toMatchSnapshot();
   });
 });
