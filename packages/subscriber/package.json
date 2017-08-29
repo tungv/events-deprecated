@@ -1,6 +1,6 @@
 {
   "name": "@events/subscriber",
-  "version": "1.0.0-3",
+  "version": "1.0.0-4",
   "description": "http's text/event-stream + @events/server protocol implementation for nodejs",
   "main": "src/index.js",
   "scripts": {
