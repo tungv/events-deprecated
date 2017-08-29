@@ -85,7 +85,7 @@ class StopCLI extends Component {
 
     const { args: { _, filter: pattern, yes: nonInteractive } } = this.props;
 
-    const preSelectedAppName = _[0];
+    const preSelectedAppName = _[0] || '';
     const stringPattern = pattern ? String(pattern) : '';
 
     const filteredApps = stringPattern.length
