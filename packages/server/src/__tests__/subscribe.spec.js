@@ -4,8 +4,10 @@ import micro from 'micro';
 import { delay } from 'awaiting';
 import listen from 'test-listen';
 
+import del from 'redis-functional/del';
 import { createClient } from '../redis-client';
 import fromURL from './fromURL';
+import { commit } from '../commit';
 import makeSubscribe from '../subscribe';
 
 jest.unmock('micro');
@@ -46,7 +48,7 @@ describe('subscribe endpoint', () => {
 
   it('should work with 2 clients', async () => {
     const pubClient = createClient();
-    const {service, unsubscribe} = makeSubscribe({
+    const { service, unsubscribe } = makeSubscribe({
       namespc: 'test-sub',
       redis: {
         url: process.env.REDIS_URL,
@@ -85,5 +87,41 @@ describe('subscribe endpoint', () => {
 
     expect(val1.length).toBe(2);
     expect(val2.length).toBe(1);
+  });
+
+  it('should work with empty cache', async () => {
+    const commitClient = createClient({ url: process.env.REDIS_URL });
+
+    await del(commitClient, 'test-no-cache::events');
+    await del(commitClient, 'test-no-cache::id');
+    const events = [
+      { type: 'test', payload: 1 },
+      { type: 'test', payload: 2 },
+      { type: 'test', payload: 3 },
+    ];
+
+    await Promise.all(
+      events.map(evt => commit(commitClient, evt, 'test-no-cache'))
+    );
+
+    const { service, unsubscribe } = makeSubscribe({
+      namespc: 'test-no-cache',
+      history: { size: 10 },
+      burst: { time: 10, count: 10 },
+      redis: {
+        url: process.env.REDIS_URL,
+      },
+    });
+
+    const server = micro(service);
+    const url = await listen(server);
+    const { data$, abort } = fromURL(url, { 'Last-Event-ID': 1 });
+
+    const output = await takeEvents(2, data$);
+    abort();
+    server.close();
+    unsubscribe();
+
+    expect(output).toMatchSnapshot();
   });
 });
