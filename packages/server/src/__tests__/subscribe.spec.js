@@ -25,13 +25,13 @@ describe('subscribe endpoint', () => {
     });
     const server = micro(service);
     const url = await listen(server);
-    const { data$, abort } = fromURL(url);
+    const { events$, abort } = fromURL(url);
 
     // 1 -> :ok
     // 2 -> first event
     // 3 -> second event
     // 4 -> abort
-    const promise = takeEvents(4, data$);
+    const promise = takeEvents(2, events$);
     await delay(100);
 
     pubClient.publish('test-sub::events', '1:{"type":"first"}');
@@ -115,9 +115,10 @@ describe('subscribe endpoint', () => {
 
     const server = micro(service);
     const url = await listen(server);
-    const { data$, abort } = fromURL(url, { 'Last-Event-ID': 1 });
+    const { events$, abort } = fromURL(url, { 'Last-Event-ID': 1 });
 
-    const output = await takeEvents(2, data$);
+    const output = await takeEvents(2, events$);
+
     abort();
     server.close();
     unsubscribe();
