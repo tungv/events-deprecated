@@ -1,4 +1,4 @@
-# npm.im/@events
+# events server
 
 This is lerna-powered monorepo. Please checkout readme in individual packages
 
