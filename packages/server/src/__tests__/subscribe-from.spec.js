@@ -6,7 +6,7 @@ import { delay } from 'awaiting';
 import listen from 'test-listen';
 
 import { commit } from '../commit';
-import fromURL from './fromURL';
+import subscribe from '@events/subscriber';
 import makeSubscribe from '../subscribe';
 import redisClient, { createClient } from '../redis-client';
 
@@ -44,13 +44,13 @@ describe('subscribe with last-event-id', () => {
       'Last-Event-ID': '5',
     };
 
-    const { data$, abort } = fromURL(url, headers);
+    const { events$, abort } = subscribe(url, headers);
 
     // 1 -> :ok
     // 2 -> 6,7,8,9,10 events
     // 3 -> 11 real time
     // 4 -> abort
-    const promise = takeEvents(4, data$);
+    const promise = takeEvents(7, events$);
     await delay(100);
 
     await commit(redisClient, { type: 'test', payload: 11 }, namespc);
@@ -94,7 +94,7 @@ describe('subscribe with last-event-id', () => {
       'Last-Event-ID': '3',
     };
 
-    const { data$, abort, events$ } = fromURL(url, headers);
+    const { abort, events$ } = subscribe(url, headers);
 
     const promise = takeEvents(9, events$);
 

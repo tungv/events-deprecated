@@ -24,6 +24,7 @@
     "redis-functional": "^0.2.4-1"
   },
   "devDependencies": {
+    "@events/subscriber": "^1.0.0-3",
     "awaiting": "^3.0.0",
     "babel-cli": "^6.26.0",
     "babel-jest": "^20.0.3",
