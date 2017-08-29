@@ -2,13 +2,29 @@
 
 exports[`subscribe endpoint should subscribe 1`] = `
 Array [
-  ":ok
+  Object {
+    "id": 1,
+    "type": "first",
+  },
+  Object {
+    "id": 2,
+    "payload": 123,
+    "type": "second",
+  },
+]
+`;
 
-",
-  "id: 2
-event: INCMSG
-data: [{\\"id\\":1,\\"type\\":\\"first\\"},{\\"id\\":2,\\"type\\":\\"second\\",\\"payload\\":123}]
-
-",
+exports[`subscribe endpoint should work with empty cache 1`] = `
+Array [
+  Object {
+    "id": 2,
+    "payload": 2,
+    "type": "test",
+  },
+  Object {
+    "id": 3,
+    "payload": 3,
+    "type": "test",
+  },
 ]
 `;

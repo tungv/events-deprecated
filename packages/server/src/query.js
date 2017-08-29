@@ -16,7 +16,11 @@ end
 return newArray
 `;
 
-export const query = async (client: RedisClientType, namespc: string, ...argv: number[]) => {
+export const query = async (
+  client: RedisClientType,
+  namespc: string,
+  ...argv: number[]
+) => {
   const array = await runLua(client, queryLua, {
     keys: [`${namespc}::events`],
     argv: argv.map(String),
@@ -32,7 +36,9 @@ export default (config: CommitConfig) => {
   const client = createClient(config.redis);
 
   return async (req: any) => {
-    const lastEventId = Number(req.headers['Last-Event-ID'] || req.query.lastEventId);
+    const lastEventId = Number(
+      req.headers['Last-Event-ID'] || req.query.lastEventId
+    );
     const events = await query(client, config.namespc, lastEventId);
 
     // we trust the input from commit. otherwise we have to do a try-parse

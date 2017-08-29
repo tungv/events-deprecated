@@ -2,24 +2,51 @@
 
 exports[`subscribe with last-event-id should send past event from redis if cache missed 1`] = `
 Array [
-  ":ok
-
-",
-  "id: 13
-event: INCMSG
-data: [{\\"id\\":4},{\\"id\\":5},{\\"id\\":6},{\\"id\\":7},{\\"id\\":8},{\\"id\\":9},{\\"id\\":10},{\\"id\\":11},{\\"id\\":12},{\\"id\\":13,\\"type\\":\\"test\\",\\"payload\\":1}]
-
-",
-  "id: 23
-event: INCMSG
-data: [{\\"id\\":14,\\"type\\":\\"test\\",\\"payload\\":2},{\\"id\\":15,\\"type\\":\\"test\\",\\"payload\\":3},{\\"id\\":16,\\"type\\":\\"test\\",\\"payload\\":4},{\\"id\\":17,\\"type\\":\\"test\\",\\"payload\\":5},{\\"id\\":18,\\"type\\":\\"test\\",\\"payload\\":6},{\\"id\\":19,\\"type\\":\\"test\\",\\"payload\\":7},{\\"id\\":20,\\"type\\":\\"test\\",\\"payload\\":8},{\\"id\\":21,\\"type\\":\\"test\\",\\"payload\\":9},{\\"id\\":22,\\"type\\":\\"test\\",\\"payload\\":10},{\\"id\\":23,\\"type\\":\\"test\\",\\"payload\\":11}]
-
-",
-  "id: 24
-event: INCMSG
-data: [{\\"id\\":24,\\"type\\":\\"test\\",\\"payload\\":12}]
-
-",
+  Object {
+    "id": 4,
+    "payload": 4,
+    "type": "test",
+  },
+  Object {
+    "id": 5,
+    "payload": 5,
+    "type": "test",
+  },
+  Object {
+    "id": 6,
+    "payload": 6,
+    "type": "test",
+  },
+  Object {
+    "id": 7,
+    "payload": 7,
+    "type": "test",
+  },
+  Object {
+    "id": 8,
+    "payload": 8,
+    "type": "test",
+  },
+  Object {
+    "id": 9,
+    "payload": 9,
+    "type": "test",
+  },
+  Object {
+    "id": 10,
+    "payload": 10,
+    "type": "test",
+  },
+  Object {
+    "id": 11,
+    "payload": 11,
+    "type": "test",
+  },
+  Object {
+    "id": 12,
+    "payload": 12,
+    "type": "test",
+  },
 ]
 `;
 

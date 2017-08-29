@@ -120,6 +120,7 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     const oldestInCache = list[list.length - 1];
 
     debug && console.log('current', current);
+    debug && console.log('oldestInCache', oldestInCache);
     if (oldestInCache <= lastEventId + 1) {
       return kefir
         .constant(range(lastEventId + 1, current + 1).map(id => cache[id]))
@@ -127,13 +128,15 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     }
 
     debug && console.error('too old, getting more from redis');
-    const fromCache$ = kefir
-      .constant(range(oldestInCache, current + 1).map(id => cache[id]))
+    const fromCache$ = kefir.constant(
+      range(oldestInCache, current + 1).map(id => cache[id])
+    );
 
-    const fromRedis$ = kefir
-      .fromPromise(
-        query(queryClient, namespc, lastEventId + 1, oldestInCache - 1)
-      );
+    const promise = list.length
+      ? query(queryClient, namespc, lastEventId + 1, oldestInCache - 1)
+      : query(queryClient, namespc, lastEventId + 1);
+
+    const fromRedis$ = kefir.fromPromise(promise);
 
     return kefir.concat([fromRedis$, fromCache$]).flatten();
   };
@@ -150,13 +153,7 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
       // const url = req.url;
       // const query = parse(url.split('?')[1]);
 
-      addClient(
-        kefir.concat([initialValues, message$]),
-        {},
-        {},
-        req,
-        res
-      );
+      addClient(kefir.concat([initialValues, message$]), {}, {}, req, res);
     } catch (ex) {
       console.log(ex);
       throw ex;
@@ -168,7 +165,7 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
   return {
     service,
     unsubscribe: () => {
-      console.log('unsubscribing from redis');
+      debug && console.log('unsubscribing from redis');
       subClient.unsubscribe(`${namespc}::events`);
     },
   };
