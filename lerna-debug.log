@@ -1,75 +1,598 @@
-0 silly input [ 'publish' ]
-1 silly flags { _: [ 'publish' ], sort: true, concurrency: 4 }
+0 silly input []
+1 silly flags { _: [ 'bootstrap' ],
+1 silly flags   npmClient: 'yarn',
+1 silly flags   'npm-client': 'yarn',
+1 silly flags   args: [] }
 2 verbose rootPath /Users/tung/projects/event-store
-3 info version 2.0.0-rc.5
-4 silly isInitialized
-5 silly isInitialized true
-6 silly existsSync /Users/tung/projects/event-store/VERSION
-7 silly initialize attempt
-8 info current version 0.0.0
-9 silly getUpdates
-10 info Checking for updated packages...
-11 silly hasTags
-12 verbose hasTags true
-13 silly getLastTag
-14 verbose getLastTag v0.7.0
-15 info Comparing with tag v0.7.0
-16 silly getLastTaggedCommitInBranch
-17 silly getLastTag
-18 verbose getLastTag v0.7.0
-19 verbose getLastTaggedCommitInBranch e98adfbda77e013ec30733783d02618eb5437d6e
-20 silly describeTag e98adfbda77e013ec30733783d02618eb5437d6e
-21 silly describeTag v0.7.0
-22 silly diffSinceIn v0.7.0 /Users/tung/projects/event-store/packages/event-store
-23 silly diff
-24 silly diffSinceIn v0.7.0 /Users/tung/projects/event-store/packages/functional-redis
-25 silly diff
-26 silly collectDependents
-27 silly collectUpdates
-28 info No updated packages to publish.
-29 silly initialize success
-30 silly execute attempt
-31 silly isDetachedHead
-32 silly getCurrentBranch
-33 verbose getCurrentBranch master
-34 verbose isDetachedHead false
-35 silly addFile /Users/tung/projects/event-store/lerna.json
-36 silly commit vundefined
-37 verbose commit [ 'commit', '-m', 'vundefined' ]
-38 error execute Error: On branch master
-38 error execute Your branch is ahead of 'origin/master' by 3 commits.
-38 error execute   (use "git push" to publish your local commits)
-38 error execute Untracked files:
-38 error execute 	lerna-debug.log
-38 error execute
-38 error execute nothing added to commit but untracked files present
-38 error execute
-38 error execute     at Function.module.exports.sync (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/node_modules/execa/index.js:277:26)
-38 error execute     at Function.execSync (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/ChildProcessUtilities.js:59:30)
-38 error execute     at Function.commit (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/GitUtilities.js:84:39)
-38 error execute     at PublishCommand.gitCommitAndTagVersion (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:591:30)
-38 error execute     at PublishCommand.commitAndTagUpdates (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:562:27)
-38 error execute     at PublishCommand.execute (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:246:16)
-38 error execute     at PublishCommand._attempt (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:265:21)
-38 error execute     at /Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:252:15
-38 error execute     at /Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:274:13
-38 error execute     at PublishCommand.initialize (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:205:9)
-38 error execute  callback with error
-38 error execute  Error: On branch master
-38 error execute Your branch is ahead of 'origin/master' by 3 commits.
-38 error execute   (use "git push" to publish your local commits)
-38 error execute Untracked files:
-38 error execute 	lerna-debug.log
-38 error execute
-38 error execute nothing added to commit but untracked files present
-38 error execute
-38 error execute     at Function.module.exports.sync (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/node_modules/execa/index.js:277:26)
-38 error execute     at Function.execSync (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/ChildProcessUtilities.js:59:30)
-38 error execute     at Function.commit (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/GitUtilities.js:84:39)
-38 error execute     at PublishCommand.gitCommitAndTagVersion (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:591:30)
-38 error execute     at PublishCommand.commitAndTagUpdates (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:562:27)
-38 error execute     at PublishCommand.execute (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:246:16)
-38 error execute     at PublishCommand._attempt (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:265:21)
-38 error execute     at /Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:252:15
-38 error execute     at /Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/Command.js:274:13
-38 error execute     at PublishCommand.initialize (/Users/tung/.nvm/versions/node/v8.0.0/lib/node_modules/lerna/lib/commands/PublishCommand.js:205:9)
+3 info version 2.0.0
+4 silly existsSync /Users/tung/projects/event-store/VERSION
+5 silly initialize attempt
+6 silly initialize success
+7 silly execute attempt
+8 info Bootstrapping 3 packages
+9 info lifecycle preinstall
+10 silly runScript preinstall @events/cli
+11 silly @events/cli
+12 silly runScript preinstall redis-functional
+13 silly redis-functional
+14 silly runScript preinstall @events/server
+15 silly @events/server
+16 silly hasMatchingDependency @events/server redis-functional
+17 silly hasDependencyInstalled @events/cli babel-cli
+18 silly dependencyIsSatisfied [ 'babel-cli',
+18 silly dependencyIsSatisfied   '^6.26.0',
+18 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+19 verbose dependencyIsSatisfied babel-cli true
+20 silly hasDependencyInstalled @events/server babel-cli
+21 silly dependencyIsSatisfied [ 'babel-cli',
+21 silly dependencyIsSatisfied   '^6.26.0',
+21 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+22 verbose dependencyIsSatisfied babel-cli true
+23 silly hasDependencyInstalled @events/cli babel-plugin-transform-class-properties
+24 silly dependencyIsSatisfied [ 'babel-plugin-transform-class-properties',
+24 silly dependencyIsSatisfied   '^6.24.1',
+24 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+25 verbose dependencyIsSatisfied babel-plugin-transform-class-properties true
+26 silly hasDependencyInstalled @events/server babel-plugin-transform-class-properties
+27 silly dependencyIsSatisfied [ 'babel-plugin-transform-class-properties',
+27 silly dependencyIsSatisfied   '^6.24.1',
+27 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+28 verbose dependencyIsSatisfied babel-plugin-transform-class-properties true
+29 silly hasDependencyInstalled @events/cli babel-plugin-transform-react-jsx
+30 silly dependencyIsSatisfied [ 'babel-plugin-transform-react-jsx',
+30 silly dependencyIsSatisfied   '^6.24.1',
+30 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+31 verbose dependencyIsSatisfied babel-plugin-transform-react-jsx true
+32 silly hasDependencyInstalled @events/server babel-plugin-transform-react-jsx
+33 silly dependencyIsSatisfied [ 'babel-plugin-transform-react-jsx',
+33 silly dependencyIsSatisfied   '^6.24.1',
+33 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+34 verbose dependencyIsSatisfied babel-plugin-transform-react-jsx true
+35 silly hasDependencyInstalled @events/cli babel-preset-env
+36 silly dependencyIsSatisfied [ 'babel-preset-env',
+36 silly dependencyIsSatisfied   '^1.6.0',
+36 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+37 verbose dependencyIsSatisfied babel-preset-env true
+38 silly hasDependencyInstalled @events/server babel-preset-env
+39 silly dependencyIsSatisfied [ 'babel-preset-env',
+39 silly dependencyIsSatisfied   '^1.6.0',
+39 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+40 verbose dependencyIsSatisfied babel-preset-env true
+41 silly hasDependencyInstalled @events/cli babel-preset-flow
+42 silly dependencyIsSatisfied [ 'babel-preset-flow',
+42 silly dependencyIsSatisfied   '^6.23.0',
+42 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+43 verbose dependencyIsSatisfied babel-preset-flow true
+44 silly hasDependencyInstalled @events/server babel-preset-flow
+45 silly dependencyIsSatisfied [ 'babel-preset-flow',
+45 silly dependencyIsSatisfied   '^6.23.0',
+45 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+46 verbose dependencyIsSatisfied babel-preset-flow true
+47 silly hasDependencyInstalled @events/cli @events/server
+48 silly dependencyIsSatisfied [ '@events/server',
+48 silly dependencyIsSatisfied   '^0.8.4-interactive.6',
+48 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+49 verbose dependencyIsSatisfied @events/server false
+50 silly hasDependencyInstalled @events/cli detect-port
+51 silly dependencyIsSatisfied [ 'detect-port',
+51 silly dependencyIsSatisfied   '^1.2.1',
+51 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+52 verbose dependencyIsSatisfied detect-port true
+53 silly hasDependencyInstalled @events/cli ink
+54 silly dependencyIsSatisfied [ 'ink',
+54 silly dependencyIsSatisfied   '^0.3.1',
+54 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+55 verbose dependencyIsSatisfied ink true
+56 silly hasDependencyInstalled @events/server ink
+57 silly dependencyIsSatisfied [ 'ink',
+57 silly dependencyIsSatisfied   '^0.3.1',
+57 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+58 verbose dependencyIsSatisfied ink true
+59 silly hasDependencyInstalled @events/cli ink-checkbox-list
+60 silly dependencyIsSatisfied [ 'ink-checkbox-list',
+60 silly dependencyIsSatisfied   '^1.3.1',
+60 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+61 verbose dependencyIsSatisfied ink-checkbox-list true
+62 silly hasDependencyInstalled @events/server ink-checkbox-list
+63 silly dependencyIsSatisfied [ 'ink-checkbox-list',
+63 silly dependencyIsSatisfied   '^1.3.1',
+63 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+64 verbose dependencyIsSatisfied ink-checkbox-list true
+65 silly hasDependencyInstalled @events/cli ink-confirm-input
+66 silly dependencyIsSatisfied [ 'ink-confirm-input',
+66 silly dependencyIsSatisfied   '^1.0.3',
+66 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+67 verbose dependencyIsSatisfied ink-confirm-input true
+68 silly hasDependencyInstalled @events/server ink-confirm-input
+69 silly dependencyIsSatisfied [ 'ink-confirm-input',
+69 silly dependencyIsSatisfied   '^1.0.3',
+69 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+70 verbose dependencyIsSatisfied ink-confirm-input true
+71 silly hasDependencyInstalled @events/cli ink-console
+72 silly dependencyIsSatisfied [ 'ink-console',
+72 silly dependencyIsSatisfied   '^1.0.0',
+72 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+73 verbose dependencyIsSatisfied ink-console true
+74 silly hasDependencyInstalled @events/server ink-console
+75 silly dependencyIsSatisfied [ 'ink-console',
+75 silly dependencyIsSatisfied   '^1.0.0',
+75 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+76 verbose dependencyIsSatisfied ink-console true
+77 silly hasDependencyInstalled @events/cli ink-select-input
+78 silly dependencyIsSatisfied [ 'ink-select-input',
+78 silly dependencyIsSatisfied   '^1.0.0',
+78 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+79 verbose dependencyIsSatisfied ink-select-input true
+80 silly hasDependencyInstalled @events/server ink-select-input
+81 silly dependencyIsSatisfied [ 'ink-select-input',
+81 silly dependencyIsSatisfied   '^1.0.0',
+81 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+82 verbose dependencyIsSatisfied ink-select-input true
+83 silly hasDependencyInstalled @events/cli ink-spinner
+84 silly dependencyIsSatisfied [ 'ink-spinner',
+84 silly dependencyIsSatisfied   '^1.0.0',
+84 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+85 verbose dependencyIsSatisfied ink-spinner true
+86 silly hasDependencyInstalled @events/server ink-spinner
+87 silly dependencyIsSatisfied [ 'ink-spinner',
+87 silly dependencyIsSatisfied   '^1.0.0',
+87 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+88 verbose dependencyIsSatisfied ink-spinner true
+89 silly hasDependencyInstalled @events/cli ink-text-input
+90 silly dependencyIsSatisfied [ 'ink-text-input',
+90 silly dependencyIsSatisfied   '^1.1.0',
+90 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+91 verbose dependencyIsSatisfied ink-text-input true
+92 silly hasDependencyInstalled @events/cli lodash
+93 silly dependencyIsSatisfied [ 'lodash',
+93 silly dependencyIsSatisfied   '^4.17.4',
+93 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+94 verbose dependencyIsSatisfied lodash true
+95 silly hasDependencyInstalled @events/server lodash
+96 silly dependencyIsSatisfied [ 'lodash',
+96 silly dependencyIsSatisfied   '^4.17.4',
+96 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+97 verbose dependencyIsSatisfied lodash true
+98 silly hasDependencyInstalled @events/cli mri
+99 silly dependencyIsSatisfied [ 'mri',
+99 silly dependencyIsSatisfied   '^1.1.0',
+99 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+100 verbose dependencyIsSatisfied mri true
+101 silly hasDependencyInstalled @events/cli pm2
+102 silly dependencyIsSatisfied [ 'pm2',
+102 silly dependencyIsSatisfied   '^2.6.1',
+102 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+103 verbose dependencyIsSatisfied pm2 true
+104 silly hasDependencyInstalled @events/server pm2
+105 silly dependencyIsSatisfied [ 'pm2',
+105 silly dependencyIsSatisfied   '^2.6.1',
+105 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+106 verbose dependencyIsSatisfied pm2 true
+107 silly hasDependencyInstalled @events/cli redis
+108 silly dependencyIsSatisfied [ 'redis',
+108 silly dependencyIsSatisfied   '^2.8.0',
+108 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/cli/node_modules' ]
+109 verbose dependencyIsSatisfied redis true
+110 silly hasDependencyInstalled @events/server redis
+111 silly dependencyIsSatisfied [ 'redis',
+111 silly dependencyIsSatisfied   '^2.8.0',
+111 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+112 verbose dependencyIsSatisfied redis true
+113 silly hasDependencyInstalled redis-functional curry
+114 silly dependencyIsSatisfied [ 'curry',
+114 silly dependencyIsSatisfied   '^1.2.0',
+114 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/functional-redis/node_modules' ]
+115 verbose dependencyIsSatisfied curry true
+116 silly hasDependencyInstalled redis-functional es6-promisify
+117 silly dependencyIsSatisfied [ 'es6-promisify',
+117 silly dependencyIsSatisfied   '^5.0.0',
+117 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/functional-redis/node_modules' ]
+118 verbose dependencyIsSatisfied es6-promisify true
+119 silly hasDependencyInstalled @events/server es6-promisify
+120 silly dependencyIsSatisfied [ 'es6-promisify',
+120 silly dependencyIsSatisfied   '^5.0.0',
+120 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+121 verbose dependencyIsSatisfied es6-promisify true
+122 silly hasDependencyInstalled @events/server awaiting
+123 silly dependencyIsSatisfied [ 'awaiting',
+123 silly dependencyIsSatisfied   '^3.0.0',
+123 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+124 verbose dependencyIsSatisfied awaiting true
+125 silly hasDependencyInstalled @events/server babel-jest
+126 silly dependencyIsSatisfied [ 'babel-jest',
+126 silly dependencyIsSatisfied   '^20.0.3',
+126 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+127 verbose dependencyIsSatisfied babel-jest true
+128 silly hasDependencyInstalled @events/server babel-preset-stage-3
+129 silly dependencyIsSatisfied [ 'babel-preset-stage-3',
+129 silly dependencyIsSatisfied   '^6.24.1',
+129 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+130 verbose dependencyIsSatisfied babel-preset-stage-3 true
+131 silly hasDependencyInstalled @events/server jest
+132 silly dependencyIsSatisfied [ 'jest',
+132 silly dependencyIsSatisfied   '^20.0.4',
+132 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+133 verbose dependencyIsSatisfied jest true
+134 silly hasDependencyInstalled @events/server request
+135 silly dependencyIsSatisfied [ 'request',
+135 silly dependencyIsSatisfied   '^2.81.0',
+135 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+136 verbose dependencyIsSatisfied request true
+137 silly hasDependencyInstalled @events/server request-promise
+138 silly dependencyIsSatisfied [ 'request-promise',
+138 silly dependencyIsSatisfied   '^4.2.1',
+138 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+139 verbose dependencyIsSatisfied request-promise true
+140 silly hasDependencyInstalled @events/server test-listen
+141 silly dependencyIsSatisfied [ 'test-listen',
+141 silly dependencyIsSatisfied   '^1.0.2',
+141 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+142 verbose dependencyIsSatisfied test-listen true
+143 silly hasDependencyInstalled @events/server chalk
+144 silly dependencyIsSatisfied [ 'chalk',
+144 silly dependencyIsSatisfied   '^2.1.0',
+144 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+145 verbose dependencyIsSatisfied chalk true
+146 silly hasDependencyInstalled @events/server cli-table2
+147 silly dependencyIsSatisfied [ 'cli-table2',
+147 silly dependencyIsSatisfied   '^0.2.0',
+147 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+148 verbose dependencyIsSatisfied cli-table2 true
+149 silly hasDependencyInstalled @events/server clui
+150 silly dependencyIsSatisfied [ 'clui',
+150 silly dependencyIsSatisfied   '^0.3.6',
+150 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+151 verbose dependencyIsSatisfied clui true
+152 silly hasDependencyInstalled @events/server commander
+153 silly dependencyIsSatisfied [ 'commander',
+153 silly dependencyIsSatisfied   '^2.11.0',
+153 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+154 verbose dependencyIsSatisfied commander true
+155 silly hasDependencyInstalled @events/server kefir
+156 silly dependencyIsSatisfied [ 'kefir',
+156 silly dependencyIsSatisfied   '^3.7.3',
+156 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+157 verbose dependencyIsSatisfied kefir true
+158 silly hasDependencyInstalled @events/server micro
+159 silly dependencyIsSatisfied [ 'micro',
+159 silly dependencyIsSatisfied   '^8.0.3',
+159 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+160 verbose dependencyIsSatisfied micro true
+161 silly hasDependencyInstalled @events/server micro-boom
+162 silly dependencyIsSatisfied [ 'micro-boom',
+162 silly dependencyIsSatisfied   '^1.1.0',
+162 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+163 verbose dependencyIsSatisfied micro-boom true
+164 silly hasDependencyInstalled @events/server micro-cors
+165 silly dependencyIsSatisfied [ 'micro-cors',
+165 silly dependencyIsSatisfied   '^0.0.4',
+165 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+166 verbose dependencyIsSatisfied micro-cors true
+167 silly hasDependencyInstalled @events/server microrouter
+168 silly dependencyIsSatisfied [ 'microrouter',
+168 silly dependencyIsSatisfied   '^2.2.2',
+168 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+169 verbose dependencyIsSatisfied microrouter true
+170 silly hasDependencyInstalled @events/server pretty-bytes
+171 silly dependencyIsSatisfied [ 'pretty-bytes',
+171 silly dependencyIsSatisfied   '^4.0.2',
+171 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+172 verbose dependencyIsSatisfied pretty-bytes true
+173 silly hasDependencyInstalled @events/server pretty-ms
+174 silly dependencyIsSatisfied [ 'pretty-ms',
+174 silly dependencyIsSatisfied   '^3.0.0',
+174 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+175 verbose dependencyIsSatisfied pretty-ms true
+176 silly hasDependencyInstalled @events/server redis-url
+177 silly dependencyIsSatisfied [ 'redis-url',
+177 silly dependencyIsSatisfied   '^1.2.1',
+177 silly dependencyIsSatisfied   '/Users/tung/projects/event-store/packages/server/node_modules' ]
+178 verbose dependencyIsSatisfied redis-url true
+179 silly root dependencies []
+180 silly leaf dependencies {
+180 silly leaf dependencies   "@events/cli": [
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-cli@^6.26.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-plugin-transform-class-properties@^6.24.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-plugin-transform-react-jsx@^6.24.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-preset-env@^1.6.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-preset-flow@^6.23.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "@events/server@^0.8.4-interactive.6",
+180 silly leaf dependencies       "isSatisfied": false
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "detect-port@^1.2.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink@^0.3.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-checkbox-list@^1.3.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-confirm-input@^1.0.3",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-console@^1.0.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-select-input@^1.0.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-spinner@^1.0.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-text-input@^1.1.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "lodash@^4.17.4",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "mri@^1.1.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "pm2@^2.6.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "redis@^2.8.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     }
+180 silly leaf dependencies   ],
+180 silly leaf dependencies   "@events/server": [
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-cli@^6.26.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-plugin-transform-class-properties@^6.24.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-plugin-transform-react-jsx@^6.24.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-preset-env@^1.6.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-preset-flow@^6.23.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink@^0.3.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-checkbox-list@^1.3.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-confirm-input@^1.0.3",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-console@^1.0.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-select-input@^1.0.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "ink-spinner@^1.0.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "lodash@^4.17.4",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "pm2@^2.6.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "redis@^2.8.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "es6-promisify@^5.0.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "awaiting@^3.0.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-jest@^20.0.3",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "babel-preset-stage-3@^6.24.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "jest@^20.0.4",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "request@^2.81.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "request-promise@^4.2.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "test-listen@^1.0.2",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "chalk@^2.1.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "cli-table2@^0.2.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "clui@^0.3.6",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "commander@^2.11.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "kefir@^3.7.3",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "micro@^8.0.3",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "micro-boom@^1.1.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "micro-cors@^0.0.4",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "microrouter@^2.2.2",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "pretty-bytes@^4.0.2",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "pretty-ms@^3.0.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "redis-url@^1.2.1",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     }
+180 silly leaf dependencies   ],
+180 silly leaf dependencies   "redis-functional": [
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "curry@^1.2.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     },
+180 silly leaf dependencies     {
+180 silly leaf dependencies       "dependency": "es6-promisify@^5.0.0",
+180 silly leaf dependencies       "isSatisfied": true
+180 silly leaf dependencies     }
+180 silly leaf dependencies   ]
+180 silly leaf dependencies }
+181 info Installing external dependencies
+182 verbose actions 1 actions, concurrency 4
+183 silly installInDir cli [ 'babel-cli@^6.26.0',
+183 silly installInDir   'babel-plugin-transform-class-properties@^6.24.1',
+183 silly installInDir   'babel-plugin-transform-react-jsx@^6.24.1',
+183 silly installInDir   'babel-preset-env@^1.6.0',
+183 silly installInDir   'babel-preset-flow@^6.23.0',
+183 silly installInDir   '@events/server@^0.8.4-interactive.6',
+183 silly installInDir   'detect-port@^1.2.1',
+183 silly installInDir   'ink@^0.3.1',
+183 silly installInDir   'ink-checkbox-list@^1.3.1',
+183 silly installInDir   'ink-confirm-input@^1.0.3',
+183 silly installInDir   'ink-console@^1.0.0',
+183 silly installInDir   'ink-select-input@^1.0.0',
+183 silly installInDir   'ink-spinner@^1.0.0',
+183 silly installInDir   'ink-text-input@^1.1.0',
+183 silly installInDir   'lodash@^4.17.4',
+183 silly installInDir   'mri@^1.1.0',
+183 silly installInDir   'pm2@^2.6.1',
+183 silly installInDir   'redis@^2.8.0' ]
+184 silly installInDir backup /Users/tung/projects/event-store/packages/cli/package.json
+185 silly rename [ '/Users/tung/projects/event-store/packages/cli/package.json',
+185 silly rename   '/Users/tung/projects/event-store/packages/cli/package.json.lerna_backup' ]
+186 silly installInDir writing tempJson { dependencies:
+186 silly installInDir    { 'babel-cli': '^6.26.0',
+186 silly installInDir      'babel-plugin-transform-class-properties': '^6.24.1',
+186 silly installInDir      'babel-plugin-transform-react-jsx': '^6.24.1',
+186 silly installInDir      'babel-preset-env': '^1.6.0',
+186 silly installInDir      'babel-preset-flow': '^6.23.0',
+186 silly installInDir      '@events/server': '^0.8.4-interactive.6',
+186 silly installInDir      'detect-port': '^1.2.1',
+186 silly installInDir      ink: '^0.3.1',
+186 silly installInDir      'ink-checkbox-list': '^1.3.1',
+186 silly installInDir      'ink-confirm-input': '^1.0.3',
+186 silly installInDir      'ink-console': '^1.0.0',
+186 silly installInDir      'ink-select-input': '^1.0.0',
+186 silly installInDir      'ink-spinner': '^1.0.0',
+186 silly installInDir      'ink-text-input': '^1.1.0',
+186 silly installInDir      lodash: '^4.17.4',
+186 silly installInDir      mri: '^1.1.0',
+186 silly installInDir      pm2: '^2.6.1',
+186 silly installInDir      redis: '^2.8.0' } }
+187 silly getExecOpts { cwd: '/Users/tung/projects/event-store/packages/cli' }
+188 silly installInDir [ 'yarn',
+188 silly installInDir   [ 'install', '--mutex', 'network:42424', '--non-interactive' ] ]
+189 silly installInDir cleanup /Users/tung/projects/event-store/packages/cli/package.json
+190 silly renameSync [ '/Users/tung/projects/event-store/packages/cli/package.json.lerna_backup',
+190 silly renameSync   '/Users/tung/projects/event-store/packages/cli/package.json' ]
+191 verbose installed leaf @events/cli
+192 error execute Error: Command failed: yarn install --mutex network:42424 --non-interactive
+192 error execute warning package.json: No license field
+192 error execute warning ../../package.json: No license field
+192 error execute warning No license field
+192 error execute error Couldn't find any versions for "@events/server" that matches "^0.8.4-interactive.6"
+192 error execute yarn install v0.27.5
+192 error execute [1/4] Resolving packages...
+192 error execute info Visit https://yarnpkg.com/en/docs/cli/install for documentation about this command.
+192 error execute
+192 error execute     at Promise.all.then.arr (/Users/tung/.nvm/versions/node/v8.2.1/lib/node_modules/lerna/node_modules/execa/index.js:210:11)
+192 error execute     at <anonymous>
+192 error execute     at process._tickCallback (internal/process/next_tick.js:188:7)
+192 error execute  callback with error
+192 error execute  { Error: Command failed: yarn install --mutex network:42424 --non-interactive
+192 error execute warning package.json: No license field
+192 error execute warning ../../package.json: No license field
+192 error execute warning No license field
+192 error execute error Couldn't find any versions for "@events/server" that matches "^0.8.4-interactive.6"
+192 error execute yarn install v0.27.5
+192 error execute [1/4] Resolving packages...
+192 error execute info Visit https://yarnpkg.com/en/docs/cli/install for documentation about this command.
+192 error execute
+192 error execute     at Promise.all.then.arr (/Users/tung/.nvm/versions/node/v8.2.1/lib/node_modules/lerna/node_modules/execa/index.js:210:11)
+192 error execute     at <anonymous>
+192 error execute     at process._tickCallback (internal/process/next_tick.js:188:7)
+192 error execute   stack: 'Error: Command failed: yarn install --mutex network:42424 --non-interactive\nwarning package.json: No license field\nwarning ../../package.json: No license field\nwarning No license field\nerror Couldn\'t find any versions for "@events/server" that matches "^0.8.4-interactive.6"\nyarn install v0.27.5\n[1/4] Resolving packages...\ninfo Visit https://yarnpkg.com/en/docs/cli/install for documentation about this command.\n\n    at Promise.all.then.arr (/Users/tung/.nvm/versions/node/v8.2.1/lib/node_modules/lerna/node_modules/execa/index.js:210:11)\n    at <anonymous>\n    at process._tickCallback (internal/process/next_tick.js:188:7)',
+192 error execute   code: 1,
+192 error execute   killed: false,
+192 error execute   stdout: 'yarn install v0.27.5\n[1/4] Resolving packages...\ninfo Visit https://yarnpkg.com/en/docs/cli/install for documentation about this command.\n',
+192 error execute   stderr: 'warning package.json: No license field\nwarning ../../package.json: No license field\nwarning No license field\nerror Couldn\'t find any versions for "@events/server" that matches "^0.8.4-interactive.6"\n',
+192 error execute   failed: true,
+192 error execute   signal: null,
+192 error execute   cmd: 'yarn install --mutex network:42424 --non-interactive',
+192 error execute   timedOut: false }

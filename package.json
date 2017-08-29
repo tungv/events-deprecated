@@ -3,6 +3,6 @@
     "lerna": "^2.0.0-rc.5"
   },
   "devDependencies": {
-    "flow-bin": "^0.47.0"
+    "flow-bin": "^0.53.1"
   }
 }

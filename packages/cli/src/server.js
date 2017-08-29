@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /* @flow */
-import factory from '..';
-import parseInput from './parseInput';
-import pkg from '../../package.json';
+import factory from '@events/server';
+import mri from 'mri';
 
-const input = parseInput();
+const input = mri(process.argv.slice(2));
 
 console.log('initializing server');
 const server = factory({
@@ -12,8 +11,8 @@ const server = factory({
   redis: { url: input.redis },
   history: { size: 10 },
   burst: {
-    time: input.burstTime || 500,
-    count: input.burstCount || 20,
+    time: input.burstTime,
+    count: input.burstCount,
   },
   debug: input.debug,
 });

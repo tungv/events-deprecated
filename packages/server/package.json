@@ -1,9 +1,7 @@
 {
   "name": "@events/server",
-  "version": "0.8.3",
-  "bin": {
-    "events-server": "./build/bin/events-server.js"
-  },
+  "version": "1.0.0-1",
+  "main": "./build/index.js",
   "scripts": {
     "prepare": "rm -rf build; yarn build",
     "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
@@ -11,32 +9,26 @@
     "start": "micro",
     "debug": "node --inspect ./node_modules/.bin/micro",
     "test": "REDIS_URL=redis://localhost:6379/4 jest --forceExit --coverage",
-    "post": "ab -p assets/test.json -T application/json -c 50 -n 500 localhost:3000/commit"
+    "post": "ab -p assets/test.json -T application/json -c 50 -n 500 localhost:8080/commit"
   },
   "dependencies": {
-    "chalk": "^1.1.3",
-    "cli-table2": "^0.2.0",
-    "clui": "^0.3.1",
-    "commander": "^2.9.0",
+    "clui": "^0.3.6",
     "es6-promisify": "^5.0.0",
-    "kefir": "^3.7.2",
+    "kefir": "^3.7.3",
     "lodash": "^4.17.4",
-    "micro": "^7.3.3",
+    "micro": "^8.0.3",
     "micro-boom": "^1.1.0",
     "micro-cors": "^0.0.4",
-    "microrouter": "^2.1.1",
-    "pm2": "^2.5.0",
-    "pretty-bytes": "^4.0.2",
-    "pretty-ms": "^2.1.0",
-    "redis": "^2.7.1",
-    "redis-functional": "^0.2.4-1",
-    "redis-url": "^1.2.1"
+    "microrouter": "^2.2.2",
+    "redis": "^2.8.0",
+    "redis-functional": "^0.2.4-1"
   },
   "devDependencies": {
     "awaiting": "^3.0.0",
-    "babel-cli": "^6.24.1",
+    "babel-cli": "^6.26.0",
     "babel-jest": "^20.0.3",
-    "babel-preset-env": "^1.5.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-3": "^6.24.1",
     "jest": "^20.0.4",
@@ -50,13 +42,15 @@
       [
         "env",
         {
-          "exclude": [
-            "transform-async-to-generator",
-            "transform-regenerator"
-          ]
+          "targets": {
+            "node": 8
+          }
         }
       ],
       "flow"
+    ],
+    "plugins": [
+      "transform-class-properties"
     ]
   },
   "jest": {

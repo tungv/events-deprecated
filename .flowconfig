@@ -1,4 +1,5 @@
 [ignore]
+.*\/conventional-changelog-core\/test\/.*
 
 [include]
 
