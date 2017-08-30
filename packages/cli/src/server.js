@@ -5,6 +5,12 @@ import mri from 'mri';
 
 const input = mri(process.argv.slice(2));
 
+try {
+  process.stdin.setRawMode(false);
+} catch (ex) {
+  // nothing
+}
+
 console.log('initializing server');
 const server = factory({
   namespc: input.name,
