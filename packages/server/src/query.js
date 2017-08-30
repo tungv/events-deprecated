@@ -6,11 +6,13 @@ import runLua from './runLua';
 
 const queryLua = `
 local from = tonumber(ARGV[1]) + 1;
-local to = tonumber(ARGV[2]) or redis.call('HLEN', KEYS[1]);
+local to = tonumber(
+  ARGV[2] or redis.call('get', KEYS[1])
+);
 local newArray = {};
 
 for id=from,to do
-  table.insert(newArray, {id, redis.call('hget', KEYS[1], id)});
+  table.insert(newArray, {id, redis.call('hget', KEYS[2], id)});
 end
 
 return newArray
@@ -22,7 +24,7 @@ export const query = async (
   ...argv: number[]
 ) => {
   const array = await runLua(client, queryLua, {
-    keys: [`${namespc}::events`],
+    keys: [`${namespc}::id`, `${namespc}::events`],
     argv: argv.map(String),
   });
 

@@ -16,6 +16,8 @@ describe('query endpoint', () => {
         for id=1,10 do
           redis.call('HSET', 'test-query::events', id, '{"type": "test", "payload":'..id..'}')
         end
+
+        redis.call('SET', 'test-query::id', 10);
       `,
       { argv: [], keys: [] }
     );
