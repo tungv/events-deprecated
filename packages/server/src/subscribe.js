@@ -133,8 +133,8 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     );
 
     const promise = list.length
-      ? query(queryClient, namespc, lastEventId + 1, oldestInCache - 1)
-      : query(queryClient, namespc, lastEventId + 1);
+      ? query(queryClient, namespc, lastEventId, oldestInCache - 1)
+      : query(queryClient, namespc, lastEventId);
 
     const fromRedis$ = kefir.fromPromise(promise);
 

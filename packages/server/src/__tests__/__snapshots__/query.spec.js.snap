@@ -3,11 +3,6 @@
 exports[`query endpoint should query 1`] = `
 Array [
   Object {
-    "id": 5,
-    "payload": 5,
-    "type": "test",
-  },
-  Object {
     "id": 6,
     "payload": 6,
     "type": "test",

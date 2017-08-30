@@ -5,7 +5,7 @@ import type { CommitConfig } from '../types/Config.type';
 import runLua from './runLua';
 
 const queryLua = `
-local from = tonumber(ARGV[1]);
+local from = tonumber(ARGV[1]) + 1;
 local to = tonumber(ARGV[2]) or redis.call('HLEN', KEYS[1]);
 local newArray = {};
 

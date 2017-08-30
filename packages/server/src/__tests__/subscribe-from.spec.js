@@ -46,11 +46,7 @@ describe('subscribe with last-event-id', () => {
 
     const { events$, abort } = subscribe(url, headers);
 
-    // 1 -> :ok
-    // 2 -> 6,7,8,9,10 events
-    // 3 -> 11 real time
-    // 4 -> abort
-    const promise = takeEvents(7, events$);
+    const promise = takeEvents(6, events$);
     await delay(100);
 
     await commit(redisClient, { type: 'test', payload: 11 }, namespc);
