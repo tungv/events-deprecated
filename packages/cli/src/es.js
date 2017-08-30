@@ -3,9 +3,11 @@
   @flow
   @jsx h
 */
-import mri from 'mri';
 import { h, render } from 'ink';
+import mri from 'mri';
+
 import App from './components/App';
+import nonTTY from './nonTTY';
 
 const args = mri(process.argv.slice(2), {
   alias: {
@@ -21,4 +23,9 @@ const args = mri(process.argv.slice(2), {
 
 const command = args._.shift();
 
-render(<App command={command} args={args} />);
+// $FlowFixMe: see https://nodejs.org/api/tty.html
+if (Boolean(process.stdout.isTTY)) {
+  render(<App command={command} args={args} />);
+} else {
+  nonTTY(command, args);
+}
