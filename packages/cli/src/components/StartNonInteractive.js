@@ -15,42 +15,44 @@ const QUESTIONS = [
   'workers',
 ];
 
+const defaultsOf = question => {
+  return {
+    redis: 'redis://localhost:6379/0',
+    port: '30890',
+    burstTime: '500',
+    burstCount: '20',
+    workers: '1',
+  }[question];
+};
+
 export default class StartNonInteractive extends Component {
   constructor(props) {
     super(props);
 
     this.state = {};
-    Object.keys(props.args).forEach(prop => {
+    QUESTIONS.forEach(prop => {
       this.state[prop] = {
-        value: props.args[prop],
+        value: props.args[prop] || defaultsOf(prop),
       };
     });
   }
-  async componentDidMount() {
-    const { args } = this.props;
+  async componentWillMount() {
     let hasError = false;
 
-    const promises = [
-      'name',
-      'redis',
-      'port',
-      'burstTime',
-      'burstCount',
-      'workers',
-    ].map(async prop => {
-      const errors = await validate(prop, args[prop]);
+    const promises = QUESTIONS.map(async prop => {
+      const errors = await validate(prop, this.state[prop].value);
       if (errors) {
         hasError = true;
         this.setState({
           [prop]: {
-            value: args[prop],
+            value: this.state[prop].value,
             errors,
           },
         });
       } else {
         this.setState({
           [prop]: {
-            value: args[prop],
+            value: this.state[prop].value,
             errors: null,
           },
         });
