@@ -6,6 +6,7 @@ import micro from 'micro';
 
 import { createClient } from './redis-client';
 import { name, version } from '../package.json';
+import queryLatest from './queryLatest';
 
 const cors = makeCors();
 
@@ -17,16 +18,18 @@ import query from './query';
 export default (config: Config) => {
   console.log('%s version %s is starting...', name, version);
   const statusClient = createClient(config.redis, { debug: true });
-  const committer = commit(config);
-  const { service: subscriber, unsubscribe } = subscribe(config);
-  const querier = query(config);
+  const commitAPI = commit(config);
+  const { service: subscribeAPI, unsubscribe } = subscribe(config);
+  const queryAPI = query(config);
+  const queryLatestAPI = queryLatest(config);
 
   const service = handleErrors(
     cors(
       router(
-        get('/subscribe', subscriber),
-        post('/commit', committer),
-        get('/query', querier),
+        get('/subscribe', subscribeAPI),
+        post('/commit', commitAPI),
+        get('/query', queryAPI),
+        get('/events/latest', queryLatestAPI),
         () => {
           throw createError(404);
         }
