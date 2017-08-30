@@ -34,7 +34,7 @@
     "prepare": "babel ./src -d ./build --ignore __tests__,__mocks__"
   },
   "bin": {
-    "es-beta": "./build/es.js"
+    "es": "./build/es.js"
   },
   "main": "build/es.js"
 }
