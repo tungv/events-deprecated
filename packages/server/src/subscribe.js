@@ -111,7 +111,7 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
   };
 
   const getInitialValues = lastEventId => {
-    if (!lastEventId) {
+    if (isNaN(lastEventId)) {
       return kefir.never();
     }
 
