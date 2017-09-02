@@ -5,6 +5,7 @@ import { h, render } from 'ink';
 import mri from 'mri';
 
 import App from './App';
+import nonTTY from './nonTTY';
 
 const args = mri(process.argv.slice(2));
 
@@ -15,10 +16,9 @@ const props = {
   burstCount: args.burstCount,
 };
 
-render(<App {...props} />);
-
 // $FlowFixMe: see https://nodejs.org/api/tty.html
 if (Boolean(process.stdout.isTTY)) {
+  render(<App {...props} />);
 } else {
-  // nonTTY(command, args);
+  nonTTY(props);
 }
