@@ -36,7 +36,7 @@ export const addClient = (src, opts, match, req, res) => {
 
   const subscription = src
     .filter(x => x)
-    .bufferWithTimeOrCount(opts.time, opts.count)
+    .bufferWithTimeOrCount(opts.time || 500, opts.count || 20)
     .filter(b => b.length)
     .map(toOutput)
     .observe(block => {
