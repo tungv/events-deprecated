@@ -6,3 +6,4 @@ packed
 lerna-debug
 npm-debug
 yarn-debug
+yarn-error.log

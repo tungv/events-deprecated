@@ -2,6 +2,7 @@
   "dependencies": {
     "lerna": "^2.0.0-rc.5"
   },
+  "license": "ISC",
   "devDependencies": {
     "flow-bin": "^0.53.1"
   }
