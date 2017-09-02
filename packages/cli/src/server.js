@@ -6,6 +6,7 @@ import mri from 'mri';
 const input = mri(process.argv.slice(2));
 
 try {
+  // $FlowFixMe: stdin has setRawMode
   process.stdin.setRawMode(false);
 } catch (ex) {
   // nothing
