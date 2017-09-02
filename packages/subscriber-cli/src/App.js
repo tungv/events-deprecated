@@ -87,8 +87,21 @@ export default class App extends Component {
       setTimeout(() => process.exit(0), 10);
     });
 
-    await raw$.take(1).toPromise();
-    this.setState({ status: 'CONNECTED', connectedTS: Date.now() });
+    raw$.onError(error => {
+      this.setState({ status: 'ABORTED', error });
+    });
+
+    const firstMessage = await raw$.take(1).toPromise();
+    const connected = firstMessage.slice(0, 3) === ':ok';
+    if (connected) {
+      this.setState({ status: 'CONNECTED', connectedTS: Date.now() });
+    } else {
+      this.setState({
+        status: 'ABORTED',
+        connectedTS: Date.now(),
+        error: firstMessage,
+      });
+    }
   }
 
   render(props, state) {
@@ -118,41 +131,45 @@ export default class App extends Component {
             total events: {state.eventCount}
           </div>}
 
-        <LineBreak gray />
-        <div>
-          <Text bold>
-            Latest events<br />
-            <br />
-          </Text>
-        </div>
-        <div>
-          {state.last5Events.map(event =>
+        {state.last5Events.length > 0 &&
+          <div>
+            <LineBreak gray />
             <div>
-              <Text green>
-                {String(event.id).padStart(6, ' ')}
-              </Text>
-              {': '}
               <Text bold>
-                {event.type}
-              </Text>
-              <br />
-              <Text>
-                {typeof event.payload !== 'object' && '     ' + event.payload}
-                {typeof event.payload === 'object' &&
-                  Object.keys(event.payload).slice(0, 5).map(prop =>
-                    <div>
-                      {'       '}
-                      <Text italic>{prop}</Text>:{' '}
-                      <Text dim>
-                        {maxLength(JSON.stringify(event.payload[prop]), 80)}
-                      </Text>
-                    </div>
-                  )}
-                {Object.keys(event.payload).length > 5 && '…'}
+                Latest events<br />
+                <br />
               </Text>
             </div>
-          )}
-        </div>
+            <div>
+              {state.last5Events.map(event =>
+                <div>
+                  <Text green>
+                    {String(event.id).padStart(6, ' ')}
+                  </Text>
+                  {': '}
+                  <Text bold>
+                    {event.type}
+                  </Text>
+                  <br />
+                  <Text>
+                    {typeof event.payload !== 'object' &&
+                      '     ' + event.payload}
+                    {typeof event.payload === 'object' &&
+                      Object.keys(event.payload).slice(0, 5).map(prop =>
+                        <div>
+                          {'       '}
+                          <Text italic>{prop}</Text>:{' '}
+                          <Text dim>
+                            {maxLength(JSON.stringify(event.payload[prop]), 80)}
+                          </Text>
+                        </div>
+                      )}
+                    {Object.keys(event.payload).length > 5 && '…'}
+                  </Text>
+                </div>
+              )}
+            </div>
+          </div>}
       </div>
     );
 
@@ -161,6 +178,10 @@ export default class App extends Component {
         <div>
           <div>
             <Text red>ABORTED</Text>
+            <br />
+            <Text red>
+              {state.error}
+            </Text>
           </div>
           {summaryElement}
         </div>
