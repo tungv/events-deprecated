@@ -1,6 +1,6 @@
 {
   "name": "@events/server",
-  "version": "1.0.0-rc.7",
+  "version": "1.0.0-rc.8",
   "main": "./build/index.js",
   "scripts": {
     "prepare": "rm -rf build; yarn build",
