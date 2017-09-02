@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /* @flow */
 /* @jsx h */
 import { h, render } from 'ink';
