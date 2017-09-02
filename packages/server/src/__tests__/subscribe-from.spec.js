@@ -1,12 +1,13 @@
+import { get, router } from 'microrouter';
 import del from 'redis-functional/del';
 import micro from 'micro';
 import range from 'lodash/fp/range';
 
 import { delay } from 'awaiting';
 import listen from 'test-listen';
+import subscribe from '@events/subscriber';
 
 import { commit } from '../commit';
-import subscribe from '@events/subscriber';
 import makeSubscribe from '../subscribe';
 import redisClient, { createClient } from '../redis-client';
 
@@ -29,7 +30,7 @@ describe('subscribe with last-event-id', () => {
       history: { size: 10 },
       burst: { time: 10, count: 10 },
     });
-    const server = micro(service);
+    const server = micro(router(get('/', service)));
     const url = await listen(server);
     await delay(100);
 
@@ -74,7 +75,7 @@ describe('subscribe with last-event-id', () => {
       history: { size: 3 },
       burst: { time: 10, count: 10 },
     });
-    const server = micro(service);
+    const server = micro(router(get('/', service)));
     const url = await listen(server);
     await delay(100);
 

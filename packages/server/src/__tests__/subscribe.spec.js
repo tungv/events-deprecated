@@ -1,13 +1,14 @@
 /* @flow */
+import { get, router } from 'microrouter';
+import del from 'redis-functional/del';
 import micro from 'micro';
 
 import { delay } from 'awaiting';
 import listen from 'test-listen';
-
 import subscribe from '@events/subscriber';
-import del from 'redis-functional/del';
-import { createClient } from '../redis-client';
+
 import { commit } from '../commit';
+import { createClient } from '../redis-client';
 import makeSubscribe from '../subscribe';
 
 jest.unmock('micro');
@@ -23,7 +24,7 @@ describe('subscribe endpoint', () => {
       history: { size: 10 },
       burst: { time: 10, count: 10 },
     });
-    const server = micro(service);
+    const server = micro(router(get('/', service)));
     const url = await listen(server);
     const { events$, abort } = subscribe(url);
 
@@ -56,7 +57,7 @@ describe('subscribe endpoint', () => {
       history: { size: 10 },
       burst: { time: 10, count: 1 },
     });
-    const server = micro(service);
+    const server = micro(router(get('/', service)));
     const url = await listen(server);
 
     const http1 = subscribe(url + '?client=1');
@@ -113,7 +114,7 @@ describe('subscribe endpoint', () => {
       },
     });
 
-    const server = micro(service);
+    const server = micro(router(get('/', service)));
     const url = await listen(server);
     const { events$, abort } = subscribe(url, { 'Last-Event-ID': 1 });
 

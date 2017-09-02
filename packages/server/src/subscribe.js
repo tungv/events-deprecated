@@ -1,19 +1,19 @@
 /* @flow */
+import { over } from 'lodash/fp';
 import kefir from 'kefir';
 import once from 'lodash/fp/once';
 import range from 'lodash/fp/range';
 
 import type { SubscribeConfig } from '../types/Config.type';
 import { createClient } from './redis-client';
+import {
+  getBurstCount,
+  getBurstTime,
+  getLastEventId,
+  getRetry,
+  tryParse,
+} from './utils';
 import { query } from './query';
-
-const tryParse = raw => {
-  try {
-    return JSON.parse(raw);
-  } catch (ex) {
-    return { type: '@@RAW', payload: raw };
-  }
-};
 
 function flush(response) {
   if (response.flush && response.flush.name !== 'deprecated') {
@@ -27,9 +27,11 @@ data: ${JSON.stringify(events)}
 
 `;
 
-export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
+const getMessage$ = ({ redis, history, debug, namespc }: SubscribeConfig) => {
   const subClient = createClient(redis);
   const queryClient = createClient(redis);
+
+  subClient.subscribe(`${namespc}::events`);
 
   // prepare cache
   const MAX_SIZE = history.size;
@@ -53,7 +55,7 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     debug && console.log('CACHE\n', cache);
   };
 
-  const message$ = kefir
+  const realtimeMessage$ = kefir
     .fromEvents(subClient, 'message', (channel, message) => message)
     .map(message => {
       const rawId = message.split(':')[0];
@@ -67,50 +69,7 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     })
     .onValue(addToCache);
 
-  const addClient = (src, opts, match, req, res) => {
-    req.socket.setTimeout(0);
-    req.socket.setNoDelay(true);
-    req.socket.setKeepAlive(true);
-
-    res.writeHead(200, {
-      'Content-Type': 'text/event-stream;charset=UTF-8',
-      'Cache-Control': 'no-cache',
-      Connection: 'keep-alive',
-    });
-
-    res.write(':ok\n\n');
-
-    // cast to integer
-    const retry = opts.retry | 0;
-
-    if (retry) {
-      res.write('retry: ' + retry + '\n');
-    }
-
-    flush(res);
-
-    const subscription = src
-      .filter(x => x)
-      .bufferWithTimeOrCount(burst.time, burst.count)
-      .filter(b => b.length)
-      .map(toOutput)
-      .observe(block => {
-        debug && console.log('send to %s %s', req.url, block);
-        res.write(block);
-      });
-
-    const removeClient = once(() => {
-      debug && console.log('removing', req.url);
-      subscription.unsubscribe();
-      res.end();
-    });
-
-    req.on('end', removeClient);
-    req.on('close', removeClient);
-    res.on('finish', removeClient);
-  };
-
-  const getInitialValues = lastEventId => {
+  const getInitialMessage$ = lastEventId => {
     if (isNaN(lastEventId)) {
       return kefir.never();
     }
@@ -141,32 +100,95 @@ export default ({ redis, history, debug, namespc, burst }: SubscribeConfig) => {
     return kefir.concat([fromRedis$, fromCache$]).flatten();
   };
 
+  const unsubscribe = () => {
+    debug && console.log('unsubscribing from redis');
+    subClient.unsubscribe(`${namespc}::events`);
+  };
+
+  return { realtimeMessage$, getInitialMessage$, unsubscribe };
+};
+
+const addClient = (src, opts, match, req, res) => {
+  req.socket.setTimeout(0);
+  req.socket.setNoDelay(true);
+  req.socket.setKeepAlive(true);
+
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream;charset=UTF-8',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+  });
+
+  res.write(':ok\n\n');
+
+  // cast to integer
+  const retry = opts.retry | 0;
+
+  if (retry) {
+    res.write('retry: ' + retry + '\n');
+  }
+
+  flush(res);
+
+  const subscription = src
+    .filter(x => x)
+    .bufferWithTimeOrCount(opts.time, opts.count)
+    .filter(b => b.length)
+    .map(toOutput)
+    .observe(block => {
+      opts.debug && console.log('send to %s %s', req.url, block);
+      res.write(block);
+    });
+
+  const removeClient = once(() => {
+    opts.debug && console.log('removing', req.url);
+    subscription.unsubscribe();
+    res.end();
+  });
+
+  req.on('end', removeClient);
+  req.on('close', removeClient);
+  res.on('finish', removeClient);
+};
+
+export default (config: SubscribeConfig) => {
+  const { realtimeMessage$, getInitialMessage$, unsubscribe } = getMessage$(
+    config
+  );
+
   const service = async (req: any, res: any) => {
     try {
-      debug && console.log('connected', req.url);
-      const lastEventId = Number(req.headers['last-event-id']);
+      config.debug && console.log('connected', req.url);
+      const [lastEventId, count, time, retry] = over([
+        getLastEventId,
+        getBurstCount,
+        getBurstTime,
+        getRetry,
+      ])(req);
 
-      const initialValues = getInitialValues(lastEventId);
+      config.debug && console.log('lastEventId', lastEventId);
+      const initialValues = getInitialMessage$(lastEventId);
 
-      debug && console.log('lastEventId', lastEventId);
-
-      // const url = req.url;
-      // const query = parse(url.split('?')[1]);
-
-      addClient(kefir.concat([initialValues, message$]), {}, {}, req, res);
+      addClient(
+        kefir.concat([initialValues, realtimeMessage$]),
+        {
+          count,
+          time,
+          retry,
+          debug: config.debug,
+        },
+        {}, // query
+        req,
+        res
+      );
     } catch (ex) {
       console.log(ex);
       throw ex;
     }
   };
 
-  subClient.subscribe(`${namespc}::events`);
-
   return {
     service,
-    unsubscribe: () => {
-      debug && console.log('unsubscribing from redis');
-      subClient.unsubscribe(`${namespc}::events`);
-    },
+    unsubscribe,
   };
 };
