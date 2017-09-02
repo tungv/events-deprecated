@@ -30,10 +30,13 @@ const subscribe = (url, headers = {}) => {
     };
   });
 
-  const events$ = raw$.flatten(string => {
-    const msg = parseMessage(string);
-    return msg.data || [];
-  });
+  const events$ = raw$
+    .bufferWhile(string => string.slice(-2) !== '\n\n')
+    .map(array => array.join(''))
+    .flatten(string => {
+      const msg = parseMessage(string);
+      return msg.data || [];
+    });
 
   return {
     raw$,
