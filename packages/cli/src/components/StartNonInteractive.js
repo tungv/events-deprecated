@@ -6,21 +6,12 @@ import ProcessRunning from './ProcessRunning';
 import Quit from './Quit';
 import validate from '../utils/validations';
 
-const QUESTIONS = [
-  'name',
-  'redis',
-  'port',
-  'burstTime',
-  'burstCount',
-  'workers',
-];
+const QUESTIONS = ['name', 'redis', 'port', 'workers'];
 
 const defaultsOf = question => {
   return {
     redis: 'redis://localhost:6379/0',
     port: '30890',
-    burstTime: '500',
-    burstCount: '20',
     workers: '1',
   }[question];
 };

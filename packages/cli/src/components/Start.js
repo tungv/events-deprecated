@@ -18,8 +18,6 @@ type StartArgs = {
   name?: string,
   redis?: string,
   port?: number,
-  burstTime?: number,
-  burstCount?: number,
   workers?: number,
   noDaemon: boolean,
 };
@@ -35,22 +33,13 @@ type State = {
   name: string,
   redis: string,
   port: string,
-  burstTime: string,
-  burstCount: string,
   workers: string,
   app: EventsServerApp,
 };
 
 type QuestionEnum = 'name' | 'redis' | 'port';
 
-const QUESTIONS = [
-  'name',
-  'redis',
-  'port',
-  'burstTime',
-  'burstCount',
-  'workers',
-];
+const QUESTIONS = ['name', 'redis', 'port', 'workers'];
 
 const nextQuestions = question => {
   const currentIndex = QUESTIONS.indexOf(question);
@@ -61,8 +50,6 @@ const defaultsOf = question => {
   return {
     redis: 'redis://localhost:6379/0',
     port: '30890',
-    burstTime: '500',
-    burstCount: '20',
     workers: '1',
   }[question];
 };
@@ -72,8 +59,6 @@ const labelOf = question => {
     name: 'App Name',
     redis: 'Redis URL',
     port: 'HTTP port',
-    burstTime: 'Burst Time',
-    burstCount: 'Burst Count',
     workers: 'Number of workers',
   }[question];
 };
@@ -86,9 +71,6 @@ const placeholderOf = question => {
       name: 'your app name',
       redis: 'full redis connection string',
       port: 'http port for this app to listen',
-      burstTime:
-        'maximum buffer wait time (in milliseconds) before sending message',
-      burstCount: 'maximum number of events can be sent in one message',
       workers: 'specify the number of processes running in background',
     }[question] + `${def ? `. Default: ${def}` : ''}`
   );
@@ -105,8 +87,6 @@ export default class Start extends Component {
       name: props.args.name,
       redis: props.args.redis,
       port: String(props.args.port || ''),
-      burstTime: String(props.args.burstTime || ''),
-      burstCount: String(props.args.burstCount || ''),
       workers: String(props.args.workers || ''),
     };
   }

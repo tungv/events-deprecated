@@ -73,28 +73,6 @@ const validations = {
     return '';
   },
 
-  burstTime(timeString: string) {
-    const time = parseInt(timeString, 10);
-    if (time < 0 || isNaN(time)) {
-      return (
-        <Text red>
-          burst time must be in milliseconds. Received {timeString} instead.
-        </Text>
-      );
-    }
-  },
-
-  burstCount(countString: string) {
-    const count = parseInt(countString, 10);
-    if (count < 1 || isNaN(count)) {
-      return (
-        <Text red>
-          burst count must be a natural number. Received {countString} instead.
-        </Text>
-      );
-    }
-  },
-
   workers(workersString: string) {
     const workers = parseInt(workersString, 10);
     if (workers < 1 || isNaN(workers)) {
