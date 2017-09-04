@@ -57,13 +57,12 @@ describe('subscribe endpoint', () => {
         url: process.env.REDIS_URL,
       },
       history: { size: 10 },
-      burst: { time: 10, count: 1 },
     });
     const server = micro(router(get('/', service)));
     const url = await listen(server);
 
     const headers = {
-      'Burst-Count': '10',
+      'Burst-Count': '1',
       'Burst-Time': '10',
     };
 
