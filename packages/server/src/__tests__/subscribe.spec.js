@@ -22,11 +22,13 @@ describe('subscribe endpoint', () => {
     const { service, unsubscribe } = makeSubscribe({
       namespc: 'test-sub',
       history: { size: 10 },
-      burst: { time: 10, count: 10 },
     });
     const server = micro(router(get('/', service)));
     const url = await listen(server);
-    const { events$, abort } = subscribe(url);
+    const { events$, abort } = subscribe(url, {
+      'Burst-Count': '10',
+      'Burst-Time': '10',
+    });
 
     // 1 -> :ok
     // 2 -> first event
@@ -60,8 +62,13 @@ describe('subscribe endpoint', () => {
     const server = micro(router(get('/', service)));
     const url = await listen(server);
 
-    const http1 = subscribe(url + '?client=1');
-    const http2 = subscribe(url + '?client=2');
+    const headers = {
+      'Burst-Count': '10',
+      'Burst-Time': '10',
+    };
+
+    const http1 = subscribe(url + '?client=1', headers);
+    const http2 = subscribe(url + '?client=2', headers);
     await delay(100);
 
     const promise1 = takeEvents(4, http1.raw$);

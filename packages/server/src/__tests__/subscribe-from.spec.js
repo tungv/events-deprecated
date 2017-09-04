@@ -28,7 +28,6 @@ describe('subscribe with last-event-id', () => {
       redis: { url: process.env.REDIS_URL },
       namespc: namespc,
       history: { size: 10 },
-      burst: { time: 10, count: 10 },
     });
     const server = micro(router(get('/', service)));
     const url = await listen(server);
@@ -43,6 +42,8 @@ describe('subscribe with last-event-id', () => {
 
     const headers = {
       'Last-Event-ID': '5',
+      'Burst-Count': '10',
+      'Burst-Time': '10',
     };
 
     const { events$, abort } = subscribe(url, headers);
@@ -73,7 +74,6 @@ describe('subscribe with last-event-id', () => {
       redis: { url: process.env.REDIS_URL },
       namespc: namespc,
       history: { size: 3 },
-      burst: { time: 10, count: 10 },
     });
     const server = micro(router(get('/', service)));
     const url = await listen(server);
@@ -89,6 +89,8 @@ describe('subscribe with last-event-id', () => {
     await delay(100);
     const headers = {
       'Last-Event-ID': '3',
+      'Burst-Count': '10',
+      'Burst-Time': '10',
     };
 
     const { abort, events$ } = subscribe(url, headers);
