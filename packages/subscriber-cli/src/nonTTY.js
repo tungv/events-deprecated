@@ -20,6 +20,9 @@ export default (async function({
 }: Props) {
   write(`${name} version ${version}`);
   write(`connecting to ${url}`);
+
+  let latestId = null;
+
   const connectingTS = Date.now();
   const { raw$, events$, abort } = subscribe(url, {
     'Last-Event-ID': lastEventId,
@@ -45,9 +48,20 @@ export default (async function({
 
   raw$.onEnd(() => {
     write('stream ended');
+    if (latestId) {
+      write(`latest id: ${latestId}`);
+    }
     process.exit(1);
   });
 
   write(`connected after ${prettyMs(Date.now() - connectingTS)}!`);
-  events$.onValue(json => console.log(`${JSON.stringify(json)}`));
+  events$.onValue(json => {
+    if (!latestId) {
+      write(
+        `first event arrived after ${prettyMs(Date.now() - connectingTS)}!`
+      );
+    }
+    latestId = json.id;
+    console.log(`${JSON.stringify(json)}`);
+  });
 });
