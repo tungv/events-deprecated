@@ -160,7 +160,10 @@ export default class App extends Component {
                           {'       '}
                           <Text italic>{prop}</Text>:{' '}
                           <Text dim>
-                            {maxLength(JSON.stringify(event.payload[prop]), 80)}
+                            {maxLength(
+                              JSON.stringify(event.payload[prop]),
+                              process.stdout.columns - 22 - prop.length
+                            )}
                           </Text>
                         </div>
                       )}
