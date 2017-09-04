@@ -7,13 +7,17 @@ import mri from 'mri';
 import App from './App';
 import nonTTY from './nonTTY';
 
-const args = mri(process.argv.slice(2));
+const args = mri(process.argv.slice(2), {
+  alias: { x: 'debug' },
+  default: { debug: false },
+});
 
 const props = {
   url: args._[0],
   lastEventId: args.last,
   burstTime: args.burstTime,
   burstCount: args.burstCount,
+  debug: args.debug,
 };
 
 // $FlowFixMe: see https://nodejs.org/api/tty.html
