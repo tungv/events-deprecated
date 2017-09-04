@@ -19,6 +19,7 @@ export default (async function({
   burstCount,
   debug,
 }: Props) {
+  let latestId = null;
   const write = debug
     ? (...args) => console.error('[SUBSCRIBER] ', ...args)
     : (str: string): void => {};
@@ -67,6 +68,7 @@ export default (async function({
         `caught up with server after ${prettyMs(Date.now() - connectingTS)}!`
       );
     }
+    latestId = json.id;
     console.log(`${JSON.stringify(json)}`);
   });
 });
