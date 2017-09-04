@@ -1,6 +1,6 @@
 {
   "name": "@events/transform",
-  "version": "1.0.0-rc.14",
+  "version": "1.0.0-rc.15",
   "description": "transform events to storage-agnostic mutation commands",
   "main": "build/index.js",
   "scripts": {
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "kefir": "^3.7.4",
-    "kefir-stdin-json": "^1.0.0-rc.13",
+    "kefir-stdin-json": "^1.0.0-rc.15",
     "lodash": "^4.17.4",
     "mri": "^1.1.0"
   }
