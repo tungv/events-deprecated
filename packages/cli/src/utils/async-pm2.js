@@ -3,6 +3,10 @@ import { filter, flow, groupBy, map, toArray } from 'lodash/fp';
 import pm2 from 'pm2';
 import path from 'path';
 
+import mri from 'mri';
+
+const input = mri(process.argv.slice(2));
+
 type Args = {
   name: string,
   redis: string,
@@ -72,8 +76,10 @@ export const exists = async (appName: string) => {
   return apps.some(a => a.name === appName);
 };
 
-export const buildArgs = ({ name, redis, port, burstTime, burstCount }: Args) =>
-  `--name ${name} --redis ${redis} --port ${port} --burstTime ${burstTime} --burstCount ${burstCount}`;
+export const buildArgs = ({ name, redis, port }: Args) =>
+  `--name ${name} --redis ${redis} --port ${port} ${input.debug
+    ? '--debug'
+    : ''}`;
 
 export const startApp = async (
   name: string,
