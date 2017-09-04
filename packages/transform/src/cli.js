@@ -4,7 +4,7 @@ import mri from 'mri';
 import path from 'path';
 
 import makeTransform from './index';
-import observeStdin from './observeStdin';
+import readJSONFromStdin from 'kefir-stdin-json';
 
 const args = mri(process.argv.slice(2));
 
@@ -19,7 +19,7 @@ const rules = require(resolvedEntry);
 // compatible with es6 export default
 const transform = makeTransform(rules.default || rules);
 
-observeStdin(process.stdin)
+readJSONFromStdin(process.stdin)
   .map(transform)
   .onValue(json => console.log(JSON.stringify(json)))
   .onEnd(process.exit.bind(1));

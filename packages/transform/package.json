@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "kefir": "^3.7.4",
+    "kefir-stdin-json": "^1.0.0-rc.13",
     "lodash": "^4.17.4",
     "mri": "^1.1.0"
   }
