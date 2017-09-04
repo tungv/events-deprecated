@@ -1,6 +1,7 @@
 /* @flow */
 import prettyMs from 'pretty-ms';
 import subscribe from '@events/subscriber';
+import request from 'request-promise';
 import { name, version } from '../package.json';
 
 type Props = {
@@ -8,23 +9,28 @@ type Props = {
   lastEventId: number,
   burstCount: number,
   burstTime: number,
+  debug: boolean,
 };
-
-const write = (...args) => console.error('[SUBSCRIBER] ', ...args);
 
 export default (async function({
   url,
   lastEventId,
   burstTime,
   burstCount,
+  debug,
 }: Props) {
-  write(`${name} version ${version}`);
-  write(`connecting to ${url}`);
+  const write = debug
+    ? (...args) => console.error('[SUBSCRIBER] ', ...args)
+    : (str: string): void => {};
 
-  let latestId = null;
+  write(`${name} version ${version}`);
+
+  write(`verifying endpoint ${url}`);
+  const latestEvent = await request(`${url}/events/latest`, { json: true });
+  write(`latest event from server: ${latestEvent.id}`);
 
   const connectingTS = Date.now();
-  const { raw$, events$, abort } = subscribe(url, {
+  const { raw$, events$, abort } = subscribe(`${url}/subscribe`, {
     'Last-Event-ID': lastEventId,
     'burst-count': burstCount,
     'burst-time': burstTime,
@@ -56,12 +62,11 @@ export default (async function({
 
   write(`connected after ${prettyMs(Date.now() - connectingTS)}!`);
   events$.onValue(json => {
-    if (!latestId) {
+    if (json.id >= latestEvent.id) {
       write(
-        `first event arrived after ${prettyMs(Date.now() - connectingTS)}!`
+        `caught up with server after ${prettyMs(Date.now() - connectingTS)}!`
       );
     }
-    latestId = json.id;
     console.log(`${JSON.stringify(json)}`);
   });
 });
