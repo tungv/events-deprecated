@@ -1,6 +1,7 @@
 /* @flow */
 import prettyMs from 'pretty-ms';
 import subscribe from '@events/subscriber';
+import { name, version } from '../package.json';
 
 type Props = {
   url: string,
@@ -9,7 +10,7 @@ type Props = {
   burstTime: number,
 };
 
-const write = (...args) => console.error('SUBSCRIBER:', ...args);
+const write = (...args) => console.error('[SUBSCRIBER] ', ...args);
 
 export default (async function({
   url,
@@ -17,6 +18,7 @@ export default (async function({
   burstTime,
   burstCount,
 }: Props) {
+  write(`${name} version ${version}`);
   write(`connecting to ${url}`);
   const connectingTS = Date.now();
   const { raw$, events$, abort } = subscribe(url, {
