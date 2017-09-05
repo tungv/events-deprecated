@@ -180,14 +180,15 @@ describe('makeTransform', () => {
     const transform = makeTransform(transforms);
 
     expect(transform(event)).toEqual({
+      __v: 1000,
       collection1: [
         {
-          insert: [{ a: 1, __v: 1000 }, { a: 2, __v: 1000 }],
+          insert: [{ a: 1 }, { a: 2 }],
         },
         {
           update: {
             where: { a: 3 },
-            changes: { $inc: { a: 999 }, $set: { __v: 1000 } },
+            changes: { $inc: { a: 999 } },
           },
         },
       ],
@@ -196,7 +197,7 @@ describe('makeTransform', () => {
           update: {
             where: { a: 3 },
             changes: {
-              $set: { a: 5, __v: 1000 },
+              $set: { a: 5 },
             },
           },
         },

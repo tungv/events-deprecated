@@ -7,6 +7,7 @@ import {
   mapValues,
   omit,
   set,
+  assign,
 } from 'lodash/fp';
 
 export const applyTransforms = collectionTransforms => event =>
@@ -39,7 +40,4 @@ export const appendVersion = curry((version, cmd) => {
 });
 
 export default collectionTransforms => event =>
-  flow(
-    mergeTransforms(collectionTransforms),
-    mapValues(map(appendVersion(event.id)))
-  )(event);
+  flow(mergeTransforms(collectionTransforms), assign({ __v: event.id }))(event);
