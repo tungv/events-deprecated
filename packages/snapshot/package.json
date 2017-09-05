@@ -1,0 +1,32 @@
+{
+  "name": "@events/snapshot",
+  "version": "1.0.0-rc.16",
+  "description":
+    "query/mutate storage-agonistic snapshot for @events/subscriber-cli",
+  "main": "src/index.js",
+  "scripts": {
+    "build:watch":
+      "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
+    "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
+    "prepare": "babel ./src -d ./build --ignore __tests__,__mocks__",
+    "test": "jest"
+  },
+  "author": "Tung Vu <me@tungv.com>",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "mri": "^1.1.0"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-jest": "^21.0.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-3": "^6.24.1"
+  },
+  "bin": {
+    "snapshot": "./src/index.js"
+  }
+}
