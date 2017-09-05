@@ -1,4 +1,5 @@
 const { URL } = require('url');
+const path = require('path');
 
 module.exports = version;
 
@@ -39,4 +40,8 @@ async function version(input, write) {
 `);
     throw new Error('module not found');
   }
+
+  const version = await m.version(input);
+
+  process.stdout.write(String(version));
 }

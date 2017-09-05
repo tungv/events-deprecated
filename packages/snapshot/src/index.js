@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const mri = require('mri');
 const noop = require('lodash/fp/noop');
 
