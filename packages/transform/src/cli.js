@@ -2,11 +2,12 @@
 import mri from 'mri';
 
 import path from 'path';
+import { name, version } from '../package.json';
 
 import makeTransform from './index';
 import readJSONFromStdin from 'kefir-stdin-json';
 
-const args = mri(process.argv.slice(2));
+const args = mri(process.argv.slice(2), { alias: { x: 'debug' } });
 
 const entry = args._[0];
 
@@ -18,6 +19,10 @@ const rules = require(resolvedEntry);
 
 // compatible with es6 export default
 const transform = makeTransform(rules.default || rules);
+
+const write = args.debug ? str => console.error('[TRANSFORM] ', str) : () => {};
+
+write(`${name} version ${version}`);
 
 readJSONFromStdin(process.stdin)
   .map(transform)
