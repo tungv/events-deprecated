@@ -1,5 +1,5 @@
 /* @flow */
-import { flatten, flow, map, set } from 'lodash/fp';
+import { sum, flatten, flow, map, set } from 'lodash/fp';
 
 export function mapToOperation<Doc>(
   version: number,
@@ -41,13 +41,11 @@ export function mapToOperation<Doc>(
 }
 
 export default function createStore(db: DB) {
-  return async function dispatch(
-    request: UpdateRequest
-  ): Promise<Array<BulkWriteResult>> {
+  return async function dispatch(request: UpdateRequest): Promise<number> {
     const { __v: version, ...collections } = request;
-    const promises: Array<Promise<BulkWriteResult>> = Object.keys(
+    const promises: Array<Promise<number>> = Object.keys(
       collections
-    ).map(collectionName => {
+    ).map(async collectionName => {
       const coll = db.collection(collectionName);
 
       const ops = flow(
@@ -55,9 +53,16 @@ export default function createStore(db: DB) {
         flatten
       )(collections[collectionName]);
 
-      return coll.bulkWrite(ops);
+      const {
+        nInserted,
+        nUpserted,
+        nModified,
+        nRemoved,
+      } = await coll.bulkWrite(ops);
+
+      return nInserted + nUpserted + nModified + nRemoved;
     });
 
-    return Promise.all(promises);
+    return sum(await Promise.all(promises));
   };
 }

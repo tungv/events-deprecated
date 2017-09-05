@@ -36,8 +36,8 @@ describe('e2e', () => {
       },
     ];
 
-    await dispatch(requests[0]);
-    await dispatch(requests[1]);
+    expect(await dispatch(requests[0])).toBe(1);
+    expect(await dispatch(requests[1])).toBe(1);
 
     const users = await db
       .collection('users')
@@ -77,8 +77,8 @@ describe('e2e', () => {
     await dispatch(requests[0]);
     await dispatch(requests[1]);
 
-    await dispatch(requests[0]);
-    await dispatch(requests[1]);
+    expect(await dispatch(requests[0])).toBe(0);
+    expect(await dispatch(requests[1])).toBe(0);
 
     const users = await db
       .collection('users')
