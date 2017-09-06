@@ -1,8 +1,7 @@
 {
   "name": "@events/snapshot",
-  "version": "1.0.0-rc.17",
-  "description":
-    "query/mutate storage-agonistic snapshot for @events/subscriber-cli",
+  "version": "1.0.0-beta.0",
+  "description": "query/mutate storage-agonistic snapshot for @events/subscriber-cli",
   "main": "src/index.js",
   "scripts": {
     "test": "jest"
@@ -14,7 +13,7 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "@events/snapshot-mongo": "^1.0.0-rc.11",
+    "@events/snapshot-mongo": "^1.0.0-beta.0",
     "babel-cli": "^6.26.0",
     "babel-jest": "^21.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",

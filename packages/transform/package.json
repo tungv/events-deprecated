@@ -1,6 +1,6 @@
 {
   "name": "@events/transform",
-  "version": "1.0.0-rc.15",
+  "version": "1.0.0-beta.0",
   "description": "transform events to storage-agnostic mutation commands",
   "main": "build/index.js",
   "scripts": {
