@@ -66,6 +66,7 @@ declare type Collection = {
   drop: (query: any) => Promise<void>,
   insertMany: (Array<any>) => Promise<void>,
   bulkWrite: (Array<Operation<*>>) => Promise<BulkWriteResult>,
+  findOneAndUpdate: <T>(Query<T>, UpdateOperation<T>, ?any) => void,
 };
 declare type DB = {
   close: () => void,
