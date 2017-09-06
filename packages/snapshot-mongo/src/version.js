@@ -66,8 +66,7 @@ export default (async function getLatest(args: Args) {
     write('6. seeded!');
   }
 
-  process.stdout.write(String(snapshotVersion || 0));
-  process.exit(0);
+  return snapshotVersion || 0;
 });
 
 async function connect(
@@ -87,13 +86,13 @@ async function connect(
   const versionsColl = db.collection('versions');
 
   write('3. verifying versions...');
-  const uniformVersion = await versionsColl.findOne({ service: 'uniform' });
+  const versionDoc = await versionsColl.findOne({ _id: '@events/version' });
 
-  if (!uniformVersion) {
-    await versionsColl.insert({ service: 'uniform', snapshot_version: 0 });
+  if (!versionDoc) {
+    await versionsColl.insert({ _id: '@events/version', snapshot_version: 0 });
   }
 
-  const snapshotVersion = pathOr(0, 'snapshot_version', uniformVersion);
+  const snapshotVersion = pathOr(0, 'snapshot_version', versionDoc);
 
   write(`4. verified`);
 

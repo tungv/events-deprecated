@@ -53,16 +53,32 @@ export default function createStore(db: DB) {
         flatten
       )(collections[collectionName]);
 
+      if (ops.length === 0) {
+        return 0;
+      }
+
       const {
         nInserted,
         nUpserted,
         nModified,
         nRemoved,
       } = await coll.bulkWrite(ops);
-
       return nInserted + nUpserted + nModified + nRemoved;
     });
 
-    return sum(await Promise.all(promises));
+    const changes = sum(await Promise.all(promises));
+
+    // update versions
+    await db.collection('versions').findOneAndUpdate(
+      {
+        _id: '@events/version',
+      },
+      {
+        $set: { snapshot_version: version },
+      },
+      { upsert: true }
+    );
+
+    return changes;
   };
 }

@@ -11,9 +11,11 @@
   },
   "author": "Tung Vu <me@tungv.com>",
   "dependencies": {
+    "kefir-stdin-json": "^1.0.0-rc.15",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.31",
-    "mri": "^1.1.0"
+    "mri": "^1.1.0",
+    "p-lazy": "^1.0.0"
   },
   "license": "ISC",
   "devDependencies": {
