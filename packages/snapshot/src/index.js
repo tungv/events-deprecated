@@ -14,3 +14,8 @@ try {
 } catch (ex) {
   write(`unknown command ${cmd}`);
 }
+
+process.on('SIGINT', () => {
+  write('INTERUPTED');
+  process.exit(0);
+});
