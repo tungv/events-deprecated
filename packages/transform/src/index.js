@@ -16,7 +16,14 @@ import {
 
 export const applyTransforms = collectionTransforms => event =>
   flow(
-    filter(transform => attempt(() => transform.when(event)) === true),
+    filter(transform => {
+      const result = attempt(() => transform.when(event));
+      if (isError(result)) {
+        console.error('[TRANSFORM] error while processing event %s', event.id);
+      }
+
+      return result === true;
+    }),
     map(transform => attempt(() => transform.dispatch(event))),
     filter(negate(isError)),
     flatten
