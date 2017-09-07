@@ -25,6 +25,58 @@ describe('applyTransforms', () => {
     expect(dispatch).toHaveBeenCalledTimes(1);
   });
 
+  it('should return empty if filter throw', () => {
+    const when = jest.fn(() => {
+      throw new Error('failed');
+    });
+
+    const dispatch = jest.fn();
+
+    const transforms = [
+      {
+        when,
+        dispatch,
+      },
+    ];
+    const transform = applyTransforms(transforms);
+
+    let cmdArray;
+    expect(() => {
+      cmdArray = transform({
+        shouldPass_1: true,
+        shouldPass_2: false,
+        value: 'test',
+      });
+    }).not.toThrow();
+    expect(dispatch).toHaveBeenCalledTimes(0);
+    expect(cmdArray).toEqual([]);
+  });
+
+  it('should return empty if dispatch throw', () => {
+    const dispatch = jest.fn(() => {
+      throw new Error('failed');
+    });
+
+    const transforms = [
+      {
+        when: T,
+        dispatch,
+      },
+    ];
+    const transform = applyTransforms(transforms);
+
+    let cmdArray;
+    expect(() => {
+      cmdArray = transform({
+        shouldPass_1: true,
+        shouldPass_2: false,
+        value: 'test',
+      });
+    }).not.toThrow();
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(cmdArray).toEqual([]);
+  });
+
   it('should map', () => {
     const dispatch = jest.fn(path('value'));
     const collectionTransforms = [

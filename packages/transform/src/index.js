@@ -8,12 +8,17 @@ import {
   omit,
   set,
   assign,
+  attempt,
+  negate,
+  isError,
+  tap,
 } from 'lodash/fp';
 
 export const applyTransforms = collectionTransforms => event =>
   flow(
-    filter(transform => transform.when(event)),
-    map(transform => transform.dispatch(event)),
+    filter(transform => attempt(() => transform.when(event)) === true),
+    map(transform => attempt(() => transform.dispatch(event))),
+    filter(negate(isError)),
     flatten
   )(collectionTransforms);
 
