@@ -4,12 +4,11 @@ import Spinner from 'ink-spinner';
 import prettyMs from 'pretty-ms';
 import subscribe from '@events/subscriber';
 
-const LineBreak = props =>
+const LineBreak = props => (
   <div>
-    <Text {...props}>
-      {'-'.repeat(process.stdout.columns)}
-    </Text>
-  </div>;
+    <Text {...props}>{'-'.repeat(process.stdout.columns)}</Text>
+  </div>
+);
 
 class TimeElapsed extends Component {
   interval = null;
@@ -40,11 +39,7 @@ class TimeElapsed extends Component {
   }
 
   render(props, state) {
-    return (
-      <Text {...props}>
-        {state.ms > 0 && prettyMs(state.ms)}
-      </Text>
-    );
+    return <Text {...props}>{state.ms > 0 && prettyMs(state.ms)}</Text>;
   }
 }
 
@@ -60,7 +55,7 @@ export default class App extends Component {
   async componentDidMount() {
     const { url, lastEventId, burstCount, burstTime } = this.props;
 
-    const { raw$, events$, abort } = subscribe(url, {
+    const { raw$, events$, abort } = subscribe(`${url}/subscribe`, {
       'Last-Event-ID': lastEventId,
       'burst-count': burstCount,
       'burst-time': burstTime,
@@ -115,23 +110,20 @@ export default class App extends Component {
 
     const summaryElement = (
       <div>
-        <div>
-          Last-Event-ID: {props.lastEventId}
-        </div>
-        {state.connectedTS > 0 &&
+        <div>Events server url: {props.url}</div>
+        <div>Last-Event-ID: {props.lastEventId}</div>
+        {state.connectedTS > 0 && (
           <div>
             total time:{' '}
             <TimeElapsed
               from={state.connectedTS}
               stopped={state.status === 'ABORTED'}
             />
-          </div>}
-        {state.eventCount > 0 &&
-          <div>
-            total events: {state.eventCount}
-          </div>}
+          </div>
+        )}
+        {state.eventCount > 0 && <div>total events: {state.eventCount}</div>}
 
-        {state.last5Events.length > 0 &&
+        {state.last5Events.length > 0 && (
           <div>
             <LineBreak gray />
             <div>
@@ -141,38 +133,37 @@ export default class App extends Component {
               </Text>
             </div>
             <div>
-              {state.last5Events.map(event =>
+              {state.last5Events.map(event => (
                 <div>
-                  <Text green>
-                    {String(event.id).padStart(6, ' ')}
-                  </Text>
+                  <Text green>{String(event.id).padStart(6, ' ')}</Text>
                   {': '}
-                  <Text bold>
-                    {event.type}
-                  </Text>
+                  <Text bold>{event.type}</Text>
                   <br />
                   <Text>
                     {typeof event.payload !== 'object' &&
                       '     ' + event.payload}
                     {typeof event.payload === 'object' &&
-                      Object.keys(event.payload).slice(0, 5).map(prop =>
-                        <div>
-                          {'       '}
-                          <Text italic>{prop}</Text>:{' '}
-                          <Text dim>
-                            {maxLength(
-                              JSON.stringify(event.payload[prop]),
-                              process.stdout.columns - 22 - prop.length
-                            )}
-                          </Text>
-                        </div>
-                      )}
+                      Object.keys(event.payload)
+                        .slice(0, 5)
+                        .map(prop => (
+                          <div>
+                            {'       '}
+                            <Text italic>{prop}</Text>:{' '}
+                            <Text dim>
+                              {maxLength(
+                                JSON.stringify(event.payload[prop]),
+                                process.stdout.columns - 22 - prop.length
+                              )}
+                            </Text>
+                          </div>
+                        ))}
                     {Object.keys(event.payload).length > 5 && '…'}
                   </Text>
                 </div>
-              )}
+              ))}
             </div>
-          </div>}
+          </div>
+        )}
       </div>
     );
 
@@ -182,9 +173,7 @@ export default class App extends Component {
           <div>
             <Text red>ABORTED</Text>
             <br />
-            <Text red>
-              {state.error}
-            </Text>
+            <Text red>{state.error}</Text>
           </div>
           {summaryElement}
         </div>
