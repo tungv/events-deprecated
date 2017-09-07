@@ -28,7 +28,9 @@ export const queryLatest = async (client: RedisClientType, namespc: string) => {
     argv: [],
   });
 
-  console.log({ id, event });
+  if (!id || !event) {
+    return {};
+  }
 
   return {
     id: Number(id),

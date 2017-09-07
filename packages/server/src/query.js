@@ -5,6 +5,10 @@ import type { CommitConfig } from '../types/Config.type';
 import runLua from './runLua';
 
 const queryLua = `
+if redis.call('exists', KEYS[1]) == 0 then
+  redis.call('set', KEYS[1], 0);
+end
+
 local from = tonumber(ARGV[1]) + 1;
 local to = tonumber(
   ARGV[2] or redis.call('get', KEYS[1])
@@ -23,15 +27,20 @@ export const query = async (
   namespc: string,
   ...argv: number[]
 ) => {
-  const array = await runLua(client, queryLua, {
-    keys: [`${namespc}::id`, `${namespc}::events`],
-    argv: argv.map(String),
-  });
+  try {
+    const array = await runLua(client, queryLua, {
+      keys: [`${namespc}::id`, `${namespc}::events`],
+      argv: argv.map(String),
+    });
 
-  return array.map(([id, event]) => ({
-    id,
-    ...JSON.parse(event),
-  }));
+    return array.map(([id, event]) => ({
+      id,
+      ...JSON.parse(event),
+    }));
+  } catch (ex) {
+    console.error(ex);
+    return [];
+  }
 };
 
 export default (config: CommitConfig) => {
