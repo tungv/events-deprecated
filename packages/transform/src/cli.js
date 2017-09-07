@@ -24,6 +24,11 @@ const write = args.debug ? str => console.error('[TRANSFORM] ', str) : () => {};
 
 write(`${name} version ${version}`);
 
+process.on('SIGINT', () => {
+  write('INTERUPTED');
+  process.exit(0);
+});
+
 readJSONFromStdin(process.stdin)
   .map(transform)
   .onValue(json => console.log(JSON.stringify(json)))
