@@ -1,6 +1,6 @@
 {
   "name": "@events/subscriber-cli",
-  "version": "1.0.0-rc.12",
+  "version": "1.0.0-beta.2",
   "description": "command line tool to connect to @events/server",
   "main": "build/index.js",
   "scripts": {
