@@ -24,7 +24,7 @@ return {
 
 export const queryLatest = async (client: RedisClientType, namespc: string) => {
   const [id, event] = await runLua(client, getLatestEventLua, {
-    keys: [`${namespc}::id`, `${namespc}::events`],
+    keys: [`{${namespc}}::id`, `{${namespc}}::events`],
     argv: [],
   });
 

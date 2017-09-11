@@ -21,8 +21,8 @@ describe('subscribe with last-event-id', () => {
     const namespc = 'test-event-id';
     const pubClient = createClient({ url: process.env.REDIS_URL });
 
-    await del(redisClient, `${namespc}::events`);
-    await del(redisClient, `${namespc}::id`);
+    await del(redisClient, `{${namespc}}::events`);
+    await del(redisClient, `{${namespc}}::id`);
 
     const { service, unsubscribe } = makeSubscribe({
       redis: { url: process.env.REDIS_URL },
@@ -67,8 +67,8 @@ describe('subscribe with last-event-id', () => {
     const namespc = 'test-old-event';
     const pubClient = createClient({ url: process.env.REDIS_URL });
 
-    await del(redisClient, `${namespc}::events`);
-    await del(redisClient, `${namespc}::id`);
+    await del(redisClient, `{${namespc}}::events`);
+    await del(redisClient, `{${namespc}}::id`);
 
     const { service, unsubscribe } = makeSubscribe({
       redis: { url: process.env.REDIS_URL },

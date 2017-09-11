@@ -23,7 +23,7 @@ export const commit = async (redisClient: RedisClientType, event: Event, namespc
   `;
 
   return runLua(redisClient, lua, {
-    keys: [`${namespc}::id`, `${namespc}::events`],
+    keys: [`{${namespc}}::id`, `{${namespc}}::events`],
     argv: [JSON.stringify(event), namespc],
   });
 };

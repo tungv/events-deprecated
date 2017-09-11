@@ -99,8 +99,8 @@ describe('subscribe endpoint', () => {
   it('should work with empty cache', async () => {
     const commitClient = createClient({ url: process.env.REDIS_URL });
 
-    await del(commitClient, 'test-no-cache::events');
-    await del(commitClient, 'test-no-cache::id');
+    await del(commitClient, '{test-no-cache}::events');
+    await del(commitClient, '{test-no-cache}::id');
     const events = [
       { type: 'test', payload: 1 },
       { type: 'test', payload: 2 },

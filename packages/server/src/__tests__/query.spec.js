@@ -8,16 +8,16 @@ import runLua from '../runLua';
 
 describe('query endpoint', () => {
   it('should query', async () => {
-    await del(redisClient, 'test-query::events');
+    await del(redisClient, '{test-query}::events');
 
     await runLua(
       redisClient,
       `
         for id=1,10 do
-          redis.call('HSET', 'test-query::events', id, '{"type": "test", "payload":'..id..'}')
+          redis.call('HSET', '{test-query}::events', id, '{"type": "test", "payload":'..id..'}')
         end
 
-        redis.call('SET', 'test-query::id', 10);
+        redis.call('SET', '{test-query}::id', 10);
       `,
       { argv: [], keys: [] }
     );

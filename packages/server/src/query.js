@@ -29,7 +29,7 @@ export const query = async (
 ) => {
   try {
     const array = await runLua(client, queryLua, {
-      keys: [`${namespc}::id`, `${namespc}::events`],
+      keys: [`{${namespc}}::id`, `{${namespc}}::events`],
       argv: argv.map(String),
     });
 
