@@ -35,6 +35,7 @@ export default (async function start(
     write(`verifying endpoint ${url}`);
     const latestEvent = await request(`${url}/events/latest`, { json: true });
     write(`latest event from server: ${latestEvent.id}`);
+    write(`latest event from client: ${lastEventId}`);
     write(`retry: ${retry ? 'yes' : 'no'}`);
 
     const connectingTS = Date.now();
@@ -43,12 +44,6 @@ export default (async function start(
       'burst-count': burstCount,
       'burst-time': burstTime,
     });
-
-    const firstMessage = await raw$.take(1).toPromise();
-    if (firstMessage.slice(0, 3) !== ':ok') {
-      process.exit(1);
-      return;
-    }
 
     raw$.onError(error => {
       write(`Error while subscribing to ${url}`);
@@ -66,7 +61,7 @@ export default (async function start(
         return;
       }
 
-      write(`retying after 1000 ms...`);
+      write(`retrying after 1000 ms...`);
 
       await delay(1000);
 
@@ -95,16 +90,23 @@ export default (async function start(
 
     write(`connected after ${prettyMs(Date.now() - connectingTS)}!`);
     events$.onValue(json => {
-      if (json.id >= latestEvent.id) {
+      console.log(`${JSON.stringify(json)}`);
+      if (json.id === latestEvent.id) {
         write(
           `caught up with server after ${prettyMs(Date.now() - connectingTS)}!`
         );
       }
       latestId = json.id;
-      console.log(`${JSON.stringify(json)}`);
     });
+
+    const firstMessage = await raw$.take(1).toPromise();
+    if (firstMessage.slice(0, 3) !== ':ok') {
+      process.exit(1);
+      return;
+    }
   } catch (ex) {
-    write(`retrying after ${retryTime} ms`);
+    write(`error: ${ex.message}`);
+    write(`retrying after ${retryTime} ms...`);
     await delay(retryTime);
     start(
       {
