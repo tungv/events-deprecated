@@ -9,7 +9,7 @@ import nonTTY from './nonTTY';
 
 const args = mri(process.argv.slice(2), {
   alias: { x: 'debug' },
-  default: { debug: false },
+  default: { debug: false, retry: false },
 });
 
 const props = {
@@ -18,6 +18,7 @@ const props = {
   burstTime: args.burstTime,
   burstCount: args.burstCount,
   debug: args.debug,
+  retry: args.retry,
 };
 
 // $FlowFixMe: see https://nodejs.org/api/tty.html
