@@ -4,9 +4,12 @@
   "description": "command line tool to connect to @events/server",
   "main": "build/index.js",
   "scripts": {
-    "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
+    "build:watch":
+      "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
     "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
-    "prepare": "babel ./src -d ./build --ignore __tests__,__mocks__"
+    "prepare": "babel ./src -d ./build --ignore __tests__,__mocks__",
+    "test": "jest",
+    "pretest": "yarn build"
   },
   "author": "Tung Vu <me@tungv.com>",
   "license": "ISC",
