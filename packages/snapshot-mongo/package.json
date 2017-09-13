@@ -4,8 +4,7 @@
   "description": "query/mutate mongo db snapshot for @events/subscriber-cli",
   "main": "build/index.js",
   "scripts": {
-    "build:watch":
-      "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
+    "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
     "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
     "prepare": "babel ./src -d ./build --ignore __tests__,__mocks__",
     "test": "MONGO_TEST=mongodb://localhost:27017/event_snapshot_test jest"
@@ -26,7 +25,8 @@
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-env": "^1.6.0",
     "babel-preset-flow": "^6.23.0",
-    "babel-preset-stage-3": "^6.24.1"
+    "babel-preset-stage-3": "^6.24.1",
+    "jest": "^21.0.2"
   },
   "bin": {
     "snapshot-mongo": "./build/index.js"

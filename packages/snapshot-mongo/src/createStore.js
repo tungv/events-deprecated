@@ -56,26 +56,48 @@ export default function createStore(db: DB) {
     const { __v: version, ...collections } = request;
     const promises: Array<Promise<number>> = Object.keys(
       collections
-    ).map(async aggregationName => {
+    ).map(async aggregateName => {
       const promises = flow(
         groupBy('__pv'),
         toPairs,
         map(([pv, cmdArray]: [string, Command<*>[]]) => [
-          `${aggregationName}_v${pv.split('.').join('_')}`,
+          `${aggregateName}_v${pv.split('.').join('_')}`,
           flow(map(cmd => mapToOperation(version, cmd)), flatten)(cmdArray),
+          pv,
         ]),
         filter(path('1.length')),
-        map(async ([collectionName, ops]) => {
+        map(async ([collectionName, ops, pv]) => {
           const coll = db.collection(collectionName);
+
           const {
             nInserted,
             nUpserted,
             nModified,
             nRemoved,
           } = await coll.bulkWrite(ops);
-          return nInserted + nUpserted + nModified + nRemoved;
+
+          const changes = nInserted + nUpserted + nModified + nRemoved;
+
+          const updateVersion = {
+            updateOne: {
+              filter: {
+                aggregate: aggregateName,
+                __pv: pv,
+                __v: { $lt: version },
+              },
+              update: {
+                $set: { __v: version },
+                $currentDate: { last_snapshot_time: { $type: 'date' } },
+              },
+              upsert: true,
+            },
+          };
+
+          db.collection('versions').bulkWrite([updateVersion]);
+
+          return changes;
         })
-      )(collections[aggregationName]);
+      )(collections[aggregateName]);
 
       const r = await Promise.all(promises);
 
@@ -83,18 +105,6 @@ export default function createStore(db: DB) {
     });
 
     const changes = sum(await Promise.all(promises));
-
-    // update versions
-    await db.collection('versions').findOneAndUpdate(
-      {
-        _id: '@events/version',
-      },
-      {
-        $set: { snapshot_version: version },
-      },
-      { upsert: true }
-    );
-
     return changes;
   };
 }

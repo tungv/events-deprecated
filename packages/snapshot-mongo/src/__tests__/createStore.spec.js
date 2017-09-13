@@ -18,6 +18,7 @@ describe('e2e', () => {
 
     try {
       await db.dropCollection('users_v1_0_0');
+      await db.dropCollection('versions');
     } catch (ex) {}
 
     const requests: UpdateRequest[] = [
@@ -55,6 +56,16 @@ describe('e2e', () => {
     expect(users[0].name).toBe('Test 1');
     expect(users[0].age).toBe(22);
 
+    const versions = await db
+      .collection('versions')
+      .find({})
+      .toArray();
+
+    expect(versions).toHaveLength(1);
+    expect(versions[0]).toHaveProperty('aggregate', 'users');
+    expect(versions[0]).toHaveProperty('__pv', '1.0.0');
+    expect(versions[0]).toHaveProperty('__v', 2);
+    expect(versions[0]).toHaveProperty('last_snapshot_time', expect.any(Date));
     db.close();
   });
 
@@ -63,6 +74,7 @@ describe('e2e', () => {
 
     try {
       await db.dropCollection('users_v1_0_0');
+      await db.dropCollection('versions');
     } catch (ex) {}
 
     const requests: UpdateRequest[] = [
@@ -113,6 +125,7 @@ describe('e2e', () => {
     try {
       await db.dropCollection('users_v1_0_0');
       await db.dropCollection('users_v1_1_0');
+      await db.dropCollection('versions');
     } catch (ex) {}
 
     const requests: UpdateRequest[] = [
@@ -177,6 +190,29 @@ describe('e2e', () => {
     expect(users_v1_1[0]).toHaveProperty('last_name', 'One');
     expect(users_v1_1[0]).toHaveProperty('age', 22);
 
+    const versions = await db
+      .collection('versions')
+      .find({})
+      .toArray();
+
+    expect(versions).toHaveLength(2);
+
+    expect(versions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          aggregate: 'users',
+          __pv: '1.0.0',
+          __v: 2,
+          last_snapshot_time: expect.any(Date),
+        }),
+        expect.objectContaining({
+          aggregate: 'users',
+          __pv: '1.1.0',
+          __v: 2,
+          last_snapshot_time: expect.any(Date),
+        }),
+      ])
+    );
     db.close();
   });
 });
