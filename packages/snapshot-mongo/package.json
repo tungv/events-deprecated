@@ -4,10 +4,11 @@
   "description": "query/mutate mongo db snapshot for @events/subscriber-cli",
   "main": "build/index.js",
   "scripts": {
-    "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
+    "build:watch":
+      "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
     "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
     "prepare": "babel ./src -d ./build --ignore __tests__,__mocks__",
-    "test": "jest"
+    "test": "MONGO_TEST=mongodb://localhost:27017/event_snapshot_test jest"
   },
   "author": "Tung Vu <me@tungv.com>",
   "dependencies": {

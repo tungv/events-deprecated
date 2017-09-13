@@ -5,8 +5,8 @@ export function mapToOperation<Doc>(
   version: number,
   cmd: Command<Doc>
 ): Operation<Doc>[] {
-  if (cmd.insert) {
-    return cmd.insert.map(doc => {
+  if (cmd.op.insert) {
+    return cmd.op.insert.map(doc => {
       // $FlowFixMe
       const setOnInsert: WithVersion<Doc> = { __v: version, ...doc };
 
@@ -22,16 +22,15 @@ export function mapToOperation<Doc>(
     });
   }
 
-  if (cmd.update) {
-    const changes = set('$set.__v', version, cmd.update.changes);
+  if (cmd.op.update) {
+    const { changes, where } = cmd.op.update;
+    const update = set('$set.__v', version, changes);
+    const filter = set('__v.$lt', version, where);
     return [
       {
         updateMany: {
-          filter: {
-            ...cmd.update.where,
-            __v: { $lt: version },
-          },
-          update: changes,
+          filter,
+          update,
         },
       },
     ];

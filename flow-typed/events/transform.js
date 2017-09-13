@@ -10,14 +10,18 @@ declare type UpdateOperation<Document> = {
 };
 
 declare type InsertCommand<Document> = {|
-  insert: Document[],
+  __pv: string,
+  op: {| insert: Document[] |},
 |};
 
 declare type UpdateCommand<Document> = {|
-  update: {
-    where: Query<Document>,
-    changes: UpdateOperation<Document>,
-  },
+  __pv: string,
+  op: {|
+    update: {
+      where: Query<Document>,
+      changes: UpdateOperation<Document>,
+    },
+  |},
 |};
 
 declare type Command<Document> =

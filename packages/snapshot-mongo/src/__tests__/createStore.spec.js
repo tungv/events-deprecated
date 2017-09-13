@@ -16,20 +16,27 @@ describe('e2e', () => {
   it('should insert', async () => {
     const { dispatch, db } = await makeDispatch();
 
-    await db.dropCollection('users');
+    try {
+      await db.dropCollection('users');
+    } catch (ex) {}
 
     const requests: UpdateRequest[] = [
       {
         __v: 1,
-        users: [{ insert: [{ name: 'Test 1', age: 21 }] }],
+        users: [
+          { __pv: '1.0.0', op: { insert: [{ name: 'Test 1', age: 21 }] } },
+        ],
       },
       {
         __v: 2,
         users: [
           {
-            update: {
-              where: { name: 'Test 1' },
-              changes: { $inc: { age: 1 } },
+            __pv: '1.0.0',
+            op: {
+              update: {
+                where: { name: 'Test 1' },
+                changes: { $inc: { age: 1 } },
+              },
             },
           },
         ],
@@ -54,20 +61,27 @@ describe('e2e', () => {
   it('should not run insert and update twice', async () => {
     const { dispatch, db } = await makeDispatch();
 
-    await db.dropCollection('users');
+    try {
+      await db.dropCollection('users');
+    } catch (ex) {}
 
     const requests: UpdateRequest[] = [
       {
         __v: 1,
-        users: [{ insert: [{ name: 'Test 1', age: 21 }] }],
+        users: [
+          { __pv: '1.0.0', op: { insert: [{ name: 'Test 1', age: 21 }] } },
+        ],
       },
       {
         __v: 2,
         users: [
           {
-            update: {
-              where: { name: 'Test 1' },
-              changes: { $inc: { age: 1 } },
+            __pv: '1.0.0',
+            op: {
+              update: {
+                where: { name: 'Test 1' },
+                changes: { $inc: { age: 1 } },
+              },
             },
           },
         ],

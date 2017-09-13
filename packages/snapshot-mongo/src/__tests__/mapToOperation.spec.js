@@ -1,10 +1,13 @@
 /* @flow */
 import { mapToOperation } from '../createStore';
 
-describe.skip('mapToOperation()', () => {
+describe('mapToOperation()', () => {
   it('should map insert command', () => {
     const cmd = {
-      insert: [{ age: 21, name: 'User 1' }, { age: 22, name: 'User 2' }],
+      __pv: '1.0.0',
+      op: {
+        insert: [{ age: 21, name: 'User 1' }, { age: 22, name: 'User 2' }],
+      },
     };
 
     const ops = mapToOperation(1000, cmd);
@@ -32,10 +35,13 @@ describe.skip('mapToOperation()', () => {
 
   it('should map update command', () => {
     const cmd = {
-      update: {
-        where: { name: 'User 2' },
-        changes: {
-          $set: { age: 32 },
+      __pv: '1.0.0',
+      op: {
+        update: {
+          where: { name: 'User 2' },
+          changes: {
+            $set: { age: 32 },
+          },
         },
       },
     };
@@ -44,7 +50,7 @@ describe.skip('mapToOperation()', () => {
     expect(ops).toEqual([
       {
         updateMany: {
-          filter: { __v: { $lte: 1000 }, name: 'User 2' },
+          filter: { __v: { $lt: 1000 }, name: 'User 2' },
           update: {
             $set: { age: 32, __v: 1000 },
           },
