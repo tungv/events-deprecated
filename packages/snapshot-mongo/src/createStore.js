@@ -1,5 +1,17 @@
 /* @flow */
-import { sum, flatten, flow, map, set } from 'lodash/fp';
+import {
+  fromPairs,
+  sum,
+  flatten,
+  flow,
+  map,
+  set,
+  groupBy,
+  tap,
+  toPairs,
+  filter,
+  path,
+} from 'lodash/fp';
 
 export function mapToOperation<Doc>(
   version: number,
@@ -44,25 +56,30 @@ export default function createStore(db: DB) {
     const { __v: version, ...collections } = request;
     const promises: Array<Promise<number>> = Object.keys(
       collections
-    ).map(async collectionName => {
-      const coll = db.collection(collectionName);
+    ).map(async aggregationName => {
+      const promises = flow(
+        groupBy('__pv'),
+        toPairs,
+        map(([pv, cmdArray]: [string, Command<*>[]]) => [
+          `${aggregationName}_v${pv.split('.').join('_')}`,
+          flow(map(cmd => mapToOperation(version, cmd)), flatten)(cmdArray),
+        ]),
+        filter(path('1.length')),
+        map(async ([collectionName, ops]) => {
+          const coll = db.collection(collectionName);
+          const {
+            nInserted,
+            nUpserted,
+            nModified,
+            nRemoved,
+          } = await coll.bulkWrite(ops);
+          return nInserted + nUpserted + nModified + nRemoved;
+        })
+      )(collections[aggregationName]);
 
-      const ops = flow(
-        map((cmd: Command<*>) => mapToOperation(version, cmd)),
-        flatten
-      )(collections[collectionName]);
+      const r = await Promise.all(promises);
 
-      if (ops.length === 0) {
-        return 0;
-      }
-
-      const {
-        nInserted,
-        nUpserted,
-        nModified,
-        nRemoved,
-      } = await coll.bulkWrite(ops);
-      return nInserted + nUpserted + nModified + nRemoved;
+      return sum(r);
     });
 
     const changes = sum(await Promise.all(promises));

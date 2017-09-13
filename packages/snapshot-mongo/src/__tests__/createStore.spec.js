@@ -17,7 +17,7 @@ describe('e2e', () => {
     const { dispatch, db } = await makeDispatch();
 
     try {
-      await db.dropCollection('users');
+      await db.dropCollection('users_v1_0_0');
     } catch (ex) {}
 
     const requests: UpdateRequest[] = [
@@ -47,7 +47,7 @@ describe('e2e', () => {
     expect(await dispatch(requests[1])).toBe(1);
 
     const users = await db
-      .collection('users')
+      .collection('users_v1_0_0')
       .find({})
       .toArray();
 
@@ -62,7 +62,7 @@ describe('e2e', () => {
     const { dispatch, db } = await makeDispatch();
 
     try {
-      await db.dropCollection('users');
+      await db.dropCollection('users_v1_0_0');
     } catch (ex) {}
 
     const requests: UpdateRequest[] = [
@@ -95,7 +95,7 @@ describe('e2e', () => {
     expect(await dispatch(requests[1])).toBe(0);
 
     const users = await db
-      .collection('users')
+      .collection('users_v1_0_0')
       .find({})
       .toArray();
 
@@ -103,6 +103,79 @@ describe('e2e', () => {
     expect(users[0].__v).toBe(2);
     expect(users[0].name).toBe('Test 1');
     expect(users[0].age).toBe(22);
+
+    db.close();
+  });
+
+  it('should work with multiple versions of projection', async () => {
+    const { dispatch, db } = await makeDispatch();
+
+    try {
+      await db.dropCollection('users_v1_0_0');
+      await db.dropCollection('users_v1_1_0');
+    } catch (ex) {}
+
+    const requests: UpdateRequest[] = [
+      {
+        __v: 1,
+        users: [
+          { __pv: '1.0.0', op: { insert: [{ name: 'Test 1', age: 21 }] } },
+          {
+            __pv: '1.1.0',
+            op: { insert: [{ first_name: 'Test', last_name: 'One', age: 21 }] },
+          },
+        ],
+      },
+      {
+        __v: 2,
+        users: [
+          {
+            __pv: '1.0.0',
+            op: {
+              update: {
+                where: { name: 'Test 1' },
+                changes: { $inc: { age: 1 } },
+              },
+            },
+          },
+          {
+            __pv: '1.1.0',
+            op: {
+              update: {
+                where: { last_name: 'One', first_name: 'Test' },
+                changes: { $inc: { age: 1 } },
+              },
+            },
+          },
+        ],
+      },
+    ];
+
+    expect(await dispatch(requests[0])).toBe(2);
+    expect(await dispatch(requests[1])).toBe(2);
+
+    const users_v1 = await db
+      .collection('users_v1_0_0')
+      .find({})
+      .toArray();
+
+    expect(users_v1).toHaveLength(1);
+
+    expect(users_v1[0]).toHaveProperty('__v', 2);
+    expect(users_v1[0]).toHaveProperty('name', 'Test 1');
+    expect(users_v1[0]).toHaveProperty('age', 22);
+
+    const users_v1_1 = await db
+      .collection('users_v1_1_0')
+      .find({})
+      .toArray();
+
+    expect(users_v1_1).toHaveLength(1);
+
+    expect(users_v1_1[0]).toHaveProperty('__v', 2);
+    expect(users_v1_1[0]).toHaveProperty('first_name', 'Test');
+    expect(users_v1_1[0]).toHaveProperty('last_name', 'One');
+    expect(users_v1_1[0]).toHaveProperty('age', 22);
 
     db.close();
   });
