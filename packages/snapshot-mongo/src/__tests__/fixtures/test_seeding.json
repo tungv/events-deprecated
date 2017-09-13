@@ -1,0 +1,36 @@
+{
+  "__pv": "1.0.0",
+  "aggregates": {
+    "users": [
+      {
+        "uid": 1234,
+        "name": "Test user 1",
+        "age": 20
+      },
+      {
+        "uid": 1235,
+        "name": "Test user 2",
+        "age": 20
+      },
+      {
+        "uid": 1236,
+        "name": "Test user 3",
+        "age": 20
+      }
+    ],
+    "posts": [
+      {
+        "title": "post 1",
+        "author": 1234
+      },
+      {
+        "title": "post 2",
+        "author": 1234
+      },
+      {
+        "title": "post 3",
+        "author": 1235
+      }
+    ]
+  }
+}

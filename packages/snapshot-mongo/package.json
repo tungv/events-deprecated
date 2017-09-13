@@ -7,15 +7,17 @@
     "build:watch": "babel --watch=./src --out-dir=./build --ignore __tests__,__mocks__",
     "build": "babel ./src -d ./build --ignore __tests__,__mocks__",
     "prepare": "babel ./src -d ./build --ignore __tests__,__mocks__",
-    "test": "MONGO_TEST=mongodb://localhost:27017/event_snapshot_test jest"
+    "test": "MONGO_TEST=mongodb://localhost:27017/event_snapshot_test jest --forceExit"
   },
   "author": "Tung Vu <me@tungv.com>",
   "dependencies": {
+    "cli-table2": "^0.2.0",
     "kefir-stdin-json": "^1.0.0-rc.15",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.31",
     "mri": "^1.1.0",
-    "p-lazy": "^1.0.0"
+    "p-lazy": "^1.0.0",
+    "semver": "^5.4.1"
   },
   "license": "ISC",
   "devDependencies": {

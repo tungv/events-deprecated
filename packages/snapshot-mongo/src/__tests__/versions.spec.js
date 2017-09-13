@@ -1,56 +1,11 @@
 import { MongoClient } from 'mongodb';
-import {
-  first,
-  map,
-  groupBy,
-  flow,
-  mapValues,
-  path,
-  toArray,
-  min,
-  toPairs,
-  fromPairs,
-  filter,
-  curry,
-  flatten,
-  tap,
-} from 'lodash/fp';
-import { satisfies } from 'semver';
-
-const getVersions = async ({ mongoUrl }) => {
-  const db = await MongoClient.connect(mongoUrl);
-
-  const versions = await db
-    .collection('versions')
-    .find({})
-    .toArray();
-
-  const byAggregate = groupBy('aggregate', versions);
-
-  const byAggregateAndVersions = mapValues(
-    flow(groupBy('__pv'), mapValues(flow(map('__v'), first)))
-  )(byAggregate);
-
-  return byAggregateAndVersions;
-};
-
-const getLastSeen = flow(toArray, map(toArray), flatten, min);
-const inSemverRange = curry((range, versions) => {
-  return flow(
-    mapValues(
-      flow(toPairs, filter(([pv, v]) => satisfies(pv, range)), fromPairs)
-    )
-  )(versions);
-});
+import { flow } from 'lodash/fp';
+import cli, { getLastSeen, getVersions, inSemverRange } from '../version';
 
 const getClient = () => MongoClient.connect(process.env.MONGO_TEST);
 
 describe('get versions', () => {
   it('should query all versions', async () => {
-    const args = {
-      mongoUrl: process.env.MONGO_TEST,
-    };
-
     const db = await getClient();
 
     try {
@@ -67,7 +22,7 @@ describe('get versions', () => {
         { __v: 4, __pv: '2.0.0', aggregate: 'posts' },
       ]);
 
-    const versions = await getVersions(args);
+    const versions = await getVersions(db);
     expect(versions).toEqual({
       users: { '1.0.0': 3, '1.1.0': 5, '2.0.0': 4 },
       posts: { '1.1.0': 5, '2.0.0': 4 },
@@ -105,5 +60,91 @@ describe('get versions', () => {
         posts: { '1.1.0': 5, '2.0.0': 6, '3.0.1': 10 },
       })
     ).toBe(4);
+  });
+});
+
+describe('cli tool', () => {
+  it('should print without version range', async () => {
+    const db = await getClient();
+
+    try {
+      await db.dropCollection('versions');
+    } catch (ex) {}
+
+    await db
+      .collection('versions')
+      .insertMany([
+        { __v: 30, __pv: '1.0.0', aggregate: 'users' },
+        { __v: 50, __pv: '1.1.0', aggregate: 'users' },
+        { __v: 40, __pv: '2.0.0', aggregate: 'users' },
+        { __v: 50, __pv: '1.1.0', aggregate: 'posts' },
+        { __v: 40, __pv: '2.0.0', aggregate: 'posts' },
+      ]);
+
+    const args = {
+      _: [process.env.MONGO_TEST],
+      debug: true,
+    };
+    const lastSeen = await cli(args);
+
+    expect(lastSeen).toBe(30);
+  });
+
+  it('should print with version range', async () => {
+    const db = await getClient();
+
+    try {
+      await db.dropCollection('versions');
+    } catch (ex) {}
+
+    await db
+      .collection('versions')
+      .insertMany([
+        { __v: 30, __pv: '1.0.0', aggregate: 'users' },
+        { __v: 50, __pv: '1.1.0', aggregate: 'users' },
+        { __v: 40, __pv: '2.0.0', aggregate: 'users' },
+        { __v: 50, __pv: '1.1.0', aggregate: 'posts' },
+        { __v: 40, __pv: '2.0.0', aggregate: 'posts' },
+      ]);
+
+    const args = {
+      _: [process.env.MONGO_TEST],
+      debug: true,
+      versionRange: '^2.x',
+    };
+    const lastSeen = await cli(args);
+
+    expect(lastSeen).toBe(40);
+  });
+
+  it('should seed', async () => {
+    const db = await getClient();
+
+    try {
+      await db.dropCollection('versions');
+    } catch (ex) {}
+
+    const args = {
+      _: [process.env.MONGO_TEST],
+      debug: true,
+      versionRange: '^2.x',
+      seed: './src/__tests__/fixtures/test_seeding.json',
+    };
+    const lastSeen = await cli(args);
+
+    expect(lastSeen).toBe(0);
+
+    const users = await db
+      .collection('users_v1_0_0')
+      .find({})
+      .toArray();
+
+    expect(users).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ uid: 1234, name: 'Test user 1', age: 20 }),
+        expect.objectContaining({ uid: 1235, name: 'Test user 2', age: 20 }),
+        expect.objectContaining({ uid: 1236, name: 'Test user 3', age: 20 }),
+      ])
+    );
   });
 });

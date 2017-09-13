@@ -1,103 +1,110 @@
 #!/usr/bin/env node
-/* @flow */
 /* eslint-disable no-console */
 import { MongoClient } from 'mongodb';
-import { pathOr } from 'lodash/fp';
-import mri from 'mri';
-import path from 'path';
+import {
+  first,
+  map,
+  groupBy,
+  flow,
+  mapValues,
+  toArray,
+  min,
+  toPairs,
+  fromPairs,
+  filter,
+  curry,
+  flatten,
+  reduce,
+  assign,
+  keys,
+  tap,
+  forEach,
+  uniqBy,
+  identity,
+  sortBy,
+} from 'lodash/fp';
+import { satisfies } from 'semver';
+import { resolve } from 'path';
+import seed from './seed';
 
-type Args = {
-  _: [string],
-  seed: string,
-  debug: boolean,
+export const getVersions = async db => {
+  const versions = await db
+    .collection('versions')
+    .find({})
+    .toArray();
+
+  const byAggregate = groupBy('aggregate', versions);
+
+  const byAggregateAndVersions = mapValues(
+    flow(groupBy('__pv'), mapValues(flow(map('__v'), first)))
+  )(byAggregate);
+
+  return byAggregateAndVersions;
 };
 
-type Collection = {
-  drop: (query: any) => Promise<void>,
-  insertMany: (Array<any>) => Promise<void>,
-};
-type DB = {
-  close: () => void,
-  collection: string => Collection,
-};
-type SnapshotAndDB = { snapshotVersion: number, db: DB };
+export const getLastSeen = flow(toArray, map(toArray), flatten, min);
+export const inSemverRange = curry((range, versions) => {
+  return flow(
+    mapValues(
+      flow(toPairs, filter(([pv, v]) => satisfies(pv, range)), fromPairs)
+    )
+  )(versions);
+});
 
-export default (async function getLatest(args: Args) {
+export default (async function getLatest(args) {
   const mongoUrl = args._[0];
+
+  const db = await MongoClient.connect(mongoUrl);
+
   const initialValuesJSONPath = args.seed;
   const debugMode = args.debug;
+  const versionRange = args.versionRange;
 
   const write = (...args) => {
     debugMode && console.error('[SNAPSHOT] ', ...args);
   };
 
-  const { db, snapshotVersion } = await connect(mongoUrl, write);
+  const snapshotVersions = await getVersions(db);
 
-  write(`snapshot_version: ${snapshotVersion || 0}`);
+  const filterFn = versionRange ? inSemverRange(versionRange) : x => x;
 
-  if (snapshotVersion === 0 && args.seed) {
-    write('5. seeding...');
+  const selectedVersions = filterFn(snapshotVersions);
+  const lastSeen = getLastSeen(selectedVersions);
 
-    // $FlowFixMe: this can be a JSON file or any JS file
-    const initialValues = require(path.resolve(
-      process.cwd(),
-      initialValuesJSONPath
-    ));
+  if (debugMode && lastSeen) {
+    const allVersions = flow(
+      toArray,
+      map(keys),
+      flatten,
+      uniqBy(identity),
+      sortBy(identity) // TODO: please swith to array.sort(semver.compare)
+    )(selectedVersions);
 
-    const promises = Object.keys(
-      initialValues
-    ).map(async (collectionName, index) => {
-      const coll = db.collection(collectionName);
-      write(
-        `5.${index + 1}. collection: ${collectionName} - ${initialValues[
-          collectionName
-        ].length} documents`
-      );
-      try {
-        await coll.drop({});
-      } catch (ex) {
-        // nothing
-      }
-      await coll.insertMany(initialValues[collectionName]);
-      write(`5.${index + 1}. seeding ${collectionName} completed!`);
+    const Table = require('cli-table2');
+    const table = new Table({
+      head: ['aggregate', ...allVersions],
     });
 
-    await Promise.all(promises);
-    write('6. seeded!');
+    flow(
+      toPairs,
+      forEach(([aggregate, versions]) => {
+        table.push([
+          aggregate,
+          ...allVersions.map(key => versions[key] || 'n/a'),
+        ]);
+      })
+    )(selectedVersions);
+
+    write(`\n${table.toString()}`);
   }
 
-  return snapshotVersion || 0;
+  if (!lastSeen && initialValuesJSONPath) {
+    const resolvedSeedingPath = resolve(process.cwd(), initialValuesJSONPath);
+    write(`seeding data from file`);
+    const seedData = require(resolvedSeedingPath);
+    const changes = await seed(db, seedData);
+    write(`${changes} documents are inserted to mongodb`);
+  }
+
+  return lastSeen || 0;
 });
-
-async function connect(
-  url: ?string,
-  write: string => void
-): Promise<SnapshotAndDB> {
-  if (typeof url !== 'string' || url.length === 0) {
-    process.exit(1);
-    // $FlowFixMe process will exit forcefully
-    return {};
-  }
-
-  write(`1. connecting to mongo ${url}...`);
-  const db = await MongoClient.connect(url);
-  write('2. connected!');
-
-  const versionsColl = db.collection('versions');
-
-  write('3. verifying versions...');
-  const versionDoc = await versionsColl.findOne({ _id: '@events/version' });
-
-  if (!versionDoc) {
-    await versionsColl.insert({ _id: '@events/version', snapshot_version: 0 });
-  }
-
-  const snapshotVersion = pathOr(0, 'snapshot_version', versionDoc);
-
-  write(`4. verified`);
-
-  return {
-    db,
-    snapshotVersion,
-  };
-}
