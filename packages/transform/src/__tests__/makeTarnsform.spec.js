@@ -11,10 +11,12 @@ describe('applyTransforms', () => {
     const dispatch = jest.fn(path('value'));
     const collectionTransforms = [
       {
+        version: '1.0.0',
         when: path('shouldPass_1'),
         dispatch,
       },
       {
+        version: '1.0.0',
         when: path('shouldPass_2'),
         dispatch,
       },
@@ -34,6 +36,7 @@ describe('applyTransforms', () => {
 
     const transforms = [
       {
+        version: '1.0.0',
         when,
         dispatch,
       },
@@ -59,6 +62,7 @@ describe('applyTransforms', () => {
 
     const transforms = [
       {
+        version: '1.0.0',
         when: T,
         dispatch,
       },
@@ -81,10 +85,12 @@ describe('applyTransforms', () => {
     const dispatch = jest.fn(path('value'));
     const collectionTransforms = [
       {
+        version: '1.0.0',
         when: path('shouldPass_1'),
         dispatch,
       },
       {
+        version: '1.0.0',
         when: path('shouldPass_2'),
         dispatch,
       },
@@ -97,16 +103,18 @@ describe('applyTransforms', () => {
       value: 'test',
     });
 
-    expect(cmdArray).toEqual(['test']);
+    expect(cmdArray).toEqual([{ __pv: '1.0.0', op: 'test' }]);
   });
 
   it('should flatten', () => {
     const collectionTransforms = [
       {
+        version: '1.0.0',
         when: path('shouldPass_1'),
         dispatch: over([path('value'), path('value')]),
       },
       {
+        version: '1.0.0',
         when: path('shouldPass_2'),
         dispatch: path('value'),
       },
@@ -119,7 +127,11 @@ describe('applyTransforms', () => {
       value: 'test',
     });
 
-    expect(cmdArray).toEqual(['test', 'test', 'test']);
+    expect(cmdArray).toEqual([
+      { __pv: '1.0.0', op: 'test' },
+      { __pv: '1.0.0', op: 'test' },
+      { __pv: '1.0.0', op: 'test' },
+    ]);
   });
 });
 
@@ -127,12 +139,28 @@ describe('merge transforms', () => {
   it('should merge', () => {
     const transforms = {
       collection1: [
-        { when: jest.fn(T), dispatch: jest.fn(always('cmd1')) },
-        { when: jest.fn(T), dispatch: jest.fn(always('cmd2')) },
+        {
+          version: '1.0.0',
+          when: jest.fn(T),
+          dispatch: jest.fn(always('cmd1')),
+        },
+        {
+          version: '1.0.0',
+          when: jest.fn(T),
+          dispatch: jest.fn(always('cmd2')),
+        },
       ],
       collection2: [
-        { when: jest.fn(T), dispatch: jest.fn(always('cmd3')) },
-        { when: jest.fn(T), dispatch: jest.fn(always('cmd4')) },
+        {
+          version: '1.0.0',
+          when: jest.fn(T),
+          dispatch: jest.fn(always('cmd3')),
+        },
+        {
+          version: '1.0.0',
+          when: jest.fn(T),
+          dispatch: jest.fn(always('cmd4')),
+        },
       ],
     };
 
@@ -140,43 +168,14 @@ describe('merge transforms', () => {
     const event = {};
 
     const cmdMap = transform(event);
-    expect(cmdMap.collection1).toEqual(['cmd1', 'cmd2']);
-    expect(cmdMap.collection2).toEqual(['cmd3', 'cmd4']);
-  });
-});
-
-describe('appendVersion', () => {
-  it('should append version to insert command', () => {
-    const cmd = {
-      insert: [{ a: 1 }, { a: 2 }, { a: 3 }],
-    };
-
-    expect(appendVersion(1000, cmd)).toEqual({
-      insert: [{ a: 1, __v: 1000 }, { a: 2, __v: 1000 }, { a: 3, __v: 1000 }],
-    });
-  });
-
-  it('should append version to update command containing $set', () => {
-    const cmd = {
-      update: {
-        where: { some: 'query' },
-        changes: {
-          $set: { someKey: 'someValue' },
-        },
-      },
-    };
-
-    expect(appendVersion(1000, cmd)).toEqual({
-      update: {
-        where: { some: 'query' },
-        changes: {
-          $set: {
-            someKey: 'someValue',
-            __v: 1000,
-          },
-        },
-      },
-    });
+    expect(cmdMap.collection1).toEqual([
+      { __pv: '1.0.0', op: 'cmd1' },
+      { __pv: '1.0.0', op: 'cmd2' },
+    ]);
+    expect(cmdMap.collection2).toEqual([
+      { __pv: '1.0.0', op: 'cmd3' },
+      { __pv: '1.0.0', op: 'cmd4' },
+    ]);
   });
 });
 
@@ -193,12 +192,14 @@ describe('makeTransform', () => {
     const transforms = {
       collection1: [
         {
+          version: '1.0.0',
           when: path('payload.shouldPass'),
           dispatch: event => ({
             insert: [{ a: event.payload.A[0] }, { a: event.payload.A[1] }],
           }),
         },
         {
+          version: '1.0.0',
           when: path('payload.shouldPass'),
           dispatch: event => ({
             update: {
@@ -212,6 +213,7 @@ describe('makeTransform', () => {
       ],
       collection2: [
         {
+          version: '1.0.0',
           when: path('payload.shouldPass'),
           dispatch: always({
             update: {
@@ -223,6 +225,7 @@ describe('makeTransform', () => {
           }),
         },
         {
+          version: '1.0.0',
           when: path('payload.shouldPass_2'),
           dispatch: always('never show up'),
         },
@@ -235,21 +238,30 @@ describe('makeTransform', () => {
       __v: 1000,
       collection1: [
         {
-          insert: [{ a: 1 }, { a: 2 }],
+          __pv: '1.0.0',
+          op: {
+            insert: [{ a: 1 }, { a: 2 }],
+          },
         },
         {
-          update: {
-            where: { a: 3 },
-            changes: { $inc: { a: 999 } },
+          __pv: '1.0.0',
+          op: {
+            update: {
+              where: { a: 3 },
+              changes: { $inc: { a: 999 } },
+            },
           },
         },
       ],
       collection2: [
         {
-          update: {
-            where: { a: 3 },
-            changes: {
-              $set: { a: 5 },
+          __pv: '1.0.0',
+          op: {
+            update: {
+              where: { a: 3 },
+              changes: {
+                $set: { a: 5 },
+              },
             },
           },
         },
