@@ -7,3 +7,4 @@ lerna-debug
 npm-debug
 yarn-debug
 yarn-error.log
+lerna-debug.log
