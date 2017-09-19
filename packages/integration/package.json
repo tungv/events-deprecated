@@ -1,7 +1,7 @@
 {
   "name": "@events/integration",
   "private": true,
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0",
   "description": "integeration test for events",
   "main": "index.js",
   "scripts": {
@@ -11,13 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@events/cli": "^1.0.0-beta.5",
-    "@events/server": "^1.0.0-beta.5",
-    "@events/snapshot": "^1.0.0-beta.5",
-    "@events/snapshot-mongo": "^1.0.0-beta.5",
+    "@events/cli": "^1.0.0",
+    "@events/server": "^1.0.0",
+    "@events/snapshot": "^1.0.0",
+    "@events/snapshot-mongo": "^1.0.0",
     "@events/subscriber": "^1.0.0-beta.5",
-    "@events/subscriber-cli": "^1.0.0-beta.5",
-    "@events/transform": "^1.0.0-beta.5",
+    "@events/subscriber-cli": "^1.0.0",
+    "@events/transform": "^1.0.0",
     "awaiting": "^3.0.0",
     "execa": "^0.8.0",
     "mongodb": "^2.2.31",
