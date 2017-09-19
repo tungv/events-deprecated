@@ -8,7 +8,7 @@ const seed = async (db, { __pv, aggregates }) => {
       try {
         await db.dropCollection(collName);
       } catch (ex) {
-        console.log(ex);
+        // console.log(ex);
         // nothing
         // happens when collection was not initialized yet
       }
