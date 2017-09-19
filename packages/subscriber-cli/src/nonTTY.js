@@ -85,7 +85,7 @@ export default (async function start(
       write(`user aborting`);
       raw$.offEnd(endOrRetry);
       abort();
-      process.exit(1);
+      process.exit(0);
     });
 
     write(`connected after ${prettyMs(Date.now() - connectingTS)}!`);
