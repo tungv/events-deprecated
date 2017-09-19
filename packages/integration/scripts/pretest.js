@@ -2,6 +2,7 @@ const redis = require('redis');
 const pify = require('pify');
 const execa = require('execa');
 const { MongoClient } = require('mongodb');
+const ping = require('redis-functional/ping');
 
 checkEnv().then(
   ok => {
@@ -15,7 +16,7 @@ checkEnv().then(
 
 async function checkEnv() {
   const {
-    REDIS_URL = 'redis://localhost:6379',
+    REDIS_URL = 'redis://localhost:6379/1',
     MONGODB_URL = 'mongodb://localhost:27017',
     ES_SERVER_PORT = '43322',
   } = process.env;
@@ -24,14 +25,17 @@ async function checkEnv() {
   console.log('MONGODB_URL', MONGODB_URL);
   console.log('------------');
 
-  const redisClient = pify(redis.createClient(REDIS_URL));
+  const redisClient = redis.createClient(REDIS_URL);
   const redisOK = await checkRedis(redisClient);
 
   console.log('------------');
 
   const mongoClient = await MongoClient.connect(MONGODB_URL);
   const mongoOK = await checkMongo(mongoClient);
-  const esServerOK = await startEventserverDaemon('integeration-test', ES_SERVER_PORT);
+  const esServerOK = await startEventserverDaemon(
+    'integration-test',
+    ES_SERVER_PORT
+  );
 
   console.log('------------');
   console.log('REDIS       OK?', redisOK);
@@ -46,7 +50,7 @@ async function checkEnv() {
 async function checkRedis(client) {
   try {
     console.log('REDIS >> ping');
-    const pong = await client.ping();
+    const pong = await ping(client);
     console.log('REDIS <<', pong);
     return pong === 'PONG';
   } catch (ex) {
