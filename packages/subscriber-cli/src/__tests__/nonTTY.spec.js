@@ -76,7 +76,6 @@ describe('non TTY interface', () => {
       expect.arrayContaining([
         expect.stringMatching('Error: getaddrinfo ENOTFOUND'),
         expect.stringMatching('retrying after 1000 ms'),
-        expect.stringMatching('retrying after 1500 ms'),
       ])
     );
   });
