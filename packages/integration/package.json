@@ -6,8 +6,7 @@
   "main": "index.js",
   "scripts": {
     "pretest": "node scripts/pretest.js",
-    "test": "jest",
-    "postinstall": "lerna bootstrap --npmClient=yarn"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
