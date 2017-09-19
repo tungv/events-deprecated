@@ -2,13 +2,6 @@
 # yarn lockfile v1
 
 
-"@events/subscriber@^1.0.0-rc.7":
-  version "1.0.0-rc.7"
-  resolved "https://registry.yarnpkg.com/@events/subscriber/-/subscriber-1.0.0-rc.7.tgz#eb6d5631b7f3e42c269bf65818853f25d155e348"
-  dependencies:
-    kefir "^3.7.4"
-    request "^2.81.0"
-
 abab@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.3.tgz#b81de5f7274ec4e756d797cd834f303642724e5d"
@@ -2136,12 +2129,6 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-kefir@^3.7.4:
-  version "3.7.4"
-  resolved "https://registry.yarnpkg.com/kefir/-/kefir-3.7.4.tgz#edc6192f686be611ac5c882426f74bf0ee287ef7"
-  dependencies:
-    symbol-observable "1.0.4"
-
 kind-of@^3.0.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.2.2.tgz#31ea21a734bab9bbb0f32466d893aea51e4a3c64"
@@ -3175,10 +3162,6 @@ supports-color@^4.0.0:
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-4.4.0.tgz#883f7ddabc165142b2a61427f3352ded195d1a3e"
   dependencies:
     has-flag "^2.0.0"
-
-symbol-observable@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.0.4.tgz#29bf615d4aa7121bdd898b22d4b3f9bc4e2aa03d"
 
 symbol-tree@^3.2.1:
   version "3.2.2"
