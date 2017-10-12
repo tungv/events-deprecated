@@ -26,7 +26,7 @@ describe('seeding', () => {
     expect(changes).toBe(6);
 
     const userWithVEqualZero = await db
-      .collection('users_v1_0_0')
+      .collection('users_v1.0.0')
       .count({ __v: 0 });
 
     expect(userWithVEqualZero).toBe(3);
