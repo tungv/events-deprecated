@@ -1,0 +1,11 @@
+{
+  "name": "@events/client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Tung <me@tungv.com>",
+  "license": "ISC"
+}
