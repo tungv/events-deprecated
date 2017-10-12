@@ -17,7 +17,7 @@ describe('e2e', () => {
     const { dispatch, db } = await makeDispatch();
 
     try {
-      await db.dropCollection('users_v1_0_0');
+      await db.dropCollection('users_v1.0.0');
       await db.dropCollection('versions');
     } catch (ex) {}
 
@@ -48,7 +48,7 @@ describe('e2e', () => {
     expect(await dispatch(requests[1])).toBe(1);
 
     const users = await db
-      .collection('users_v1_0_0')
+      .collection('users_v1.0.0')
       .find({})
       .toArray();
 
@@ -73,7 +73,7 @@ describe('e2e', () => {
     const { dispatch, db } = await makeDispatch();
 
     try {
-      await db.dropCollection('users_v1_0_0');
+      await db.dropCollection('users_v1.0.0');
       await db.dropCollection('versions');
     } catch (ex) {}
 
@@ -107,7 +107,7 @@ describe('e2e', () => {
     expect(await dispatch(requests[1])).toBe(0);
 
     const users = await db
-      .collection('users_v1_0_0')
+      .collection('users_v1.0.0')
       .find({})
       .toArray();
 
@@ -123,8 +123,8 @@ describe('e2e', () => {
     const { dispatch, db } = await makeDispatch();
 
     try {
-      await db.dropCollection('users_v1_0_0');
-      await db.dropCollection('users_v1_1_0');
+      await db.dropCollection('users_v1.0.0');
+      await db.dropCollection('users_v1.1.0');
       await db.dropCollection('versions');
     } catch (ex) {}
 
@@ -168,7 +168,7 @@ describe('e2e', () => {
     expect(await dispatch(requests[1])).toBe(2);
 
     const users_v1 = await db
-      .collection('users_v1_0_0')
+      .collection('users_v1.0.0')
       .find({})
       .toArray();
 
@@ -179,7 +179,7 @@ describe('e2e', () => {
     expect(users_v1[0]).toHaveProperty('age', 22);
 
     const users_v1_1 = await db
-      .collection('users_v1_1_0')
+      .collection('users_v1.1.0')
       .find({})
       .toArray();
 
@@ -211,7 +211,7 @@ describe('e2e', () => {
           __v: 2,
           last_snapshot_time: expect.any(Date),
         }),
-      ])
+      ]),
     );
     db.close();
   });
