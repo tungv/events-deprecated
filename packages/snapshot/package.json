@@ -1,6 +1,6 @@
 {
   "name": "@events/snapshot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "query/mutate storage-agonistic snapshot for @events/subscriber-cli",
   "main": "src/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "@events/snapshot-mongo": "^1.0.0",
+    "@events/snapshot-mongo": "^1.1.0",
     "babel-cli": "^6.26.0",
     "babel-jest": "^21.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",

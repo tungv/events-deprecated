@@ -1,7 +1,7 @@
 {
   "name": "@events/integration",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "integeration test for events",
   "main": "index.js",
   "scripts": {
