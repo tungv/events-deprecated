@@ -15,7 +15,7 @@ import {
 
 export function mapToOperation<Doc>(
   version: number,
-  cmd: Command<Doc>
+  cmd: Command<Doc>,
 ): Operation<Doc>[] {
   if (cmd.op.insert) {
     return cmd.op.insert.map(doc => {
@@ -55,13 +55,13 @@ export default function createStore(db: DB) {
   return async function dispatch(request: UpdateRequest): Promise<number> {
     const { __v: version, ...collections } = request;
     const promises: Array<Promise<number>> = Object.keys(
-      collections
+      collections,
     ).map(async aggregateName => {
       const promises = flow(
         groupBy('__pv'),
         toPairs,
         map(([pv, cmdArray]: [string, Command<*>[]]) => [
-          `${aggregateName}_v${pv.split('.').join('_')}`,
+          `${aggregateName}_v${pv}`,
           flow(map(cmd => mapToOperation(version, cmd)), flatten)(cmdArray),
           pv,
         ]),
@@ -96,7 +96,7 @@ export default function createStore(db: DB) {
           db.collection('versions').bulkWrite([updateVersion]);
 
           return changes;
-        })
+        }),
       )(collections[aggregateName]);
 
       const r = await Promise.all(promises);
