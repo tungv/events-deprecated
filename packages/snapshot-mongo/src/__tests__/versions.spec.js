@@ -135,7 +135,7 @@ describe('cli tool', () => {
     expect(lastSeen).toBe(0);
 
     const users = await db
-      .collection('users_v1_0_0')
+      .collection('users_v1.0.0')
       .find({})
       .toArray();
 

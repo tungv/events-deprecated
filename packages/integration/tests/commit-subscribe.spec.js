@@ -133,7 +133,7 @@ describe('commit and subscribe', () => {
 
     const db = await MongoClient.connect(MONGODB_URL);
     const users = await db
-      .collection('users_v1_0_0')
+      .collection('users_v1.0.0')
       .find({})
       .toArray();
 

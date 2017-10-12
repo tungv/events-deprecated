@@ -3,7 +3,7 @@ const seed = async (db, { __pv, aggregates }) => {
   const promises = flow(
     toPairs,
     map(async ([aggregateName, docs]) => {
-      const collName = `${aggregateName}_v${__pv.split('.').join('_')}`;
+      const collName = `${aggregateName}_v${__pv}`;
       const coll = db.collection(collName);
       try {
         await db.dropCollection(collName);
