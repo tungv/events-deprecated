@@ -1,5 +1,5 @@
 const kefir = require('kefir');
-
+const makeShouldLog = require('./should-log');
 const subscribeThread = require('./subscription');
 
 const LOG_LEVEL = {
@@ -13,11 +13,11 @@ const LOG_LEVEL = {
 };
 
 const main = config => {
-  const minLogLevel = LOG_LEVEL[config.logLevel];
+  const shouldLog = makeShouldLog(config.logLevel);
 
   return kefir.stream(emitter => {
     const emit = (level, type, payload) => {
-      if (LOG_LEVEL[level] < minLogLevel) return;
+      if (!shouldLog(level)) return;
       emitter.emit({
         type,
         payload,

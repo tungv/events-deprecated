@@ -52,8 +52,6 @@ module.exports = async function subscribeThread(config, emit, end) {
   });
 
   await firstRespPromise;
-
-  setTimeout(end, 1000);
 };
 
 async function getLatest(url) {

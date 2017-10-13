@@ -1,11 +1,12 @@
+const path = require('path');
 const InvalidConfigError = require('./InvalidConfigError');
 const InvalidEndpoint = require('./InvalidEndpoint');
 const detectDriver = require('./detectPersistDriver');
 const DriverNotFoundError = require('./DriverNotFoundError');
 const hasModule = require('./has-module');
 
-module.exports = async config => {
-  const { subscribe, persist } = config;
+module.exports = async (config, configRoot) => {
+  const { logLevel, subscribe, persist, transform } = config;
 
   if (!subscribe) {
     throw new InvalidConfigError({
@@ -43,7 +44,12 @@ module.exports = async config => {
     throw new DriverNotFoundError(actualDriver);
   }
 
+  const { rulePath, rulesPath } = transform;
+
+  const absRulePath = path.join(configRoot, rulePath || rulesPath);
+
   return {
+    logLevel,
     subscribe: {
       serverUrl,
       burstCount,
@@ -52,6 +58,9 @@ module.exports = async config => {
     persist: {
       store,
       driver: actualDriver,
+    },
+    transform: {
+      rulePath: absRulePath,
     },
   };
 };
