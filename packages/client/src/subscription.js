@@ -45,6 +45,12 @@ module.exports = async function subscribeThread(config, emit, end) {
     emit('DEBUG', 'TRANSFORM/PROJECTION', { projection: p });
   });
 
+  const p$ = await persist({ _: [store] }, projection$);
+
+  p$.observe(p => {
+    emit('DATA', 'PERSIST/WRITE', { documents: p });
+  });
+
   await firstRespPromise;
 
   setTimeout(end, 1000);
