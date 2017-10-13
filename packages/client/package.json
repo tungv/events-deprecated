@@ -4,8 +4,20 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest"
+    "test": "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest"
   },
   "author": "Tung <me@tungv.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@events/subscriber": "^1.0.0-beta.5",
+    "kefir": "^3.7.4",
+    "mitt": "^1.1.2",
+    "pkg-up": "^2.0.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "@events/snapshot-mongo": "^1.1.0",
+    "jest": "^21.2.1"
+  }
 }
