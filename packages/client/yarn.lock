@@ -21,6 +21,15 @@
     kefir "^3.7.4"
     request "^2.81.0"
 
+"@events/transform@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@events/transform/-/transform-1.0.0.tgz#e34877684766da85a5bd3ec39df96fb97c10419f"
+  dependencies:
+    kefir "^3.7.4"
+    kefir-stdin-json "^1.0.0-rc.15"
+    lodash "^4.17.4"
+    mri "^1.1.0"
+
 abab@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"

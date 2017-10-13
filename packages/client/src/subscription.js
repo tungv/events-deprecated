@@ -1,13 +1,21 @@
 const parseConfig = require('./parseConfig');
 const subscriber = require('@events/subscriber');
 
+// FIXME: make transform package commonjs compatible
+const makeTransform = require('@events/transform').default;
+
 module.exports = async function subscribeThread(config, emit, end) {
   const {
     subscribe: { serverUrl, burstCount, burstTime },
     persist: { store, driver },
+    transform: { rulePath },
   } = config;
 
   emit('DEBUG', 'CONFIG', { config });
+
+  const rules = getRule(rulePath);
+
+  const transform = makeTransform(rules);
 
   const { persist, version } = require(driver);
 
@@ -27,9 +35,19 @@ module.exports = async function subscribeThread(config, emit, end) {
 
   const firstRespPromise = raw$.take(1).toPromise();
 
+  events$.observe(e => {
+    emit('DEBUG', 'SERVER/INCOMING_EVENT', { event: e });
+  });
+
+  const projection$ = events$.map(transform);
+
+  projection$.observe(p => {
+    emit('DEBUG', 'TRANSFORM/PROJECTION', { projection: p });
+  });
+
   await firstRespPromise;
 
-  end();
+  setTimeout(end, 1000);
 };
 
 async function getLatest(url) {
@@ -37,4 +55,10 @@ async function getLatest(url) {
   const resp = await request(`${url}/events/latest`, { json: true });
 
   return resp.id;
+}
+
+function getRule(rulePath) {
+  const rules = require(rulePath);
+
+  return rules.default || rules;
 }

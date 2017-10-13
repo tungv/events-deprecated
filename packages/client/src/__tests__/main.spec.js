@@ -1,5 +1,6 @@
 const kefir = require('kefir');
 const main = require('../index');
+const path = require('path');
 
 describe('connectivity', () => {
   it('should connect', async () => {
@@ -14,10 +15,21 @@ describe('connectivity', () => {
         store: process.env.MONGO_TEST,
         driver: '@events/snapshot-mongo',
       },
+      transform: {
+        rulePath: path.resolve('./fixtures/rules/user_management.js'),
+      },
     };
 
     const stream$ = main(config);
-    stream$.observe(d => console.log(d));
+    stream$.observe(d => {
+      console.log(
+        ` [%s] %d\n%s\n%j`,
+        d.meta.level,
+        d.meta.ts,
+        d.type,
+        d.payload
+      );
+    });
 
     const p = stream$.toPromise();
     return p;
