@@ -35,7 +35,22 @@ module.exports = async (config, configRoot) => {
 
   await validateServerUrl(serverUrl);
 
-  const { store, driver } = persist;
+  const { store, driver, seedFilePath } = persist;
+  const absSeedFilePath = seedFilePath
+    ? path.join(configRoot, seedFilePath)
+    : false;
+
+  if (absSeedFilePath) {
+    try {
+      require(absSeedFilePath);
+    } catch (ex) {
+      throw new InvalidConfigError({
+        path: 'persist.seedFilePath',
+        expected: 'a JSON file path',
+        actual: ex.message,
+      });
+    }
+  }
 
   if (!store) {
     throw new InvalidConfigError({
@@ -70,6 +85,7 @@ module.exports = async (config, configRoot) => {
     persist: {
       store,
       driver: actualDriver,
+      seedFilePath: absSeedFilePath,
     },
     transform: {
       rulePath: absRulePath,

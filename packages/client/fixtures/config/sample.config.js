@@ -5,6 +5,7 @@ module.exports = {
   },
   persist: {
     store: 'mongodb://localhost/client_test',
+    seedFilePath: '../seeding/sample_seeds.json',
   },
   transform: {
     rulePath: '../rules/user_management.js',

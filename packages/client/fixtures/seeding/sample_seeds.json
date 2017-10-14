@@ -1,0 +1,9 @@
+{
+  "__pv": "1.0.0",
+  "aggregates": {
+    "users": [
+      { "uid": "abcabacba", "name": "owner", "email": "owner@events.com" },
+      { "uid": "123123123", "name": "super admin", "email": "admin@events.com" }
+    ]
+  }
+}
