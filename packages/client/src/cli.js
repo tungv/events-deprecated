@@ -49,6 +49,16 @@ const parseConfigAndDisplayError = async (config, configDir, logger) => {
   const configDir = path.resolve(configAbsPath, '..');
   const logger = makeLogger(input.logLevel);
 
+  process.on('exit', code => {
+    logger('INFO', `Exiting with code ${chalk.bold(code)}. Bye!`);
+  });
+
+  process.on('SIGINT', () => {
+    console.log('\n');
+    logger('INFO', 'Interrupted!');
+    process.exit(0);
+  });
+
   logger('INFO', `log level: ${input.logLevel}`);
   logger('INFO', `loading config from: ${bold(configAbsPath)}`);
   const config = require(configAbsPath);
