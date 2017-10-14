@@ -11,7 +11,14 @@ const makeLogger = require('./logger');
 const parseConfig = require('./parseConfig');
 const renderError = require('./renderError');
 
-console.info(bold(`@events/client v1.0.0\n`));
+const brighten = require('brighten');
+const { version: pkgVersion } = require('../package.json');
+
+// clear screen when process is a TTY
+if (process.stdout.isTTY) {
+  brighten();
+}
+console.info(bold(`@events/client v${pkgVersion}\n`));
 
 const input = mri(process.argv.slice(2), {
   alias: {
@@ -23,7 +30,6 @@ const input = mri(process.argv.slice(2), {
     logLevel: 'INFO',
   },
 });
-
 const configPath = input.config;
 
 const parseConfigAndDisplayError = async (config, configDir, logger) => {
@@ -41,6 +47,7 @@ const parseConfigAndDisplayError = async (config, configDir, logger) => {
   const configDir = path.resolve(configAbsPath, '..');
   const logger = makeLogger(input.logLevel);
 
+  logger('INFO', `log level: ${input.logLevel}`);
   logger('INFO', `loading config from: ${bold(configAbsPath)}`);
   const config = require(configAbsPath);
   logger(
@@ -112,9 +119,9 @@ function observeAndLog(finalConfig, logger, retryCount = 0) {
         logger(
           p.meta.level,
           [
-            `event: %s (id = %s)`,
-            bold(p.payload.event.type),
+            `event #%s: type=%s`,
             bold(p.payload.event.id),
+            bold(p.payload.event.type),
           ],
           p.meta.ts
         );
@@ -161,7 +168,7 @@ function observeAndLog(finalConfig, logger, retryCount = 0) {
             p.meta.ts
           );
         } else {
-          logger('DEBUG', 'nothing happens', p.meta.ts);
+          logger('DEBUG', chalk.dim('nothing happens'), p.meta.ts);
         }
 
         return;

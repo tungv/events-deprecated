@@ -19,10 +19,6 @@ module.exports = async function subscribeThread(config, emit, end) {
 
   const { persist, version } = require(driver);
 
-  // check snapshot version
-  const clientSnapshotVersion = await version({ _: [store] });
-  emit('INFO', 'SNAPSHOT/CONNECTED', { clientSnapshotVersion });
-
   // check server version
   const serverLatest = await getLatest(serverUrl);
   if (!serverLatest) {
@@ -30,6 +26,10 @@ module.exports = async function subscribeThread(config, emit, end) {
     end();
     return;
   }
+
+  // check snapshot version
+  const clientSnapshotVersion = await version({ _: [store] });
+  emit('INFO', 'SNAPSHOT/CONNECTED', { clientSnapshotVersion });
 
   emit('INFO', 'SERVER/CONNECTED', { serverLatest });
 

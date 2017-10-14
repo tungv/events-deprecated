@@ -11,6 +11,7 @@
   "dependencies": {
     "@events/subscriber": "^1.0.0-beta.5",
     "@events/transform": "^1.0.0",
+    "brighten": "^0.0.1",
     "chalk": "^2.1.0",
     "date-fns": "^1.29.0",
     "mitt": "^1.1.2",
