@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@events/snapshot-mongo@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@events/snapshot-mongo/-/snapshot-mongo-1.1.0.tgz#adac843f35fe54c4679d8722f7755776f5aadfa0"
+"@events/snapshot-mongo@^2.0.0-0":
+  version "2.0.0-0"
+  resolved "https://registry.yarnpkg.com/@events/snapshot-mongo/-/snapshot-mongo-2.0.0-0.tgz#a605e461034170703e07aa1f19c803a575a73a79"
   dependencies:
     cli-table2 "^0.2.0"
     kefir-stdin-json "^1.0.0-rc.15"

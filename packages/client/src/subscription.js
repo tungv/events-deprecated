@@ -62,8 +62,6 @@ module.exports = async function subscribeThread(config, emit, end) {
   const p$ = await persist({ _: [store] }, projection$);
 
   p$.observe(({ __v, changes }) => {
-    console.log('__v', __v);
-    console.log('changes', changes);
     emit('INFO', 'PERSIST/WRITE', { __v, documents: changes });
     if (!caughtup && __v >= clientSnapshotVersion) {
       caughtup = true;
