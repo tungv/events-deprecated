@@ -3,8 +3,12 @@
   "version": "2.0.0-2",
   "description": "",
   "main": "src/index.js",
+  "bin": {
+    "subscribe": "src/index.js"
+  },
   "scripts": {
-    "test": "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest"
+    "test":
+      "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest"
   },
   "author": "Tung <me@tungv.com>",
   "license": "ISC",
