@@ -25,7 +25,19 @@ module.exports = async function subscribeThread(config, emit, end) {
 
   // check server version
   const serverLatest = await getLatest(serverUrl);
+  if (!serverLatest) {
+    emit('ERROR', 'SERVER/DISCONNECTED');
+    end();
+    return;
+  }
+
   emit('INFO', 'SERVER/CONNECTED', { serverLatest });
+
+  let caughtup = false;
+  if (serverLatest === clientSnapshotVersion) {
+    caughtup = true;
+    emit('DEBUG', 'SUBSCRIPTION/CATCH_UP');
+  }
 
   const { raw$, events$, abort } = subscriber(`${serverUrl}/subscribe`, {
     'Last-Event-ID': clientSnapshotVersion,
@@ -34,6 +46,8 @@ module.exports = async function subscribeThread(config, emit, end) {
   });
 
   const firstRespPromise = raw$.take(1).toPromise();
+
+  raw$.onEnd(end);
 
   events$.observe(e => {
     emit('DEBUG', 'SERVER/INCOMING_EVENT', { event: e });
@@ -47,8 +61,14 @@ module.exports = async function subscribeThread(config, emit, end) {
 
   const p$ = await persist({ _: [store] }, projection$);
 
-  p$.observe(p => {
-    emit('DATA', 'PERSIST/WRITE', { documents: p });
+  p$.observe(({ __v, changes }) => {
+    console.log('__v', __v);
+    console.log('changes', changes);
+    emit('INFO', 'PERSIST/WRITE', { __v, documents: changes });
+    if (!caughtup && __v >= clientSnapshotVersion) {
+      caughtup = true;
+      emit('DEBUG', 'SUBSCRIPTION/CATCH_UP');
+    }
   });
 
   await firstRespPromise;
@@ -56,9 +76,12 @@ module.exports = async function subscribeThread(config, emit, end) {
 
 async function getLatest(url) {
   const request = require('request-promise');
-  const resp = await request(`${url}/events/latest`, { json: true });
-
-  return resp.id;
+  try {
+    const resp = await request(`${url}/events/latest`, { json: true });
+    return resp.id;
+  } catch (ex) {
+    return null;
+  }
 }
 
 function getRule(rulePath) {

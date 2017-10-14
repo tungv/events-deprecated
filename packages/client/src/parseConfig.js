@@ -16,7 +16,14 @@ module.exports = async (config, configRoot) => {
     });
   }
 
-  const { serverUrl, burstCount = 20, burstTime = 500 } = subscribe;
+  const {
+    serverUrl,
+    burstCount = 20,
+    burstTime = 500,
+    retry = 1000,
+    retryBackoff = 500,
+    maxRetry = 20,
+  } = subscribe;
 
   if (!serverUrl) {
     throw new InvalidConfigError({
@@ -54,6 +61,9 @@ module.exports = async (config, configRoot) => {
       serverUrl,
       burstCount,
       burstTime,
+      retry,
+      retryBackoff,
+      maxRetry,
     },
     persist: {
       store,
