@@ -6,7 +6,7 @@ const DriverNotFoundError = require('./DriverNotFoundError');
 const hasModule = require('./has-module');
 
 module.exports = async (config, configRoot) => {
-  const { logLevel, subscribe, persist, transform } = config;
+  const { logLevel, subscribe, persist, transform, monitor = {} } = config;
 
   if (!subscribe) {
     throw new InvalidConfigError({
@@ -55,6 +55,8 @@ module.exports = async (config, configRoot) => {
 
   const absRulePath = path.join(configRoot, rulePath || rulesPath);
 
+  const { port } = monitor;
+
   return {
     logLevel,
     subscribe: {
@@ -71,6 +73,9 @@ module.exports = async (config, configRoot) => {
     },
     transform: {
       rulePath: absRulePath,
+    },
+    monitor: {
+      port,
     },
   };
 };

@@ -42,6 +42,8 @@ const parseConfigAndDisplayError = async (config, configDir, logger) => {
 };
 
 (async () => {
+  const state = {};
+
   const rootDir = await pkgDir();
   const configAbsPath = require.resolve(path.resolve(rootDir, configPath));
   const configDir = path.resolve(configAbsPath, '..');
@@ -61,18 +63,39 @@ const parseConfigAndDisplayError = async (config, configDir, logger) => {
     logger
   );
 
-  observeAndLog(finalConfig, logger);
+  state.config = finalConfig;
+
+  if (!isNaN(finalConfig.monitor.port)) {
+    const micro = require('micro');
+    const { router, get } = require('microrouter');
+
+    const server = micro(router(get('/status', () => state)));
+    server.listen(finalConfig.monitor.port, () => {
+      logger(
+        'INFO',
+        chalk.bold.green(
+          `monitor server is listening on port ${finalConfig.monitor.port}`
+        )
+      );
+    });
+  }
+
+  observeAndLog(finalConfig, logger, state);
 })();
 
-function observeAndLog(finalConfig, logger, retryCount = 0) {
+function observeAndLog(finalConfig, logger, state, retryCount = 0) {
   const stream$ = main(finalConfig);
 
   stream$.onEnd(() => {
     const { retry, retryBackoff } = finalConfig.subscribe;
     const nextRetry = retry + retryCount * retryBackoff;
+
+    state.retry_count = retryCount + 1;
+    state.next_retry = Date.now() + nextRetry;
+
     logger('INFO', `reconnecting in ${nextRetry}ms...`);
     setTimeout(() => {
-      observeAndLog(finalConfig, logger, retryCount + 1);
+      observeAndLog(finalConfig, logger, state, retryCount + 1);
     }, nextRetry);
   });
 
@@ -90,6 +113,8 @@ function observeAndLog(finalConfig, logger, retryCount = 0) {
         return;
 
       case 'SNAPSHOT/CONNECTED': {
+        state.snapshot_connected = true;
+        state.snapshot_connected_at = p.meta.ts;
         logger(
           p.meta.level,
           [
@@ -104,18 +129,26 @@ function observeAndLog(finalConfig, logger, retryCount = 0) {
 
       case 'SERVER/CONNECTED':
         retryCount = 0;
+        state.server_connected = true;
+        state.server_connected_at = p.meta.ts;
+        state.latest_event_received = p.payload.latestEvent;
+        state.latest_event_received_at = p.meta.ts;
+
         logger(
           p.meta.level,
           [
             `connected to %s. current version = %s`,
             bold(finalConfig.subscribe.serverUrl),
-            bold(p.payload.serverLatest),
+            bold(p.payload.latestEvent.id),
           ],
           p.meta.ts
         );
         return;
 
       case 'SERVER/INCOMING_EVENT':
+        state.latest_event_received = p.payload.event;
+        state.latest_event_received_at = p.meta.ts;
+
         logger(
           p.meta.level,
           [
@@ -161,6 +194,7 @@ function observeAndLog(finalConfig, logger, retryCount = 0) {
           .reduce((a, b) => a.concat(b));
 
         if (changes.length) {
+          state.latest_projection_created_at = p.meta.ts;
           logger(
             p.meta.level,
             `${changes.length} update(s) after event #${__v}
@@ -176,6 +210,7 @@ function observeAndLog(finalConfig, logger, retryCount = 0) {
 
       case 'PERSIST/WRITE':
         if (p.payload.documents > 0) {
+          state.latest_persistence_created_at = p.meta.ts;
           logger(
             p.meta.level,
             `persistence completed. ${chalk.bold(
@@ -188,6 +223,8 @@ function observeAndLog(finalConfig, logger, retryCount = 0) {
         return;
 
       case 'SERVER/DISCONNECTED':
+        state.server_connected = false;
+        state.server_disconnected_at = Date.now();
         logger(
           p.meta.level,
           `cannot connect to server at ${finalConfig.subscribe.serverUrl}`,
@@ -195,6 +232,7 @@ function observeAndLog(finalConfig, logger, retryCount = 0) {
         );
         return;
     }
-    console.log('---', inspect(p, { depth: null, colors: true }));
+
+    logger('SILLY', inspect(p, { depth: null, colors: true }));
   });
 }

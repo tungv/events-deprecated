@@ -20,18 +20,20 @@ module.exports = async function subscribeThread(config, emit, end) {
   const { persist, version } = require(driver);
 
   // check server version
-  const serverLatest = await getLatest(serverUrl);
-  if (!serverLatest) {
+  const latestEvent = await getLatest(serverUrl);
+  if (!latestEvent) {
     emit('ERROR', 'SERVER/DISCONNECTED');
     end();
     return;
   }
 
+  const serverLatest = latestEvent.id;
+
   // check snapshot version
   const clientSnapshotVersion = await version({ _: [store] });
   emit('INFO', 'SNAPSHOT/CONNECTED', { clientSnapshotVersion });
 
-  emit('INFO', 'SERVER/CONNECTED', { serverLatest });
+  emit('INFO', 'SERVER/CONNECTED', { latestEvent });
 
   let caughtup = false;
   if (serverLatest === clientSnapshotVersion) {
@@ -75,8 +77,7 @@ module.exports = async function subscribeThread(config, emit, end) {
 async function getLatest(url) {
   const request = require('request-promise');
   try {
-    const resp = await request(`${url}/events/latest`, { json: true });
-    return resp.id;
+    return await request(`${url}/events/latest`, { json: true });
   } catch (ex) {
     return null;
   }

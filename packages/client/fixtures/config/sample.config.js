@@ -9,4 +9,7 @@ module.exports = {
   transform: {
     rulePath: '../rules/user_management.js',
   },
+  monitor: {
+    port: 43333,
+  },
 };
