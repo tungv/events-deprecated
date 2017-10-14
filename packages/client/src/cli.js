@@ -1,4 +1,4 @@
-#!/bin/node
+#!/usr/bin/env node
 const { bold } = require('chalk');
 const mri = require('mri');
 const main = require('./index');
