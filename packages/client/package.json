@@ -14,10 +14,8 @@
     "brighten": "^0.0.1",
     "chalk": "^2.1.0",
     "date-fns": "^1.29.0",
-    "mitt": "^1.1.2",
     "mri": "^1.1.0",
     "pkg-dir": "^2.0.0",
-    "pkg-up": "^2.0.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2"
   },
