@@ -52,7 +52,9 @@ export function mapToOperation<Doc>(
 }
 
 export default function createStore(db: DB) {
-  return async function dispatch(request: UpdateRequest): Promise<number> {
+  return async function dispatch(
+    request: UpdateRequest
+  ): Promise<{ __v: number, changes: number }> {
     const { __v: version, ...collections } = request;
     const promises: Array<Promise<number>> = Object.keys(
       collections
@@ -106,7 +108,7 @@ export default function createStore(db: DB) {
 
     const changes = sum(await Promise.all(promises));
     return {
-      __v,
+      __v: version,
       changes,
     };
   };
