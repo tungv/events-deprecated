@@ -20,3 +20,4 @@ test:
 
   override:
     - cd packages/server; yarn test
+    - cd packages/client; yarn test
