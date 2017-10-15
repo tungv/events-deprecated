@@ -120,7 +120,7 @@ module.exports = {
 
     const child = execa('node', ['src/cli.js', '-c', configPath]);
 
-    await delay(1500);
+    await delay(require('is-ci') ? 3000 : 1500);
     child.kill('SIGINT');
     server.close();
 
