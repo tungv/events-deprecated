@@ -1,4 +1,4 @@
-const mockServer = require('../__mocks__/mockserver');
+const mockServer = require('../__mocks__/mockServer');
 const execa = require('execa');
 const path = require('path');
 const fs = require('fs');
