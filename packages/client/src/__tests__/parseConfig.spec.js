@@ -1,6 +1,5 @@
 const parseConfig = require('../parseConfig');
 const hasModule = require('../has-module');
-const mockServer = require('../test-helpers/mockserver');
 
 jest.mock('../has-module');
 
@@ -14,12 +13,10 @@ describe('config: subscribe', () => {
   });
 
   it('should not throw if subscribe.burstCount or subscribe.burstTime are not defined', async () => {
-    const server = await mockServer(1, [{ id: 1, payload: 'test' }]);
-
     const config = await parseConfig(
       {
         subscribe: {
-          serverUrl: server.url,
+          serverUrl: process.env.EVENT_STORE_URL,
         },
         persist: {
           store: process.env.MONGO_TEST,
@@ -31,11 +28,9 @@ describe('config: subscribe', () => {
       __dirname
     );
 
-    server.close();
-
     expect(config).toMatchObject({
       subscribe: {
-        serverUrl: server.url,
+        serverUrl: process.env.EVENT_STORE_URL,
         burstCount: 20,
         burstTime: 500,
       },
@@ -55,10 +50,8 @@ describe('config: subscribe', () => {
 
 describe('config: persist', () => {
   it('should detect persist driver is defined', async () => {
-    const server = await mockServer(1, [{ id: 1, payload: 'test' }]);
-
     const config = {
-      subscribe: { serverUrl: server.url },
+      subscribe: { serverUrl: process.env.EVENT_STORE_URL },
       persist: {
         store: process.env.MONGO_TEST,
       },

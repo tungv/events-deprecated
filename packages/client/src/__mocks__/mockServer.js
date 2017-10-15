@@ -2,7 +2,7 @@ const createTestServer = require('create-test-server');
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-module.exports = async (initialLatestId, events) => {
+const mockServer = async (initialLatestId, events) => {
   let latestId = initialLatestId;
   const server = await createTestServer();
 
@@ -70,3 +70,5 @@ data: ${JSON.stringify(events)}
 
   return server;
 };
+
+module.exports = mockServer;
