@@ -11,9 +11,7 @@
   },
   "author": "Tung Vu <me@tungv.com>",
   "dependencies": {
-    "cli-table2": "^0.2.0",
     "kefir": "^3.7.4",
-    "kefir-stdin-json": "^1.0.0-rc.15",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.31",
     "mri": "^1.1.0",
