@@ -49,7 +49,7 @@ const parseConfigAndDisplayError = async (config, configDir, logger) => {
   const state = {};
 
   const rootDir = await pkgDir();
-  const configAbsPath = require.resolve(path.resolve(rootDir, configPath));
+  const configAbsPath = path.resolve(rootDir, configPath);
   const configDir = path.resolve(configAbsPath, '..');
   const logger = makeLogger(input.logLevel);
 

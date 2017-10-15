@@ -134,7 +134,7 @@ module.exports = {
     expect(log).toEqual(`
 
 log level: INFO
-loading config from: /private/tmp/sample.config.js
+loading config from: /tmp/sample.config.js
 monitor server is listening on port 43333
 connected to ${url}. current version = 7
 connected to mongodb://localhost/client_test. local snapshot version = 0
