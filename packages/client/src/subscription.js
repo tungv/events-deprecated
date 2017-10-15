@@ -31,10 +31,8 @@ module.exports = async function subscribeThread(config, emit, end) {
   const serverLatest = latestEvent.id;
 
   // check snapshot version
-  const clientSnapshotVersion = await version({
-    _: [store],
-    seed: config.persist.seedFilePath,
-  });
+  const clientSnapshotVersion = await version(config.persist);
+
   emit('INFO', 'SNAPSHOT/CONNECTED', { clientSnapshotVersion });
 
   let caughtup = false;
