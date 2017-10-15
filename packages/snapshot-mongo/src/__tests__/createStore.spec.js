@@ -44,8 +44,8 @@ describe('e2e', () => {
       },
     ];
 
-    expect(await dispatch(requests[0])).toBe(1);
-    expect(await dispatch(requests[1])).toBe(1);
+    expect(await dispatch(requests[0])).toEqual({ __v: 1, changes: 1 });
+    expect(await dispatch(requests[1])).toEqual({ __v: 2, changes: 1 });
 
     const users = await db
       .collection('users_v1.0.0')
@@ -103,8 +103,8 @@ describe('e2e', () => {
     await dispatch(requests[0]);
     await dispatch(requests[1]);
 
-    expect(await dispatch(requests[0])).toBe(0);
-    expect(await dispatch(requests[1])).toBe(0);
+    expect(await dispatch(requests[0])).toEqual({ __v: 1, changes: 0 });
+    expect(await dispatch(requests[1])).toEqual({ __v: 2, changes: 0 });
 
     const users = await db
       .collection('users_v1.0.0')
@@ -164,8 +164,14 @@ describe('e2e', () => {
       },
     ];
 
-    expect(await dispatch(requests[0])).toBe(2);
-    expect(await dispatch(requests[1])).toBe(2);
+    expect(await dispatch(requests[0])).toEqual({
+      changes: 2,
+      __v: 1,
+    });
+    expect(await dispatch(requests[1])).toEqual({
+      changes: 2,
+      __v: 2,
+    });
 
     const users_v1 = await db
       .collection('users_v1.0.0')
@@ -211,7 +217,7 @@ describe('e2e', () => {
           __v: 2,
           last_snapshot_time: expect.any(Date),
         }),
-      ]),
+      ])
     );
     db.close();
   });

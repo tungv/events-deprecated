@@ -1,0 +1,36 @@
+{
+  "name": "@events/client",
+  "version": "2.0.0-7",
+  "description": "",
+  "main": "src/index.js",
+  "bin": {
+    "subscribe": "src/cli.js"
+  },
+  "scripts": {
+    "test": "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest --forceExit"
+  },
+  "author": "Tung <me@tungv.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@events/subscriber": "^1.0.0-beta.5",
+    "@events/transform": "^1.0.0",
+    "brighten": "^0.0.1",
+    "chalk": "^2.1.0",
+    "date-fns": "^1.29.0",
+    "micro": "^9.0.0",
+    "microrouter": "^2.2.3",
+    "mri": "^1.1.0",
+    "pkg-dir": "^2.0.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "@events/snapshot-mongo": "^2.0.0-6",
+    "create-test-server": "^2.1.1",
+    "execa": "^0.8.0",
+    "is-ci": "^1.0.10",
+    "jest": "^21.2.1",
+    "kefir": "^3.7.4",
+    "mongodb": "^2.2.33"
+  }
+}

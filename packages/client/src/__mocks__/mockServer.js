@@ -1,4 +1,4 @@
-import createTestServer from 'create-test-server';
+const createTestServer = require('create-test-server');
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -6,16 +6,24 @@ const mockServer = async (initialLatestId, events) => {
   let latestId = initialLatestId;
   const server = await createTestServer();
 
-  const writeEvents = (res, ...events) => {
+  const writeEvents = (res, events) => {
     if (!events.length) {
       return;
     }
+
     res.write(`id: ${events[events.length - 1].id}
 event: INCMSG
 data: ${JSON.stringify(events)}
 
 `);
   };
+
+  server.use((req, res, next) => {
+    // console.log('req:', req.method, req.path);
+    next();
+  });
+
+  server.get('/query', (req, res) => res.json([]));
 
   server.get('/events/latest', (req, res) => {
     // console.log('latest: ', latestId);
@@ -38,7 +46,7 @@ data: ${JSON.stringify(events)}
 
     // console.log(initialEvents);
 
-    writeEvents(res, ...initialEvents);
+    writeEvents(res, initialEvents);
     let ended = false;
 
     for (const event of events.slice(latestIndex + 1)) {
@@ -50,7 +58,7 @@ data: ${JSON.stringify(events)}
         if (ended) {
           return;
         } else {
-          writeEvents(res, actual);
+          writeEvents(res, [actual]);
         }
       } catch (ex) {
         res.end('');
@@ -63,4 +71,4 @@ data: ${JSON.stringify(events)}
   return server;
 };
 
-export default mockServer;
+module.exports = mockServer;
