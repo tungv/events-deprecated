@@ -68,7 +68,7 @@ module.exports = async (config, configRoot) => {
 
   const { rulePath, rulesPath } = transform;
 
-  const absRulePath = path.join(configRoot, rulePath || rulesPath);
+  const absRulePath = path.resolve(configRoot, rulePath || rulesPath);
 
   const { port } = monitor;
 

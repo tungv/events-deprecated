@@ -13,14 +13,20 @@ describe('config: subscribe', () => {
   });
 
   it('should not throw if subscribe.burstCount or subscribe.burstTime are not defined', async () => {
-    const config = await parseConfig({
-      subscribe: {
-        serverUrl: process.env.EVENT_STORE_URL,
+    const config = await parseConfig(
+      {
+        subscribe: {
+          serverUrl: process.env.EVENT_STORE_URL,
+        },
+        persist: {
+          store: process.env.MONGO_TEST,
+        },
+        transform: {
+          rulePath: '../../fixtures/rules/user_management.js',
+        },
       },
-      persist: {
-        store: process.env.MONGO_TEST,
-      },
-    });
+      __dirname
+    );
 
     expect(config).toMatchObject({
       subscribe: {
@@ -49,9 +55,12 @@ describe('config: persist', () => {
       persist: {
         store: process.env.MONGO_TEST,
       },
+      transform: {
+        rulePath: '../../fixtures/rules/user_management.js',
+      },
     };
 
-    expect(await parseConfig(config)).toMatchObject({
+    expect(await parseConfig(config, __dirname)).toMatchObject({
       persist: {
         store: process.env.MONGO_TEST,
         driver: '@events/snapshot-mongo',

@@ -7,7 +7,8 @@
     "subscribe": "src/cli.js"
   },
   "scripts": {
-    "test": "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest"
+    "test":
+      "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest --forceExit"
   },
   "author": "Tung <me@tungv.com>",
   "license": "ISC",
@@ -26,6 +27,8 @@
   },
   "devDependencies": {
     "@events/snapshot-mongo": "^2.0.0-1",
+    "create-test-server": "^2.1.1",
+    "execa": "^0.8.0",
     "jest": "^21.2.1",
     "kefir": "^3.7.4",
     "mongodb": "^2.2.33"

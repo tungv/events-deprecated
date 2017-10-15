@@ -20,6 +20,10 @@ if (process.stdout.isTTY) {
 }
 console.info(bold(`@events/client v${pkgVersion}\n`));
 
+process.on('unhandledRejection', reason => {
+  console.log('Reason: ' + reason.stack);
+});
+
 const input = mri(process.argv.slice(2), {
   alias: {
     c: 'config',
