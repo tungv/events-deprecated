@@ -35,7 +35,7 @@ export function mapToOperation<Doc>(
   }
 
   if (cmd.op.update) {
-    const { changes, where } = cmd.op.update;
+    const { changes, where, upsert = false } = cmd.op.update;
     const update = set('$set.__v', version, changes);
     const filter = set('__v.$lt', version, where);
     return [
@@ -43,6 +43,7 @@ export function mapToOperation<Doc>(
         updateMany: {
           filter,
           update,
+          upsert,
         },
       },
     ];
