@@ -1,5 +1,6 @@
 /* @flow */
 import { MongoClient } from 'mongodb';
+
 import createStore from '../createStore';
 
 describe('e2e', () => {
@@ -44,8 +45,18 @@ describe('e2e', () => {
       },
     ];
 
-    expect(await dispatch(requests[0])).toEqual({ __v: 1, changes: 1 });
-    expect(await dispatch(requests[1])).toEqual({ __v: 2, changes: 1 });
+    expect(
+      await dispatch({
+        event: { id: 0, type: 'TEST', payload: true },
+        projections: requests[0],
+      })
+    ).toEqual({ __v: 1, changes: 1 });
+    expect(
+      await dispatch({
+        event: { id: 1, type: 'TEST', payload: true },
+        projections: requests[1],
+      })
+    ).toEqual({ __v: 2, changes: 1 });
 
     const users = await db
       .collection('users_v1.0.0')
@@ -100,11 +111,27 @@ describe('e2e', () => {
       },
     ];
 
-    await dispatch(requests[0]);
-    await dispatch(requests[1]);
+    await dispatch({
+      event: { id: 0, type: 'TEST', payload: true },
+      projections: requests[0],
+    });
+    await dispatch({
+      event: { id: 1, type: 'TEST', payload: true },
+      projections: requests[1],
+    });
 
-    expect(await dispatch(requests[0])).toEqual({ __v: 1, changes: 0 });
-    expect(await dispatch(requests[1])).toEqual({ __v: 2, changes: 0 });
+    expect(
+      await dispatch({
+        event: { id: 0, type: 'TEST', payload: true },
+        projections: requests[0],
+      })
+    ).toEqual({ __v: 1, changes: 0 });
+    expect(
+      await dispatch({
+        event: { id: 1, type: 'TEST', payload: true },
+        projections: requests[1],
+      })
+    ).toEqual({ __v: 2, changes: 0 });
 
     const users = await db
       .collection('users_v1.0.0')
@@ -164,11 +191,21 @@ describe('e2e', () => {
       },
     ];
 
-    expect(await dispatch(requests[0])).toEqual({
+    expect(
+      await dispatch({
+        event: { id: 0, type: 'TEST', payload: true },
+        projections: requests[0],
+      })
+    ).toEqual({
       changes: 2,
       __v: 1,
     });
-    expect(await dispatch(requests[1])).toEqual({
+    expect(
+      await dispatch({
+        event: { id: 1, type: 'TEST', payload: true },
+        projections: requests[1],
+      })
+    ).toEqual({
       changes: 2,
       __v: 2,
     });
