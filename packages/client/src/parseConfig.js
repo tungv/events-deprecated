@@ -6,7 +6,13 @@ const DriverNotFoundError = require('./DriverNotFoundError');
 const hasModule = require('./has-module');
 
 module.exports = async (config, configRoot) => {
-  const { subscribe, persist, transform, monitor = {} } = config;
+  const {
+    subscribe,
+    persist,
+    transform,
+    monitor = {},
+    sideEffects = {},
+  } = config;
 
   if (!subscribe) {
     throw new InvalidConfigError({
@@ -70,6 +76,15 @@ module.exports = async (config, configRoot) => {
 
   const absRulePath = path.resolve(configRoot, rulePath || rulesPath);
 
+  const { sideEffectsPath } = sideEffects;
+
+  const applyingSideEffect =
+    sideEffectsPath && hasModule(path.resolve(configRoot, sideEffectsPath));
+
+  const finalSideEffects = applyingSideEffect
+    ? { sideEffectsPath: path.resolve(configRoot, sideEffectsPath) }
+    : { sideEffectsPath: false };
+
   const { port } = monitor;
 
   return {
@@ -89,6 +104,7 @@ module.exports = async (config, configRoot) => {
     transform: {
       rulePath: absRulePath,
     },
+    sideEffects: finalSideEffects,
     monitor: {
       port,
     },
