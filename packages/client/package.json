@@ -17,6 +17,7 @@
     "brighten": "^0.0.1",
     "chalk": "^2.1.0",
     "date-fns": "^1.29.0",
+    "filtr": "^0.3.0",
     "micro": "^9.0.0",
     "microrouter": "^2.2.3",
     "mri": "^1.1.0",
