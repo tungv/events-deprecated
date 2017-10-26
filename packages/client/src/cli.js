@@ -183,13 +183,13 @@ function observeAndLog(finalConfig, logger, state, retryCount = 0) {
         return;
 
       case 'TRANSFORM/PROJECTION': {
-        const { payload: { projection } } = p;
-        const { __v } = projection;
+        const { payload: { projections } } = p;
+        const { __v } = projections;
 
-        const changes = Object.keys(projection)
+        const changes = Object.keys(projections)
           .filter(k => k !== '__v')
           .map(aggregateName =>
-            projection[aggregateName].map(change => {
+            projections[aggregateName].map(change => {
               const prefix = chalk.bold.italic(
                 `${aggregateName}_v${change.__pv}`
               );
@@ -230,7 +230,7 @@ function observeAndLog(finalConfig, logger, state, retryCount = 0) {
             `persistence completed. ${chalk.bold(
               p.payload.documents
             )} document(s) affected. Latest snapshot version is ${p.payload
-              .__v}`,
+              .event.id}`,
             p.meta.ts
           );
         }

@@ -13,7 +13,7 @@ module.exports = async function subscribeThread(config, emit, end) {
 
   emit('DEBUG', 'CONFIG', { config });
 
-  const rules = getRule(rulePath);
+  const rules = esmInteropImport(rulePath);
 
   const transform = makeTransform(rules);
 
@@ -55,17 +55,20 @@ module.exports = async function subscribeThread(config, emit, end) {
     emit('DEBUG', 'SERVER/INCOMING_EVENT', { event: e });
   });
 
-  const projection$ = events$.map(transform);
+  const projection$ = events$.map(e => ({
+    event: e,
+    projections: transform(e),
+  }));
 
-  projection$.observe(p => {
-    emit('DEBUG', 'TRANSFORM/PROJECTION', { projection: p });
+  projection$.observe(ctx => {
+    emit('DEBUG', 'TRANSFORM/PROJECTION', ctx);
   });
 
   const p$ = await persist({ _: [store] }, projection$);
 
-  p$.observe(({ __v, changes }) => {
-    emit('INFO', 'PERSIST/WRITE', { __v, documents: changes });
-    if (!caughtup && __v >= clientSnapshotVersion) {
+  p$.observe(({ event, projections, changes }) => {
+    emit('INFO', 'PERSIST/WRITE', { event, documents: changes });
+    if (!caughtup && event.id >= clientSnapshotVersion) {
       caughtup = true;
       emit('DEBUG', 'SUBSCRIPTION/CATCH_UP');
     }
@@ -83,7 +86,7 @@ async function getLatest(url) {
   }
 }
 
-function getRule(rulePath) {
+function esmInteropImport(rulePath) {
   const rules = require(rulePath);
 
   return rules.default || rules;
