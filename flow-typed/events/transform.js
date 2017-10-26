@@ -20,7 +20,7 @@ declare type UpdateCommand<Document> = {|
     update: {
       where: Query<Document>,
       changes: UpdateOperation<Document>,
-      upsert: void | boolean,
+      upsert?: boolean,
     },
   |},
 |};
