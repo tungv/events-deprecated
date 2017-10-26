@@ -8,7 +8,7 @@ module.exports = [
     execute: async event => {
       await sleep(100);
       console.log(
-        '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> side effect',
+        '------------------------------------ side effect',
         event.payload.uid
       );
     },
