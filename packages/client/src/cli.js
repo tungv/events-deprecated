@@ -245,6 +245,18 @@ function observeAndLog(finalConfig, logger, state, retryCount = 0) {
           p.meta.ts
         );
         return;
+
+      case 'SIDE_EFFECTS/COMPLETE':
+        const { successfulEffects, duration } = p.payload;
+        if (successfulEffects) {
+          logger(
+            p.meta.level,
+            `${successfulEffects} side effect(s) completed after ${(duration /
+              1000
+            ).toFixed(1)}s`,
+            p.meta.ts
+          );
+        }
     }
 
     logger('SILLY', inspect(p, { depth: null, colors: true }));

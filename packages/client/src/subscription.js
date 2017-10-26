@@ -3,12 +3,16 @@ const subscriber = require('@events/subscriber');
 
 // FIXME: make transform package commonjs compatible
 const makeTransform = require('@events/transform').default;
+const makeSideEffects = require('./makeSideEffects');
+
+const noop = () => {};
 
 module.exports = async function subscribeThread(config, emit, end) {
   const {
     subscribe: { serverUrl, burstCount, burstTime },
     persist: { store, driver },
     transform: { rulePath },
+    sideEffects: { sideEffectsPath },
   } = config;
 
   emit('DEBUG', 'CONFIG', { config });
@@ -16,6 +20,10 @@ module.exports = async function subscribeThread(config, emit, end) {
   const rules = esmInteropImport(rulePath);
 
   const transform = makeTransform(rules);
+
+  const applySideEffect = sideEffectsPath
+    ? makeSideEffects(esmInteropImport(sideEffectsPath))
+    : noop;
 
   const { persist, version } = require(driver);
 
@@ -66,11 +74,20 @@ module.exports = async function subscribeThread(config, emit, end) {
 
   const p$ = await persist({ _: [store] }, projection$);
 
-  p$.observe(({ event, projections, changes }) => {
+  p$.observe(async ({ event, projections, changes }) => {
     emit('INFO', 'PERSIST/WRITE', { event, documents: changes });
     if (!caughtup && event.id >= clientSnapshotVersion) {
       caughtup = true;
       emit('DEBUG', 'SUBSCRIPTION/CATCH_UP');
+    }
+
+    if (changes) {
+      const { successfulEffects, duration } = await applySideEffect({
+        event,
+        projections,
+        changes,
+      });
+      emit('INFO', 'SIDE_EFFECTS/COMPLETE', { successfulEffects, duration });
     }
   });
 
