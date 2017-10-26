@@ -183,13 +183,13 @@ function observeAndLog(finalConfig, logger, state, retryCount = 0) {
         return;
 
       case 'TRANSFORM/PROJECTION': {
-        const { payload: { projection } } = p;
-        const { __v } = projection;
+        const { payload: { projections } } = p;
+        const { __v } = projections;
 
-        const changes = Object.keys(projection)
+        const changes = Object.keys(projections)
           .filter(k => k !== '__v')
           .map(aggregateName =>
-            projection[aggregateName].map(change => {
+            projections[aggregateName].map(change => {
               const prefix = chalk.bold.italic(
                 `${aggregateName}_v${change.__pv}`
               );
@@ -230,7 +230,7 @@ function observeAndLog(finalConfig, logger, state, retryCount = 0) {
             `persistence completed. ${chalk.bold(
               p.payload.documents
             )} document(s) affected. Latest snapshot version is ${p.payload
-              .__v}`,
+              .event.id}`,
             p.meta.ts
           );
         }
@@ -245,6 +245,18 @@ function observeAndLog(finalConfig, logger, state, retryCount = 0) {
           p.meta.ts
         );
         return;
+
+      case 'SIDE_EFFECTS/COMPLETE':
+        const { successfulEffects, duration } = p.payload;
+        if (successfulEffects) {
+          logger(
+            p.meta.level,
+            `${successfulEffects} side effect(s) completed after ${(duration /
+              1000
+            ).toFixed(1)}s`,
+            p.meta.ts
+          );
+        }
     }
 
     logger('SILLY', inspect(p, { depth: null, colors: true }));

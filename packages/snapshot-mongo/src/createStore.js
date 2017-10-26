@@ -35,7 +35,7 @@ export function mapToOperation<Doc>(
   }
 
   if (cmd.op.update) {
-    const { changes, where } = cmd.op.update;
+    const { changes, where, upsert = false } = cmd.op.update;
     const update = set('$set.__v', version, changes);
     const filter = set('__v.$lt', version, where);
     return [
@@ -43,6 +43,7 @@ export function mapToOperation<Doc>(
         updateMany: {
           filter,
           update,
+          upsert,
         },
       },
     ];
@@ -51,11 +52,23 @@ export function mapToOperation<Doc>(
   return [];
 }
 
+type DispatchInput = {
+  event: any,
+  projections: UpdateRequest,
+};
+
+type DispatchOutput = {
+  event: any,
+  projections: UpdateRequest,
+  changes: number,
+};
+
 export default function createStore(db: DB) {
-  return async function dispatch(
-    request: UpdateRequest
-  ): Promise<{ __v: number, changes: number }> {
-    const { __v: version, ...collections } = request;
+  return async function dispatch({
+    event,
+    projections,
+  }: DispatchInput): Promise<DispatchOutput> {
+    const { __v: version, ...collections } = projections;
     const promises: Array<Promise<number>> = Object.keys(
       collections
     ).map(async aggregateName => {
@@ -108,7 +121,8 @@ export default function createStore(db: DB) {
 
     const changes = sum(await Promise.all(promises));
     return {
-      __v: version,
+      event,
+      projections,
       changes,
     };
   };

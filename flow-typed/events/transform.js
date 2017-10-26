@@ -20,6 +20,7 @@ declare type UpdateCommand<Document> = {|
     update: {
       where: Query<Document>,
       changes: UpdateOperation<Document>,
+      upsert?: boolean,
     },
   |},
 |};
@@ -38,7 +39,7 @@ declare type WithVersion<Document> = {
 } & Document;
 
 declare type UpdateBehaivor<Document> = {
-  upsert?: true,
+  upsert?: boolean,
   filter: {
     __v: any,
     [key: $Keys<Document>]: any,
