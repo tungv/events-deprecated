@@ -12,6 +12,7 @@ module.exports = async (config, configRoot) => {
     transform,
     monitor = {},
     sideEffects = {},
+    sideEffect = {},
   } = config;
 
   if (!subscribe) {
@@ -76,10 +77,11 @@ module.exports = async (config, configRoot) => {
 
   const absRulePath = path.resolve(configRoot, rulePath || rulesPath);
 
-  const { sideEffectsPath } = sideEffects;
+  const { sideEffectsPath, sideEffectPath } = sideEffects || sideEffect;
 
   const applyingSideEffect =
-    sideEffectsPath && hasModule(path.resolve(configRoot, sideEffectsPath));
+    sideEffectsPath &&
+    hasModule(path.resolve(configRoot, sideEffectsPath || sideEffectPath));
 
   const finalSideEffects = applyingSideEffect
     ? { sideEffectsPath: path.resolve(configRoot, sideEffectsPath) }
