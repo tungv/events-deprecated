@@ -1,4 +1,5 @@
 const path = require('path');
+const pkgUp = require('pkg-up');
 const InvalidConfigError = require('./InvalidConfigError');
 const InvalidEndpoint = require('./InvalidEndpoint');
 const detectDriver = require('./detectPersistDriver');
@@ -13,6 +14,7 @@ module.exports = async (config, configRoot) => {
     monitor = {},
     sideEffects = {},
     sideEffect = {},
+    hotReload = {},
   } = config;
 
   if (!subscribe) {
@@ -89,6 +91,8 @@ module.exports = async (config, configRoot) => {
 
   const { port } = monitor;
 
+  const watchPaths = await parseHotReload(hotReload, configRoot);
+
   return {
     subscribe: {
       serverUrl,
@@ -107,6 +111,9 @@ module.exports = async (config, configRoot) => {
       rulePath: absRulePath,
     },
     sideEffects: finalSideEffects,
+    hotReload: {
+      watchPaths,
+    },
     monitor: {
       port,
     },
@@ -135,3 +142,25 @@ async function validateServerUrl(url) {
     reason: 'not an event server',
   });
 }
+
+const parseHotReload = async (hotReload, configRoot) => {
+  const { enabled, enable } = hotReload;
+
+  if (enabled || enable) {
+    let { watchPaths: toWatch } = hotReload;
+
+    if (Array.isArray(toWatch)) {
+      return toWatch;
+    }
+
+    if (!toWatch) {
+      // Find out which directory to watch
+      const closestPkg = await pkgUp(configRoot);
+      return [closestPkg ? path.dirname(closestPkg) : process.cwd()];
+    }
+
+    return [toWatch];
+  }
+
+  return false;
+};

@@ -1,8 +1,12 @@
-const parseConfig = require('./parseConfig');
+const { watch } = require('chokidar');
+const debounce = require('debounce');
 const subscriber = require('@events/subscriber');
+const path = require('path');
 
 // FIXME: make transform package commonjs compatible
 const makeTransform = require('@events/transform').default;
+
+const parseConfig = require('./parseConfig');
 const makeSideEffects = require('./makeSideEffects');
 
 const noop = () => {};
@@ -13,6 +17,7 @@ module.exports = async function subscribeThread(config, emit, end) {
     persist: { store, driver },
     transform: { rulePath },
     sideEffects: { sideEffectsPath },
+    hotReload: { watchPaths },
   } = config;
 
   emit('DEBUG', 'CONFIG', { config });
@@ -21,9 +26,39 @@ module.exports = async function subscribeThread(config, emit, end) {
 
   const transform = makeTransform(rules);
 
-  const applySideEffect = sideEffectsPath
+  // using let because applySideEffect may be hot reloaded
+  let applySideEffect = sideEffectsPath
     ? makeSideEffects(esmInteropImport(sideEffectsPath))
     : noop;
+
+  if (watchPaths && sideEffectsPath) {
+    const watchConfig = {
+      ignoreInitial: true,
+      ignored: [
+        /\.git|node_modules|\.nyc_output|\.sass-cache|coverage/,
+        /\.swp$/,
+      ],
+    };
+    const watcher = watch(watchPaths, watchConfig);
+
+    emit('INFO', 'SIDE_EFFECTS/HOT_RELOAD_ENABLED', { watchPaths });
+
+    watcher.on(
+      'all',
+      debounce((event, filePath) => {
+        const location = path.relative(process.cwd(), filePath);
+
+        emit('INFO', 'SIDE_EFFECTS/FILE_CHANGED', { location });
+
+        // clear cache
+        clearRequireCache(watcher);
+
+        // patch
+        applySideEffect = makeSideEffects(esmInteropImport(sideEffectsPath));
+        emit('INFO', 'SIDE_EFFECTS/RELOADED', { location });
+      }, 300)
+    );
+  }
 
   const { persist, version } = require(driver);
 
@@ -81,12 +116,13 @@ module.exports = async function subscribeThread(config, emit, end) {
       emit('DEBUG', 'SUBSCRIPTION/CATCH_UP');
     }
 
-    if (changes) {
+    if (changes && sideEffectsPath) {
       const { successfulEffects, duration } = await applySideEffect({
         event,
         projections,
         changes,
       });
+
       emit('INFO', 'SIDE_EFFECTS/COMPLETE', { successfulEffects, duration });
     }
   });
@@ -107,4 +143,35 @@ function esmInteropImport(rulePath) {
   const rules = require(rulePath);
 
   return rules.default || rules;
+}
+
+function clearRequireCache(watcher) {
+  const watched = watcher.getWatched();
+  const toDelete = [];
+
+  for (const mainPath in watched) {
+    if (!{}.hasOwnProperty.call(watched, mainPath)) {
+      continue;
+    }
+
+    const subPaths = watched[mainPath];
+
+    for (const subPath of subPaths) {
+      const full = path.join(mainPath, subPath);
+      toDelete.push(full);
+    }
+
+    // Remove file that changed from the `require` cache
+    for (const item of toDelete) {
+      let location;
+
+      try {
+        location = require.resolve(item);
+      } catch (err) {
+        continue;
+      }
+
+      delete require.cache[location];
+    }
+  }
 }

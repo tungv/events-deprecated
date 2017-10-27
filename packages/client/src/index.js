@@ -14,7 +14,9 @@ const main = config => {
     const end = emitter.end.bind(emitter);
 
     // spawn subscription in next tick
-    subscribeThread(config, emit, end);
+    process.nextTick(() => {
+      subscribeThread(config, emit, end);
+    });
   });
 };
 

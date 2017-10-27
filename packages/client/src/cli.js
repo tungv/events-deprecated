@@ -257,6 +257,31 @@ function observeAndLog(finalConfig, logger, state, retryCount = 0) {
             p.meta.ts
           );
         }
+        return;
+
+      case 'SIDE_EFFECTS/HOT_RELOAD_ENABLED':
+        logger(
+          p.meta.level,
+          `hot reload enabled. Watching ${p.payload.watchPaths.length} file(s):
+  - ${p.payload.watchPaths.slice(0, 10).join('\n - ')}
+`,
+          p.meta.ts
+        );
+
+        return;
+
+      case 'SIDE_EFFECTS/FILE_CHANGED':
+        logger(
+          p.meta.level,
+          `File changes at ${p.payload
+            .location}. Hot reloading side effects...`,
+          p.meta.ts
+        );
+        return;
+
+      case 'SIDE_EFFECTS/RELOADED':
+        logger(p.meta.level, `Side effects reloaded!`, p.meta.ts);
+        return;
     }
 
     logger('SILLY', inspect(p, { depth: null, colors: true }));
