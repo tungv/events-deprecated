@@ -5,8 +5,8 @@ const makeShouldLog = require('./should-log');
 const METHODS = {
   SILLY: 'log',
   DEBUG: 'log',
-  WARN: 'warn',
   INFO: 'info',
+  WARN: 'warn',
   ERROR: 'error',
   FATAL: 'error',
 };
@@ -14,8 +14,8 @@ const METHODS = {
 const PREFIXES = {
   SILLY: chalk.bgWhite.black.bold.dim(' SLY '),
   DEBUG: chalk.bgWhite.black.bold(' DBG '),
-  WARN: chalk.bgYellow.bold(' WAR '),
   INFO: chalk.bgGreen.bold(' INF '),
+  WARN: chalk.bgYellow.black.bold(' WAR '),
   ERROR: chalk.bgRed.bold(' ERR '),
   FATAL: chalk.bgMagenta.bold(' FTL '),
 };
@@ -33,6 +33,10 @@ const makeLogger = logLevel => {
 
     if (typeof body === 'string') {
       body = [body];
+    }
+
+    if (typeof body === 'function') {
+      body = [body()];
     }
 
     const msg = `%s %s: ${body[0]}`;

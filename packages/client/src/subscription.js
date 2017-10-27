@@ -28,7 +28,7 @@ module.exports = async function subscribeThread(config, emit, end) {
 
   // using let because applySideEffect may be hot reloaded
   let applySideEffect = sideEffectsPath
-    ? makeSideEffects(esmInteropImport(sideEffectsPath))
+    ? makeSideEffects(esmInteropImport(sideEffectsPath), emit)
     : noop;
 
   if (watchPaths && sideEffectsPath) {

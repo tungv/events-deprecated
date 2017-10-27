@@ -282,6 +282,21 @@ function observeAndLog(finalConfig, logger, state, retryCount = 0) {
       case 'SIDE_EFFECTS/RELOADED':
         logger(p.meta.level, `Side effects reloaded!`, p.meta.ts);
         return;
+
+      case 'SIDE_EFFECTS/ERROR_THROWN':
+        const { error } = p.payload;
+        logger(
+          p.meta.level,
+          `Error thown inside a side effect. Message: ${chalk.bold(
+            error.message
+          )}`
+        );
+        logger(
+          'DEBUG',
+          () => `Error thown inside a side effect. Message: ${error.stack}`,
+          p.meta.ts
+        );
+        return;
     }
 
     logger('SILLY', inspect(p, { depth: null, colors: true }));

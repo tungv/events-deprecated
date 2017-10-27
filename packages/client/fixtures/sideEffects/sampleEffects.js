@@ -14,6 +14,11 @@ module.exports = [
     },
   },
   {
-    when: (event, projections) => {},
+    when: (event, projections) => {
+      return event.type === 'USER_EMAIL_UPDATED';
+    },
+    execute: async event => {
+      throw new Error('must failed');
+    },
   },
 ];
