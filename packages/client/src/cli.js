@@ -1,15 +1,18 @@
 #!/usr/bin/env node
-const { bold } = require('chalk');
 const mri = require('mri');
-const main = require('./index');
+const subscribe = require('./index');
 const path = require('path');
 const pkgDir = require('pkg-dir');
 const { inspect } = require('util');
 const chalk = require('chalk');
 
+const { bold } = chalk;
+
 const makeLogger = require('./logger');
 const parseConfig = require('./parseConfig');
 const renderError = require('./renderError');
+
+const messageHandlers = require('./cli-output');
 
 const brighten = require('brighten');
 const { version: pkgVersion } = require('../package.json');
@@ -21,7 +24,7 @@ if (process.stdout.isTTY) {
 console.info(bold(`@events/client v${pkgVersion}\n`));
 
 process.on('unhandledRejection', reason => {
-  console.log('Reason: ' + reason.stack);
+  console.log('unhandledRejection: Reason: ' + reason.stack);
 });
 
 const input = mri(process.argv.slice(2), {
@@ -36,16 +39,30 @@ const input = mri(process.argv.slice(2), {
 });
 const configPath = input.config;
 
-const parseConfigAndDisplayError = async (config, configDir, logger) => {
-  try {
-    return await parseConfig(config, configDir);
-  } catch (ex) {
-    renderError(ex, logger);
-    process.exit(1);
-  }
-};
+main();
 
-(async () => {
+function observeAndLog(finalConfig, logger, state, retryCount = 0) {
+  const stream$ = subscribe(finalConfig);
+
+  stream$.onEnd(() => {
+    const { retry, retryBackoff } = finalConfig.subscribe;
+    const nextRetry = retry + retryCount * retryBackoff;
+
+    state.retry_count = retryCount + 1;
+    state.next_retry = Date.now() + nextRetry;
+
+    logger('INFO', `reconnecting in ${nextRetry}ms...`);
+    setTimeout(() => {
+      observeAndLog(finalConfig, logger, state, retryCount + 1);
+    }, nextRetry);
+  });
+
+  const handler = switcher(messageHandlers, msg => msg.type, logger, state);
+
+  stream$.observe(handler);
+}
+
+async function main() {
   const state = {};
 
   const rootDir = await pkgDir();
@@ -95,210 +112,21 @@ const parseConfigAndDisplayError = async (config, configDir, logger) => {
   }
 
   observeAndLog(finalConfig, logger, state);
-})();
+}
 
-function observeAndLog(finalConfig, logger, state, retryCount = 0) {
-  const stream$ = main(finalConfig);
-
-  stream$.onEnd(() => {
-    const { retry, retryBackoff } = finalConfig.subscribe;
-    const nextRetry = retry + retryCount * retryBackoff;
-
-    state.retry_count = retryCount + 1;
-    state.next_retry = Date.now() + nextRetry;
-
-    logger('INFO', `reconnecting in ${nextRetry}ms...`);
-    setTimeout(() => {
-      observeAndLog(finalConfig, logger, state, retryCount + 1);
-    }, nextRetry);
-  });
-
-  stream$.observe(p => {
-    switch (p.type) {
-      case 'CONFIG':
-        logger(
-          p.meta.level,
-          `config content\n${inspect(p.payload.config, {
-            depth: null,
-            colors: true,
-          })}`,
-          p.meta.ts
-        );
-        return;
-
-      case 'SNAPSHOT/CONNECTED': {
-        state.snapshot_connected = true;
-        state.snapshot_connected_at = p.meta.ts;
-        logger(
-          p.meta.level,
-          [
-            `connected to %s. local snapshot version = %s`,
-            bold(finalConfig.persist.store),
-            bold(p.payload.clientSnapshotVersion),
-          ],
-          p.meta.ts
-        );
-        return;
-      }
-
-      case 'SERVER/CONNECTED':
-        retryCount = 0;
-        state.server_connected = true;
-        state.server_connected_at = p.meta.ts;
-        state.latest_event_received = p.payload.latestEvent;
-        state.latest_event_received_at = p.meta.ts;
-
-        logger(
-          p.meta.level,
-          [
-            `connected to %s. current version = %s`,
-            bold(finalConfig.subscribe.serverUrl),
-            bold(p.payload.latestEvent.id),
-          ],
-          p.meta.ts
-        );
-        return;
-
-      case 'SERVER/INCOMING_EVENT':
-        state.latest_event_received = p.payload.event;
-        state.latest_event_received_at = p.meta.ts;
-
-        logger(
-          p.meta.level,
-          [
-            `event #%s: type=%s`,
-            bold(p.payload.event.id),
-            bold(p.payload.event.type),
-          ],
-          p.meta.ts
-        );
-        return;
-
-      case 'SUBSCRIPTION/CATCH_UP':
-        logger(
-          p.meta.level,
-          'client has caught up with server. Still listening for new events...',
-          p.meta.ts
-        );
-        return;
-
-      case 'TRANSFORM/PROJECTION': {
-        const { payload: { projections } } = p;
-        const { __v } = projections;
-
-        const changes = Object.keys(projections)
-          .filter(k => k !== '__v')
-          .map(aggregateName =>
-            projections[aggregateName].map(change => {
-              const prefix = chalk.bold.italic(
-                `${aggregateName}_v${change.__pv}`
-              );
-
-              if (change.op.update) {
-                return `${prefix}: updating where ${JSON.stringify(
-                  change.op.update.where
-                )}`;
-              }
-              if (change.op.insert) {
-                return `${prefix}: inserting ${change.op.insert
-                  .length} document(s)`;
-              }
-            })
-          )
-          .reduce((a, b) => a.concat(b));
-
-        if (changes.length) {
-          state.latest_projection_created_at = p.meta.ts;
-          logger(
-            p.meta.level,
-            `${changes.length} update(s) after event #${__v}
-  - ${changes.join('\n- ')}`,
-            p.meta.ts
-          );
-        } else {
-          logger('DEBUG', chalk.dim('nothing happens'), p.meta.ts);
-        }
-
-        return;
-      }
-
-      case 'PERSIST/WRITE':
-        if (p.payload.documents > 0) {
-          state.latest_persistence_created_at = p.meta.ts;
-          logger(
-            p.meta.level,
-            `persistence completed. ${chalk.bold(
-              p.payload.documents
-            )} document(s) affected. Latest snapshot version is ${p.payload
-              .event.id}`,
-            p.meta.ts
-          );
-        }
-        return;
-
-      case 'SERVER/DISCONNECTED':
-        state.server_connected = false;
-        state.server_disconnected_at = Date.now();
-        logger(
-          p.meta.level,
-          `cannot connect to server at ${finalConfig.subscribe.serverUrl}`,
-          p.meta.ts
-        );
-        return;
-
-      case 'SIDE_EFFECTS/COMPLETE':
-        const { successfulEffects, duration } = p.payload;
-        if (successfulEffects) {
-          logger(
-            p.meta.level,
-            `${successfulEffects} side effect(s) completed after ${(duration /
-              1000
-            ).toFixed(1)}s`,
-            p.meta.ts
-          );
-        }
-        return;
-
-      case 'SIDE_EFFECTS/HOT_RELOAD_ENABLED':
-        logger(
-          p.meta.level,
-          `hot reload enabled. Watching ${p.payload.watchPaths.length} file(s):
-  - ${p.payload.watchPaths.slice(0, 10).join('\n - ')}
-`,
-          p.meta.ts
-        );
-
-        return;
-
-      case 'SIDE_EFFECTS/FILE_CHANGED':
-        logger(
-          p.meta.level,
-          `File changes at ${p.payload
-            .location}. Hot reloading side effects...`,
-          p.meta.ts
-        );
-        return;
-
-      case 'SIDE_EFFECTS/RELOADED':
-        logger(p.meta.level, `Side effects reloaded!`, p.meta.ts);
-        return;
-
-      case 'SIDE_EFFECTS/ERROR_THROWN':
-        const { error } = p.payload;
-        logger(
-          p.meta.level,
-          `Error thown inside a side effect. Message: ${chalk.bold(
-            error.message
-          )}`
-        );
-        logger(
-          'DEBUG',
-          () => `Error thown inside a side effect. Message: ${error.stack}`,
-          p.meta.ts
-        );
-        return;
+function switcher(map, getter, ...args) {
+  return msg => {
+    const fn = map[getter(msg)] || map._;
+    if (typeof fn === 'function') {
+      return fn(msg, ...args);
     }
-
-    logger('SILLY', inspect(p, { depth: null, colors: true }));
-  });
+  };
+}
+async function parseConfigAndDisplayError(config, configDir, logger) {
+  try {
+    return await parseConfig(config, configDir);
+  } catch (ex) {
+    renderError(ex, logger);
+    process.exit(1);
+  }
 }
