@@ -1,12 +1,15 @@
 const sleep = async ms => new Promise(resolve => setTimeout(resolve, ms));
 
+let delay = 0;
+
 module.exports = [
   {
     when: {
       type: 'USER_REGISTERED',
     },
     execute: async event => {
-      await sleep(100);
+      delay += 100;
+      await sleep(delay);
       console.log(
         '------------------------------------ side effect',
         event.payload.uid

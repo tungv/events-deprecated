@@ -186,11 +186,11 @@ persistence completed. 1 document(s) affected. Latest snapshot version is 7
 persistence completed. 1 document(s) affected. Latest snapshot version is 8
 persistence completed. 1 document(s) affected. Latest snapshot version is 9
 side effect 9d5901c0-4228-4832-adb2-41cb3a8797cd
+1 side effect(s) completed after 0.1s
 side effect 6d90bd42-62ef-4d3c-91aa-6f517fdcc8da
-1 side effect(s) completed after 0.1s
-1 side effect(s) completed after 0.1s
+1 side effect(s) completed after 0.2s
 side effect 3822c08a-2967-40bb-8c99-d3c76b569561
-1 side effect(s) completed after 0.1s
+1 side effect(s) completed after 0.3s
 
 
 Interrupted!
