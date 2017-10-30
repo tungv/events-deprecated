@@ -1257,6 +1257,12 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+kefir-stdin-json@^1.0.0-rc.15:
+  version "1.0.0-rc.15"
+  resolved "https://registry.yarnpkg.com/kefir-stdin-json/-/kefir-stdin-json-1.0.0-rc.15.tgz#6c9ddbe9d31b7b2959245164ffa6e7c0a7c15e09"
+  dependencies:
+    kefir "^3.7.4"
+
 kefir@^3.7.4:
   version "3.7.4"
   resolved "https://registry.yarnpkg.com/kefir/-/kefir-3.7.4.tgz#edc6192f686be611ac5c882426f74bf0ee287ef7"
