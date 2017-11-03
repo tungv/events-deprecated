@@ -46,14 +46,13 @@ function observeAndLog(finalConfig, logger, state) {
 
   stream$.onEnd(() => {
     const { retry, retryBackoff } = finalConfig.subscribe;
-    const nextRetry = retry + retryCount * retryBackoff;
+    const nextRetry = retry + state.retry_count * retryBackoff;
 
-    state.retry_count = retryCount + 1;
+    state.retry_count++;
     state.next_retry = Date.now() + nextRetry;
 
     logger('INFO', `reconnecting in ${nextRetry}ms...`);
     setTimeout(() => {
-      state.retryCount++;
       observeAndLog(finalConfig, logger, state);
     }, nextRetry);
   });
@@ -65,7 +64,7 @@ function observeAndLog(finalConfig, logger, state) {
 
 async function main() {
   const state = {
-    retryCount: 0,
+    retry_count: 0,
   };
 
   const rootDir = await pkgDir();
