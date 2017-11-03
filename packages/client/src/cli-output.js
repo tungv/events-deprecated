@@ -33,7 +33,7 @@ const messageHandlers = {
   },
 
   'SERVER/CONNECTED': (message, logger, state) => {
-    retryCount = 0;
+    state.retryCount = 0;
     state.server_connected = true;
     state.server_connected_at = message.meta.ts;
     state.latest_event_received = message.payload.latestEvent;

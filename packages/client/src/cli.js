@@ -41,7 +41,7 @@ const configPath = input.config;
 
 main();
 
-function observeAndLog(finalConfig, logger, state, retryCount = 0) {
+function observeAndLog(finalConfig, logger, state) {
   const stream$ = subscribe(finalConfig);
 
   stream$.onEnd(() => {
@@ -53,7 +53,8 @@ function observeAndLog(finalConfig, logger, state, retryCount = 0) {
 
     logger('INFO', `reconnecting in ${nextRetry}ms...`);
     setTimeout(() => {
-      observeAndLog(finalConfig, logger, state, retryCount + 1);
+      state.retryCount++;
+      observeAndLog(finalConfig, logger, state);
     }, nextRetry);
   });
 
@@ -63,7 +64,9 @@ function observeAndLog(finalConfig, logger, state, retryCount = 0) {
 }
 
 async function main() {
-  const state = {};
+  const state = {
+    retryCount: 0,
+  };
 
   const rootDir = await pkgDir();
   const configAbsPath = path.resolve(rootDir, configPath);
