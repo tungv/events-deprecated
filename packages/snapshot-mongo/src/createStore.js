@@ -13,6 +13,8 @@ import {
   path,
 } from 'lodash/fp';
 
+import MongoHeartbeat from 'mongo-heartbeat';
+
 export function mapToOperation<Doc>(
   version: number,
   cmd: Command<Doc>
@@ -64,6 +66,19 @@ type DispatchOutput = {
 };
 
 export default function createStore(db: DB) {
+  const hb = MongoHeartbeat(db, {
+    interval: 5000,
+    timeout: 10000,
+    tolerance: 2,
+  });
+
+  hb.on('error', err => {
+    console.error('mongodb didnt respond the heartbeat message');
+    process.nextTick(function() {
+      process.exit(1);
+    });
+  });
+
   return async function dispatch({
     event,
     projections,
