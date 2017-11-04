@@ -84,7 +84,7 @@ const messageHandlers = {
       .filter(k => k !== '__v')
       .map(aggregateName =>
         projections[aggregateName].map(change => {
-          const prefix = chalk.bold.italic(`${aggregateName}_v${change.__pv}`);
+          const prefix = bold.italic(`${aggregateName}_v${change.__pv}`);
 
           if (change.op.update) {
             return `${prefix}: updating where ${JSON.stringify(
@@ -127,7 +127,7 @@ const messageHandlers = {
 
       const result = ` ${batchString}, changes: ${documents}, latest local version: ${event.id} `;
 
-      const msg = `persistence completed.${chalk.bold.bgBlue(result)}`;
+      const msg = `persistence completed.${bold.bgBlue(result)}`;
       logger(message.meta.level, msg, message.meta.ts);
     }
     return;
@@ -189,7 +189,7 @@ const messageHandlers = {
     const { error } = message.payload;
     logger(
       message.meta.level,
-      `Error thown inside a side effect. Message: ${chalk.bold(error.message)}`
+      `Error thown inside a side effect. Message: ${bold(error.message)}`
     );
     logger(
       'DEBUG',
