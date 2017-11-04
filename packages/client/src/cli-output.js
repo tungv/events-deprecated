@@ -20,12 +20,26 @@ const messageHandlers = {
   'SNAPSHOT/CONNECTED': (message, logger, state) => {
     state.snapshot_connected = true;
     state.snapshot_connected_at = message.meta.ts;
+
+    const { snapshotVersion, explain } = message.payload;
+    logger(
+      'DEBUG',
+      () =>
+        'versions:\n' +
+        explain
+          .map(
+            ({ name, pv, version }) =>
+              ` - ${bold(name)} v${bold(pv)}: ${version}`
+          )
+          .join('\n')
+    );
+
     logger(
       message.meta.level,
       [
         `connected to %s. local snapshot version = %s`,
         bold(state.config.persist.store),
-        bold(message.payload.clientSnapshotVersion),
+        bold(snapshotVersion),
       ],
       message.meta.ts
     );
@@ -125,9 +139,9 @@ const messageHandlers = {
 
       state.latest_persistence_created_at = message.meta.ts;
 
-      const result = ` ${batchString}, changes: ${documents}, latest local version: ${event.id} `;
+      const result = `${batchString}, changes: ${documents}, latest local version: ${event.id}`;
 
-      const msg = `persistence completed.${bold.bgBlue(result)}`;
+      const msg = `persistence completed. ${bold.bgBlue(result)}`;
       logger(message.meta.level, msg, message.meta.ts);
     }
     return;

@@ -110,7 +110,7 @@ describe('cli', () => {
         type: 'USER_EMAIL_UPDATED',
         payload: {
           uid: '9d5901c0-4228-4832-adb2-41cb3a8797cd',
-          email: 'updated',
+          email: 'failing',
         },
       },
       {
@@ -144,8 +144,7 @@ module.exports = {
   monitor: {
     port: 43333,
   },
-};
-`;
+};`;
 
     const configPath = '/tmp/sample.config.js';
     fs.writeFileSync(configPath, config);
@@ -154,46 +153,59 @@ module.exports = {
     await db.dropDatabase({});
 
     const child = execa('node', ['src/cli.js', '-c', configPath]);
-    // child.stderr.pipe(process.stderr);
 
-    await delay(require('is-ci') ? 3000 : 1500);
-    child.kill('SIGINT');
-    server.close();
+    child.stdout.once('data', async () => {
+      await delay(require('is-ci') ? 3000 : 1500);
+      child.kill('SIGINT');
+      server.close();
+    });
 
     const result = await child;
-
     console.log(result.stdout);
-
     const log = result.stdout
       .split('\n')
       .map(line => line.slice(' INF  2017-10-15T17:06:19.215+07:00: '.length))
       .join('\n');
 
-    //     expect(log).toEqual(`
-    //
-    // log level: INFO
-    // loading config from: /tmp/sample.config.js
-    // monitor server is listening on port 43333
-    // connected to ${url}. current version = 7
-    // connected to mongodb://localhost/client_test. local snapshot version = 0
-    // persistence completed. 1 document(s) affected. Latest snapshot version is 1
-    // persistence completed. 2 document(s) affected. Latest snapshot version is 2
-    // persistence completed. 2 document(s) affected. Latest snapshot version is 3
-    // persistence completed. 1 document(s) affected. Latest snapshot version is 4
-    // persistence completed. 1 document(s) affected. Latest snapshot version is 5
-    // persistence completed. 2 document(s) affected. Latest snapshot version is 6
-    // persistence completed. 1 document(s) affected. Latest snapshot version is 7
-    // persistence completed. 1 document(s) affected. Latest snapshot version is 8
-    // persistence completed. 1 document(s) affected. Latest snapshot version is 9
-    // side effect 9d5901c0-4228-4832-adb2-41cb3a8797cd
-    // 1 side effect(s) completed after 0.1s
-    // side effect 6d90bd42-62ef-4d3c-91aa-6f517fdcc8da
-    // 1 side effect(s) completed after 0.2s
-    // side effect 3822c08a-2967-40bb-8c99-d3c76b569561
-    // 1 side effect(s) completed after 0.3s
-    //
-    //
-    // Interrupted!
-    // Exiting with code 0. Bye!`);
+    expect(log).toEqual({
+      asymmetricMatch: actual =>
+        actual ===
+          `
+
+log level: INFO
+loading config from: /tmp/sample.config.js
+monitor server is listening on port 43333
+connected to ${url}. current version = 7
+connected to mongodb://localhost/client_test. local snapshot version = 0
+persistence completed. events: #1 - #7, changes: 10, latest local version: 7
+persistence completed. events: #8 - #9, changes: 2, latest local version: 9
+side effect 9d5901c0-4228-4832-adb2-41cb3a8797cd
+side effect 6d90bd42-62ef-4d3c-91aa-6f517fdcc8da
+side effect 3822c08a-2967-40bb-8c99-d3c76b569561
+3 side effect(s) completed after 0.3s
+
+
+Interrupted!
+Exiting with code 0. Bye!` ||
+        actual ===
+          `
+
+log level: INFO
+loading config from: /tmp/sample.config.js
+monitor server is listening on port 43333
+connected to ${url}. current version = 7
+connected to mongodb://localhost/client_test. local snapshot version = 0
+persistence completed. events: #1 - #7, changes: 10, latest local version: 7
+persistence completed. event: #8, changes: 1, latest local version: 8
+persistence completed. event: #9, changes: 1, latest local version: 9
+side effect 9d5901c0-4228-4832-adb2-41cb3a8797cd
+side effect 6d90bd42-62ef-4d3c-91aa-6f517fdcc8da
+side effect 3822c08a-2967-40bb-8c99-d3c76b569561
+3 side effect(s) completed after 0.3s
+
+
+Interrupted!
+Exiting with code 0. Bye!`,
+    });
   });
 });
