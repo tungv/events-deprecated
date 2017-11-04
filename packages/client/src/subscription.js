@@ -109,19 +109,21 @@ module.exports = async function subscribeThread(config, emit, end) {
 
   const p$ = await persist({ _: [store] }, projection$);
 
-  p$.observe(async ({ event, projections, changes }) => {
-    emit('INFO', 'PERSIST/WRITE', { event, documents: changes });
+  p$.observe(async out => {
+    const { requests, changes } = out;
+    const { event } = requests[requests.length - 1];
+    const { event: firstEvent } = requests[0];
+    const batch = [firstEvent.id, event.id];
+
+    emit('INFO', 'PERSIST/WRITE', { event, documents: changes, batch });
+
     if (!caughtup && event.id >= clientSnapshotVersion) {
       caughtup = true;
       emit('DEBUG', 'SUBSCRIPTION/CATCH_UP');
     }
 
     if (changes && sideEffectsPath) {
-      const { successfulEffects, duration } = await applySideEffect({
-        event,
-        projections,
-        changes,
-      });
+      const { successfulEffects, duration } = await applySideEffect(requests);
 
       emit('INFO', 'SIDE_EFFECTS/COMPLETE', { successfulEffects, duration });
     }

@@ -116,16 +116,19 @@ const messageHandlers = {
   },
 
   'PERSIST/WRITE': (message, logger, state) => {
-    if (message.payload.documents > 0) {
+    const { batch, documents, event } = message.payload;
+    if (documents > 0) {
+      const batchString =
+        batch[0] === batch[1]
+          ? `event: #${batch[0]}`
+          : `events: #${batch[0]} - #${batch[1]}`;
+
       state.latest_persistence_created_at = message.meta.ts;
-      logger(
-        message.meta.level,
-        `persistence completed. ${chalk.bold(
-          message.payload.documents
-        )} document(s) affected. Latest snapshot version is ${message.payload
-          .event.id}`,
-        message.meta.ts
-      );
+
+      const result = ` ${batchString}, changes: ${documents}, latest local version: ${event.id} `;
+
+      const msg = `persistence completed.${chalk.bold.bgBlue(result)}`;
+      logger(message.meta.level, msg, message.meta.ts);
     }
     return;
   },
