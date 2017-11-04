@@ -1,43 +1,32 @@
-import {
-  filter,
-  flow,
-  identity,
-  initial,
-  join,
-  last,
-  map,
-  over,
-  path,
-  split,
-} from 'lodash/fp';
+import { MongoClient } from 'mongodb';
+import { flow, map, min } from 'lodash/fp';
 
 const test = reg => string => reg.test(string);
 const isVersionedCollectionName = test(/^.*_v\d*\.\d*\.\d*$/);
 
-export default async db => {
-  const collections = await db.collections();
+export default async ({ store }, aggrAndPVs) => {
+  const db = await MongoClient.connect(store);
 
-  const tuples = flow(
-    filter(flow(path('collectionName'), isVersionedCollectionName)),
-    map(
-      over([
-        flow(path('collectionName'), split('_v'), initial, join('_v')),
-        flow(path('collectionName'), split('_v'), last),
-        identity,
-      ])
-    )
-  )(collections);
+  const promises = aggrAndPVs.map(async ({ name, version }) => {
+    const collName = `${name}_v${version}`;
 
-  const r = [];
+    const coll = db.collection(collName);
 
-  for (const tuple of tuples) {
-    const { __v } = await tuple[2].findOne(
+    const ret = await coll.findOne(
       {},
       { sort: { __v: -1 }, fields: { __v: 1 } }
     );
 
-    r.push({ name: tuple[0], pv: tuple[1], version: __v });
-  }
+    return {
+      name,
+      pv: version,
+      version: ret ? ret.__v : 0,
+    };
+  });
 
-  return r;
+  const explain = await Promise.all(promises);
+
+  const snapshotVersion = flow(map('version'), min)(explain);
+
+  return { snapshotVersion, explain };
 };

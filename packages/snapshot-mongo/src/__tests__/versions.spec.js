@@ -1,5 +1,4 @@
 import { MongoClient } from 'mongodb';
-import { flow } from 'lodash/fp';
 
 import getVerions from '../version';
 
@@ -65,16 +64,33 @@ describe('get versions', () => {
         { __v: 65, name: 'test' },
       ]);
 
-    const versions = await getVerions(db);
-
-    expect(versions).toEqual(
-      expect.arrayContaining([
-        { name: 'users', pv: '1.0.0', version: 5 },
-        { name: 'users', pv: '1.1.0', version: 9 },
-        { name: 'users', pv: '2.0.0', version: 35 },
-        { name: 'with_v_in_name', pv: '2.0.0', version: 55 },
-        { name: 'with_v_in_name', pv: '3.0.0', version: 65 },
-      ])
+    const versions = await getVerions(
+      {
+        store: process.env.MONGO_TEST,
+      },
+      [
+        {
+          name: 'users',
+          version: '1.0.0',
+        },
+        {
+          name: 'users',
+          version: '2.0.0',
+        },
+        {
+          name: 'with_v_in_name',
+          version: '3.0.0',
+        },
+      ]
     );
+
+    expect(versions).toEqual({
+      snapshotVersion: 5,
+      explain: [
+        { name: 'users', pv: '1.0.0', version: 5 },
+        { name: 'users', pv: '2.0.0', version: 35 },
+        { name: 'with_v_in_name', pv: '3.0.0', version: 65 },
+      ],
+    });
   });
 });
