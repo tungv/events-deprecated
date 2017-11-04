@@ -28,29 +28,34 @@ module.exports = (array, emit) => {
     }
   };
 
-  return async ctx => {
+  return async requests => {
     const start = Date.now();
-    const allPromises = array.map(async sideEffect => {
-      const { when, execute } = sideEffect;
 
-      if (!when || !execute) {
+    const promises = [];
+
+    requests.forEach(ctx => {
+      array.forEach(sideEffect => {
+        const { when, execute } = sideEffect;
+
+        if (!when || !execute) {
+          return false;
+        }
+
+        const successfullyExecute = safely(() =>
+          execute(ctx.event, ctx.projections, ctx.changes)
+        );
+
+        const satisfied = isMatch(when, ctx.event);
+
+        if (satisfied) {
+          return promises.push(successfullyExecute());
+        }
+
         return false;
-      }
-
-      const successfullyExecute = safely(() =>
-        execute(ctx.event, ctx.projections, ctx.changes)
-      );
-
-      const satisfied = isMatch(when, ctx.event);
-
-      if (satisfied) {
-        return successfullyExecute();
-      }
-
-      return false;
+      });
     });
 
-    const allDone = await Promise.all(allPromises);
+    const allDone = await Promise.all(promises);
     return {
       successfulEffects: allDone.filter(success => success).length,
       duration: Date.now() - start,

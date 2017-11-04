@@ -3,8 +3,6 @@ const kefir = require('kefir');
 const parseMessage = require('./parseMessage');
 
 const subscribe = (url, headers = {}) => {
-  const stream = request(url, { headers });
-
   const raw$ = kefir.stream(emitter => {
     const emitString = data => {
       emitter.emit(String(data));
@@ -18,6 +16,7 @@ const subscribe = (url, headers = {}) => {
       emitter.end();
     };
 
+    const stream = request(url, { headers });
     stream.on('data', emitString);
     stream.on('error', errorString);
     stream.on('end', end);

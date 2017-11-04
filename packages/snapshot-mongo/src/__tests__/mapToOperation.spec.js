@@ -4,10 +4,7 @@ import { mapToOperation } from '../createStore';
 describe('mapToOperation()', () => {
   it('should map insert command', () => {
     const cmd = {
-      __pv: '1.0.0',
-      op: {
-        insert: [{ age: 21, name: 'User 1' }, { age: 22, name: 'User 2' }],
-      },
+      insert: [{ age: 21, name: 'User 1' }, { age: 22, name: 'User 2' }],
     };
 
     const ops = mapToOperation(1000, cmd);
@@ -35,13 +32,10 @@ describe('mapToOperation()', () => {
 
   it('should map update command', () => {
     const cmd = {
-      __pv: '1.0.0',
-      op: {
-        update: {
-          where: { name: 'User 2' },
-          changes: {
-            $set: { age: 32 },
-          },
+      update: {
+        where: { name: 'User 2' },
+        changes: {
+          $set: { age: 32 },
         },
       },
     };
@@ -54,6 +48,7 @@ describe('mapToOperation()', () => {
           update: {
             $set: { age: 32, __v: 1000 },
           },
+          upsert: false,
         },
       },
     ]);

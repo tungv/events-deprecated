@@ -1,38 +1,32 @@
-#!/usr/bin/env node
-/* eslint-disable no-console */
 import { MongoClient } from 'mongodb';
-import {
-  first,
-  map,
-  groupBy,
-  flow,
-  mapValues,
-  toArray,
-  min,
-  flatten,
-} from 'lodash/fp';
+import { flow, map, min } from 'lodash/fp';
 
-export const getVersions = async db => {
-  const versions = await db
-    .collection('versions')
-    .find({})
-    .toArray();
+const test = reg => string => reg.test(string);
+const isVersionedCollectionName = test(/^.*_v\d*\.\d*\.\d*$/);
 
-  const byAggregate = groupBy('aggregate', versions);
-
-  const byAggregateAndVersions = mapValues(
-    flow(groupBy('__pv'), mapValues(flow(map('__v'), first)))
-  )(byAggregate);
-
-  return byAggregateAndVersions;
-};
-
-export const getLastSeen = flow(toArray, map(toArray), flatten, min);
-
-export default (async function getLatest({ store }) {
+export default async ({ store }, aggrAndPVs) => {
   const db = await MongoClient.connect(store);
-  const snapshotVersions = await getVersions(db);
-  const lastSeen = getLastSeen(snapshotVersions);
 
-  return lastSeen || 0;
-});
+  const promises = aggrAndPVs.map(async ({ name, version }) => {
+    const collName = `${name}_v${version}`;
+
+    const coll = db.collection(collName);
+
+    const ret = await coll.findOne(
+      {},
+      { sort: { __v: -1 }, fields: { __v: 1 } }
+    );
+
+    return {
+      name,
+      pv: version,
+      version: ret ? ret.__v : 0,
+    };
+  });
+
+  const explain = await Promise.all(promises);
+
+  const snapshotVersion = flow(map('version'), min)(explain);
+
+  return { snapshotVersion, explain };
+};

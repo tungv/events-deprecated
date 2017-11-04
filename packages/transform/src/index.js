@@ -1,15 +1,16 @@
 import {
+  assign,
+  attempt,
   filter,
   flatten,
   flow,
+  isError,
   map,
   mapValues,
-  assign,
-  attempt,
   negate,
-  isError,
+  toPairs,
+  uniqBy,
 } from 'lodash/fp';
-
 import arrify from 'arrify';
 
 export const applyTransforms = collectionTransforms => event =>
@@ -38,6 +39,14 @@ export const mergeTransforms = mapsOfCollectionTransforms => {
     return mapValues(fn => fn(event))(mapOfFn);
   };
 };
+
+export const getMeta = flow(
+  toPairs,
+  map(([name, rules]) =>
+    uniqBy('version', rules).map(r => ({ name, version: r.version }))
+  ),
+  flatten
+);
 
 export default collectionTransforms => event =>
   flow(mergeTransforms(collectionTransforms), assign({ __v: event.id }))(event);

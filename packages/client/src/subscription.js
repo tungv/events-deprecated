@@ -5,6 +5,7 @@ const path = require('path');
 
 // FIXME: make transform package commonjs compatible
 const makeTransform = require('@events/transform').default;
+const { getMeta } = require('@events/transform');
 
 const parseConfig = require('./parseConfig');
 const makeSideEffects = require('./makeSideEffects');
@@ -23,6 +24,7 @@ module.exports = async function subscribeThread(config, emit, end) {
   emit('DEBUG', 'CONFIG', { config });
 
   const rules = esmInteropImport(rulePath);
+  const aggreateNameAndPVs = getMeta(rules);
 
   const transform = makeTransform(rules);
 
@@ -61,7 +63,6 @@ module.exports = async function subscribeThread(config, emit, end) {
   }
 
   const { persist, version } = require(driver);
-
   // check server version
   const latestEvent = await getLatest(serverUrl);
   if (!latestEvent) {
@@ -74,9 +75,11 @@ module.exports = async function subscribeThread(config, emit, end) {
   const serverLatest = latestEvent.id;
 
   // check snapshot version
-  const clientSnapshotVersion = await version(config.persist);
+  const snapshotVersions = await version(config.persist, aggreateNameAndPVs);
 
-  emit('INFO', 'SNAPSHOT/CONNECTED', { clientSnapshotVersion });
+  const { snapshotVersion: clientSnapshotVersion } = snapshotVersions;
+
+  emit('INFO', 'SNAPSHOT/CONNECTED', snapshotVersions);
 
   let caughtup = false;
   if (serverLatest === clientSnapshotVersion) {
@@ -109,19 +112,21 @@ module.exports = async function subscribeThread(config, emit, end) {
 
   const p$ = await persist({ _: [store] }, projection$);
 
-  p$.observe(async ({ event, projections, changes }) => {
-    emit('INFO', 'PERSIST/WRITE', { event, documents: changes });
+  p$.observe(async out => {
+    const { requests, changes } = out;
+    const { event } = requests[requests.length - 1];
+    const { event: firstEvent } = requests[0];
+    const batch = [firstEvent.id, event.id];
+
+    emit('INFO', 'PERSIST/WRITE', { event, documents: changes, batch });
+
     if (!caughtup && event.id >= clientSnapshotVersion) {
       caughtup = true;
       emit('DEBUG', 'SUBSCRIPTION/CATCH_UP');
     }
 
     if (changes && sideEffectsPath) {
-      const { successfulEffects, duration } = await applySideEffect({
-        event,
-        projections,
-        changes,
-      });
+      const { successfulEffects, duration } = await applySideEffect(requests);
 
       emit('INFO', 'SIDE_EFFECTS/COMPLETE', { successfulEffects, duration });
     }

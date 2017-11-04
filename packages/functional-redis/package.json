@@ -1,6 +1,6 @@
 {
   "name": "redis-functional",
-  "version": "1.0.0-beta.5",
+  "version": "2.2.0",
   "main": "src",
   "dependencies": {
     "curry": "^1.2.0",

@@ -20,12 +20,26 @@ const messageHandlers = {
   'SNAPSHOT/CONNECTED': (message, logger, state) => {
     state.snapshot_connected = true;
     state.snapshot_connected_at = message.meta.ts;
+
+    const { snapshotVersion, explain } = message.payload;
+    logger(
+      'DEBUG',
+      () =>
+        'versions:\n' +
+        explain
+          .map(
+            ({ name, pv, version }) =>
+              ` - ${bold(name)} v${bold(pv)}: ${version}`
+          )
+          .join('\n')
+    );
+
     logger(
       message.meta.level,
       [
         `connected to %s. local snapshot version = %s`,
         bold(state.config.persist.store),
-        bold(message.payload.clientSnapshotVersion),
+        bold(snapshotVersion),
       ],
       message.meta.ts
     );
@@ -33,7 +47,7 @@ const messageHandlers = {
   },
 
   'SERVER/CONNECTED': (message, logger, state) => {
-    retryCount = 0;
+    state.retry_count = 0;
     state.server_connected = true;
     state.server_connected_at = message.meta.ts;
     state.latest_event_received = message.payload.latestEvent;
@@ -84,7 +98,7 @@ const messageHandlers = {
       .filter(k => k !== '__v')
       .map(aggregateName =>
         projections[aggregateName].map(change => {
-          const prefix = chalk.bold.italic(`${aggregateName}_v${change.__pv}`);
+          const prefix = bold.italic(`${aggregateName}_v${change.__pv}`);
 
           if (change.op.update) {
             return `${prefix}: updating where ${JSON.stringify(
@@ -116,16 +130,19 @@ const messageHandlers = {
   },
 
   'PERSIST/WRITE': (message, logger, state) => {
-    if (message.payload.documents > 0) {
+    const { batch, documents, event } = message.payload;
+    if (documents > 0) {
+      const batchString =
+        batch[0] === batch[1]
+          ? `event: #${batch[0]}`
+          : `events: #${batch[0]} - #${batch[1]}`;
+
       state.latest_persistence_created_at = message.meta.ts;
-      logger(
-        message.meta.level,
-        `persistence completed. ${chalk.bold(
-          message.payload.documents
-        )} document(s) affected. Latest snapshot version is ${message.payload
-          .event.id}`,
-        message.meta.ts
-      );
+
+      const result = `${batchString}, changes: ${documents}, latest local version: ${event.id}`;
+
+      const msg = `persistence completed. ${bold.bgBlue(result)}`;
+      logger(message.meta.level, msg, message.meta.ts);
     }
     return;
   },
@@ -186,7 +203,7 @@ const messageHandlers = {
     const { error } = message.payload;
     logger(
       message.meta.level,
-      `Error thown inside a side effect. Message: ${chalk.bold(error.message)}`
+      `Error thown inside a side effect. Message: ${bold(error.message)}`
     );
     logger(
       'DEBUG',
