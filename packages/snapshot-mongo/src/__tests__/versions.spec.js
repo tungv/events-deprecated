@@ -1,69 +1,80 @@
 import { MongoClient } from 'mongodb';
 import { flow } from 'lodash/fp';
 
-import cli, { getLastSeen, getVersions, inSemverRange } from '../version';
+import getVerions from '../version';
 
 const getClient = () => MongoClient.connect(process.env.MONGO_TEST);
 
 describe('get versions', () => {
-  it('should query all versions', async () => {
+  it('should fetch all collections and get the latest __v', async () => {
     const db = await getClient();
 
     try {
-      await db.dropCollection('versions');
+      await db.dropCollection('users_v1.0.0');
+      await db.dropCollection('users_v1.1.0');
+      await db.dropCollection('users_v2.0.0');
+      await db.dropCollection('with_v_in_name_v2.0.0');
+      await db.dropCollection('with_v_in_name_v3.0.0');
     } catch (ex) {}
 
-    await db
-      .collection('versions')
-      .insertMany([
-        { __v: 3, __pv: '1.0.0', aggregate: 'users' },
-        { __v: 5, __pv: '1.1.0', aggregate: 'users' },
-        { __v: 4, __pv: '2.0.0', aggregate: 'users' },
-        { __v: 5, __pv: '1.1.0', aggregate: 'posts' },
-        { __v: 4, __pv: '2.0.0', aggregate: 'posts' },
-      ]);
-
-    const versions = await getVersions(db);
-    expect(versions).toEqual({
-      users: { '1.0.0': 3, '1.1.0': 5, '2.0.0': 4 },
-      posts: { '1.1.0': 5, '2.0.0': 4 },
-    });
-  });
-
-  it('should get the oldest snapshot version amongst all projection versions', () => {
-    const versions = {
-      users: { '1.0.0': 3, '1.1.0': 5, '2.0.0': 4 },
-      posts: { '1.1.0': 5, '2.0.0': 4 },
-    };
-
-    const actual = getLastSeen(versions);
-    expect(actual).toBe(3);
-  });
-});
-
-describe('cli tool', () => {
-  it('should print without version range', async () => {
-    const db = await getClient();
-
-    try {
-      await db.dropCollection('versions');
-    } catch (ex) {}
+    await db.collection('not_related').insert({ any: 'thing' });
 
     await db
-      .collection('versions')
+      .collection('users_v1.0.0')
       .insertMany([
-        { __v: 30, __pv: '1.0.0', aggregate: 'users' },
-        { __v: 50, __pv: '1.1.0', aggregate: 'users' },
-        { __v: 40, __pv: '2.0.0', aggregate: 'users' },
-        { __v: 50, __pv: '1.1.0', aggregate: 'posts' },
-        { __v: 40, __pv: '2.0.0', aggregate: 'posts' },
+        { __v: 1, name: 'test' },
+        { __v: 2, name: 'test' },
+        { __v: 3, name: 'test' },
+        { __v: 4, name: 'test' },
+        { __v: 5, name: 'test' },
+      ]);
+    await db
+      .collection('users_v1.1.0')
+      .insertMany([
+        { __v: 3, name: 'test' },
+        { __v: 4, name: 'test' },
+        { __v: 5, name: 'test' },
+        { __v: 7, name: 'test' },
+        { __v: 9, name: 'test' },
+      ]);
+    await db
+      .collection('users_v2.0.0')
+      .insertMany([
+        { __v: 31, name: 'test' },
+        { __v: 32, name: 'test' },
+        { __v: 33, name: 'test' },
+        { __v: 34, name: 'test' },
+        { __v: 35, name: 'test' },
+      ]);
+    await db
+      .collection('with_v_in_name_v2.0.0')
+      .insertMany([
+        { __v: 31, name: 'test' },
+        { __v: 52, name: 'test' },
+        { __v: 53, name: 'test' },
+        { __v: 54, name: 'test' },
+        { __v: 55, name: 'test' },
+      ]);
+    await db
+      .collection('with_v_in_name_v3.0.0')
+      .insertMany([
+        { __v: 61, name: 'test' },
+        { __v: 62, name: 'test' },
+        { __v: 63, name: 'test' },
+        { __v: 64, name: 'test' },
+        { __v: 65, name: 'test' },
       ]);
 
-    const args = {
-      store: process.env.MONGO_TEST,
-    };
-    const lastSeen = await cli(args);
+    const versions = await getVerions(db);
 
-    expect(lastSeen).toBe(30);
+    expect(versions).toEqual(
+      expect.arrayContaining([
+        { name: 'users', pv: '1.0.0', version: 5 },
+        { name: 'users', pv: '1.1.0', version: 9 },
+        { name: 'users', pv: '2.0.0', version: 35 },
+        { name: 'with_v_in_name', pv: '2.0.0', version: 55 },
+        { name: 'with_v_in_name', pv: '3.0.0', version: 65 },
+      ])
+    );
   });
 });

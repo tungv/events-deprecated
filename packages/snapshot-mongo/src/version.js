@@ -1,38 +1,43 @@
-#!/usr/bin/env node
-/* eslint-disable no-console */
-import { MongoClient } from 'mongodb';
 import {
-  first,
-  map,
-  groupBy,
+  filter,
   flow,
-  mapValues,
-  toArray,
-  min,
-  flatten,
+  identity,
+  initial,
+  join,
+  last,
+  map,
+  over,
+  path,
+  split,
 } from 'lodash/fp';
 
-export const getVersions = async db => {
-  const versions = await db
-    .collection('versions')
-    .find({})
-    .toArray();
+const test = reg => string => reg.test(string);
+const isVersionedCollectionName = test(/^.*_v\d*\.\d*\.\d*$/);
 
-  const byAggregate = groupBy('aggregate', versions);
+export default async db => {
+  const collections = await db.collections();
 
-  const byAggregateAndVersions = mapValues(
-    flow(groupBy('__pv'), mapValues(flow(map('__v'), first)))
-  )(byAggregate);
+  const tuples = flow(
+    filter(flow(path('collectionName'), isVersionedCollectionName)),
+    map(
+      over([
+        flow(path('collectionName'), split('_v'), initial, join('_v')),
+        flow(path('collectionName'), split('_v'), last),
+        identity,
+      ])
+    )
+  )(collections);
 
-  return byAggregateAndVersions;
+  const r = [];
+
+  for (const tuple of tuples) {
+    const { __v } = await tuple[2].findOne(
+      {},
+      { sort: { __v: -1 }, fields: { __v: 1 } }
+    );
+
+    r.push({ name: tuple[0], pv: tuple[1], version: __v });
+  }
+
+  return r;
 };
-
-export const getLastSeen = flow(toArray, map(toArray), flatten, min);
-
-export default (async function getLatest({ store }) {
-  const db = await MongoClient.connect(store);
-  const snapshotVersions = await getVersions(db);
-  const lastSeen = getLastSeen(snapshotVersions);
-
-  return lastSeen || 0;
-});

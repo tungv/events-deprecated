@@ -113,12 +113,15 @@ export default function createStore(db: DB) {
     });
   });
 
+  const versions = db.collection('versions');
+
   return async function dispatch(
     array: DispatchInput
   ): Promise<BatchDispatchOutput> {
     const operationsByCollection: {
       [collectionName: string]: Operation<*>[],
     } = mapAndGroupRequestToMongoOps(array);
+
     const promises = flow(
       toPairs,
       map(async ([collectionName, ops]) => {
