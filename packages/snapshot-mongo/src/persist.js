@@ -14,5 +14,8 @@ export default async (args, input$) => {
 
   const dispatch = lazify(await createStore(db));
 
-  return input$.flatMapConcat(request => kefir.fromPromise(dispatch(request)));
+  return input$
+    .bufferWithTimeOrCount(2, 100)
+    .filter(buf => buf.length)
+    .flatMapConcat(request => kefir.fromPromise(dispatch(request)));
 };
