@@ -120,7 +120,7 @@ module.exports = async function subscribeThread(config, emit, end) {
 
     emit('INFO', 'PERSIST/WRITE', { event, documents: changes, batch });
 
-    if (!caughtup && event.id >= clientSnapshotVersion) {
+    if (!caughtup && event.id >= serverLatest) {
       caughtup = true;
       emit('DEBUG', 'SUBSCRIPTION/CATCH_UP');
     }
