@@ -93,10 +93,6 @@ module.exports = async function subscribeThread(config, emit, end) {
     'burst-time': burstTime,
   });
 
-  raw$.onEnd(error => {
-    emit('INFO', 'SERVER/DISCONNECTED', { error });
-  });
-
   let startTime = Date.now();
   raw$.take(1).observe(() => (startTime = Date.now()));
 
