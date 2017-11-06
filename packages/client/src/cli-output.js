@@ -158,11 +158,23 @@ const messageHandlers = {
   'SERVER/DISCONNECTED': (message, logger, state) => {
     state.server_connected = false;
     state.server_disconnected_at = Date.now();
+
     logger(
       message.meta.level,
       `cannot connect to server at ${state.config.subscribe.serverUrl}`,
       message.meta.ts
     );
+
+    const { error } = message.payload;
+
+    if (error) {
+      logger(
+        message.meta.level,
+        `Connection Error: ${error.message || error}`,
+        message.meta.ts
+      );
+    }
+
     return;
   },
 
