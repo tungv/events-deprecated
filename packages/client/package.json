@@ -7,7 +7,8 @@
     "subscribe": "src/cli.js"
   },
   "scripts": {
-    "test": "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest --forceExit"
+    "test":
+      "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest --forceExit"
   },
   "author": "Tung <me@tungv.com>",
   "license": "ISC",
