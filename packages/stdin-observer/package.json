@@ -1,6 +1,6 @@
 {
   "name": "kefir-stdin-json",
-  "version": "2.2.0",
+  "version": "2.2.3",
   "description": "readline from stdin and return a kefir stream",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,6 @@
   "author": "Tung Vu <me@tungv.com>",
   "license": "ISC",
   "dependencies": {
-    "kefir": "^3.7.4"
+    "kefir": "3.8.0"
   }
 }

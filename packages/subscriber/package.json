@@ -1,15 +1,16 @@
 {
   "name": "@events/subscriber",
-  "version": "2.2.0",
+  "version": "2.2.3",
   "description": "http's text/event-stream + @events/server protocol implementation for nodejs",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\""
+    "test": "jest"
   },
   "author": "Tung <me@tungv.com>",
   "license": "ISC",
   "dependencies": {
-    "kefir": "^3.7.4",
+    "jest": "^21.2.1",
+    "kefir": "3.8.0",
     "request": "^2.81.0"
   }
 }

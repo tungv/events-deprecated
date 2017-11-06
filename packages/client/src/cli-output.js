@@ -82,11 +82,19 @@ const messageHandlers = {
   },
 
   'SUBSCRIPTION/CATCH_UP': (message, logger, state) => {
-    logger(
-      message.meta.level,
-      'client has caught up with server. Still listening for new events...',
-      message.meta.ts
-    );
+    const { count, time } = message.payload;
+
+    const prettyTime = time > 10000 ? `${time / 1000}s` : `${time}ms`;
+    const pace = String((count / time * 1000).toFixed(2));
+
+    const msg =
+      count === 0
+        ? 'client has caught up with server. Still listening for new events...'
+        : `client has caught up with server after ${bold(
+            prettyTime
+          )} (pace: ${bold(pace)} events/s).`;
+
+    logger(message.meta.level, msg, message.meta.ts);
     return;
   },
 

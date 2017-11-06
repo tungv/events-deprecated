@@ -1,6 +1,6 @@
 {
   "name": "@events/server",
-  "version": "2.2.0",
+  "version": "2.2.3",
   "main": "./build/index.js",
   "scripts": {
     "prepare": "rm -rf build; yarn build",
@@ -24,7 +24,7 @@
     "redis-functional": "^2.2.0"
   },
   "devDependencies": {
-    "@events/subscriber": "^2.2.0",
+    "@events/subscriber": "^2.2.3",
     "awaiting": "^3.0.0",
     "babel-cli": "^6.26.0",
     "babel-jest": "^20.0.3",

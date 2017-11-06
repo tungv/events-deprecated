@@ -84,7 +84,7 @@ module.exports = async function subscribeThread(config, emit, end) {
   let caughtup = false;
   if (serverLatest === clientSnapshotVersion) {
     caughtup = true;
-    emit('DEBUG', 'SUBSCRIPTION/CATCH_UP');
+    emit('DEBUG', 'SUBSCRIPTION/CATCH_UP', { count: 0, time: 0 });
   }
 
   const { raw$, events$, abort } = subscriber(`${serverUrl}/subscribe`, {
@@ -93,9 +93,8 @@ module.exports = async function subscribeThread(config, emit, end) {
     'burst-time': burstTime,
   });
 
-  const firstRespPromise = raw$.take(1).toPromise();
-
-  raw$.onEnd(end);
+  let startTime = Date.now();
+  raw$.take(1).observe(() => (startTime = Date.now()));
 
   events$.observe(e => {
     emit('DEBUG', 'SERVER/INCOMING_EVENT', { event: e });
@@ -120,9 +119,12 @@ module.exports = async function subscribeThread(config, emit, end) {
 
     emit('INFO', 'PERSIST/WRITE', { event, documents: changes, batch });
 
-    if (!caughtup && event.id >= clientSnapshotVersion) {
+    if (!caughtup && event.id >= serverLatest) {
       caughtup = true;
-      emit('DEBUG', 'SUBSCRIPTION/CATCH_UP');
+      emit('INFO', 'SUBSCRIPTION/CATCH_UP', {
+        count: serverLatest - clientSnapshotVersion + 1,
+        time: Date.now() - startTime,
+      });
     }
 
     if (changes && sideEffectsPath) {
@@ -132,7 +134,7 @@ module.exports = async function subscribeThread(config, emit, end) {
     }
   });
 
-  await firstRespPromise;
+  p$.onEnd(end);
 };
 
 async function getLatest(url) {

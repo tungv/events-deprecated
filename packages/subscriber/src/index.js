@@ -1,8 +1,10 @@
 const request = require('request');
 const kefir = require('kefir');
 const parseMessage = require('./parseMessage');
+const getChunks = require('./getChunks');
 
 const subscribe = (url, headers = {}) => {
+  const stream = request(url, { headers });
   const raw$ = kefir.stream(emitter => {
     const emitString = data => {
       emitter.emit(String(data));
@@ -16,7 +18,6 @@ const subscribe = (url, headers = {}) => {
       emitter.end();
     };
 
-    const stream = request(url, { headers });
     stream.on('data', emitString);
     stream.on('error', errorString);
     stream.on('end', end);
@@ -29,13 +30,9 @@ const subscribe = (url, headers = {}) => {
     };
   });
 
-  const events$ = raw$
-    .bufferWhile(string => string.slice(-2) !== '\n\n')
-    .map(array => array.join(''))
-    .flatten(string => {
-      const msg = parseMessage(string);
-      return msg.data || [];
-    });
+  const events$ = raw$.thru(getChunks).flatten(obj => {
+    return obj.data ? JSON.parse(obj.data) : [];
+  });
 
   return {
     raw$,
