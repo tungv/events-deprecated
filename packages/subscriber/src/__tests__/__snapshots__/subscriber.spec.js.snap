@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parser should ignore remaining chunks when stream ends 1`] = `
+Array [
+  Object {
+    "data": "[{\\"a\\": 1}]",
+    "event": "name",
+    "id": "1",
+  },
+  Object {
+    "data": "[]",
+    "event": "name",
+    "id": "2",
+  },
+  Object {
+    "data": "[{\\"a\\": 2}]",
+    "event": "name",
+    "id": "3",
+  },
+]
+`;
+
+exports[`parser should work when data are send in batch ending with double newlines 1`] = `
+Array [
+  Object {
+    "data": "[{\\"a\\":1}]",
+    "event": "name",
+    "id": "1",
+  },
+  Object {
+    "data": "[{\\"a\\":2}]",
+    "event": "name",
+    "id": "2",
+  },
+]
+`;
+
+exports[`parser should work when data are truncated 1`] = `
+Array [
+  Object {
+    "data": "[{\\"a\\":1}]",
+    "event": "name",
+    "id": "1",
+  },
+  Object {
+    "data": "[{\\"a\\":2}]",
+    "event": "name",
+    "id": "2",
+  },
+]
+`;
+
+exports[`parser should work when data are truncated at the first new line 1`] = `
+Array [
+  Object {
+    "data": "[{\\"a\\":1}]",
+    "event": "name",
+    "id": "1",
+  },
+  Object {
+    "data": "[{\\"a\\":2}]",
+    "event": "name",
+    "id": "2",
+  },
+]
+`;
+
+exports[`parser should work when multiple data are send in batch ending with double newlines 1`] = `
+Array [
+  Object {
+    "data": "[{\\"a\\": 1}]",
+    "event": "name",
+    "id": "1",
+  },
+  Object {
+    "data": "[]",
+    "event": "name",
+    "id": "2",
+  },
+  Object {
+    "data": "[{\\"a\\": 2}]",
+    "event": "name",
+    "id": "3",
+  },
+]
+`;
