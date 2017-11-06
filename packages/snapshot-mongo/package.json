@@ -11,7 +11,7 @@
   },
   "author": "Tung Vu <me@tungv.com>",
   "dependencies": {
-    "kefir": "^3.7.4",
+    "kefir": "3.8.0",
     "lodash": "^4.17.4",
     "mongo-heartbeat": "^1.1.0",
     "mongodb": "^2.2.31",

@@ -9,6 +9,6 @@
   "author": "Tung Vu <me@tungv.com>",
   "license": "ISC",
   "dependencies": {
-    "kefir": "^3.7.4"
+    "kefir": "3.8.0"
   }
 }
