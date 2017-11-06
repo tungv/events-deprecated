@@ -1,20 +1,19 @@
 {
   "name": "@events/client",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "",
   "main": "src/index.js",
   "bin": {
     "subscribe": "src/cli.js"
   },
   "scripts": {
-    "test":
-      "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest --forceExit"
+    "test": "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest --forceExit"
   },
   "author": "Tung <me@tungv.com>",
   "license": "ISC",
   "dependencies": {
-    "@events/subscriber": "^2.2.0",
-    "@events/transform": "^2.2.1",
+    "@events/subscriber": "^2.2.3",
+    "@events/transform": "^2.2.3",
     "brighten": "^0.0.1",
     "chalk": "^2.1.0",
     "chokidar": "^1.7.0",
@@ -30,7 +29,7 @@
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
-    "@events/snapshot-mongo": "^2.2.1",
+    "@events/snapshot-mongo": "^2.2.3",
     "create-test-server": "^2.1.1",
     "execa": "^0.8.0",
     "is-ci": "^1.0.10",

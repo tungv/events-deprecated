@@ -1,6 +1,6 @@
 {
   "name": "kefir-stdin-json",
-  "version": "2.2.0",
+  "version": "2.2.3",
   "description": "readline from stdin and return a kefir stream",
   "main": "index.js",
   "scripts": {
