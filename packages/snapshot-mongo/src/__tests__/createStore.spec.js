@@ -6,7 +6,9 @@ import createStore from '../createStore';
 describe('e2e', () => {
   const makeDispatch = async () => {
     const db = await MongoClient.connect(process.env.MONGO_TEST);
-    const dispatch = createStore(db);
+
+    // $FlowFixMe: MONGO_TEST is always passed in test
+    const dispatch = await createStore(process.env.MONGO_TEST);
 
     return {
       dispatch,
