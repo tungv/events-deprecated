@@ -1,18 +1,17 @@
-import { MongoClient } from 'mongodb';
-import createStore from './createStore';
-import kefir from 'kefir';
 import PLazy from 'p-lazy';
+import kefir from 'kefir';
 
-const lazify = factory => (...args) =>
+import createStore from './createStore';
+
+const lazify = factoryPromise => (...args) =>
   new PLazy((resolve, reject) => {
-    factory(...args).then(resolve, reject);
+    factoryPromise.then(factory => factory(...args).then(resolve, reject));
   });
 
-export default async (args, input$) => {
+export default (args, input$) => {
   const url = args._[0];
-  const db = await MongoClient.connect(url);
 
-  const dispatch = lazify(await createStore(db));
+  const dispatch = lazify(createStore(url));
 
   return input$
     .bufferWithTimeOrCount(2, 100)

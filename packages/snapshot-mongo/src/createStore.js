@@ -15,6 +15,7 @@ import {
   pickBy,
   isArray,
 } from 'lodash/fp';
+import { MongoClient } from 'mongodb';
 import MongoHeartbeat from 'mongo-heartbeat';
 
 export function mapToOperation<Doc>(
@@ -99,7 +100,8 @@ type BatchDispatchOutput = {
   requests: DispatchInput,
 };
 
-export default function createStore(db: DB) {
+export default async function createStore(url: string) {
+  const db = await MongoClient.connect(url);
   const hb = MongoHeartbeat(db, {
     interval: 5000,
     timeout: 10000,
