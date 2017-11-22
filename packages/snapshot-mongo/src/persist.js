@@ -8,10 +8,37 @@ const lazify = factoryPromise => (...args) =>
     factoryPromise.then(factory => factory(...args).then(resolve, reject));
   });
 
-export default (args, input$) => {
+export default (args, input$, aggreateNameAndPVs) => {
   const url = args._[0];
 
   const dispatch = lazify(createStore(url));
+
+  // checkpoint stream
+  const checkpoint$ = input$.throttle(1000).map(e => {
+    const updates = aggreateNameAndPVs.map(({ name, version }) => ({
+      __pv: '1.0.0',
+      op: {
+        update: {
+          where: { name, version },
+          changes: {},
+          upsert: true,
+        },
+      },
+    }));
+    return {
+      event: e,
+      projections: {
+        __snapshots: updates,
+      },
+    };
+  });
+
+  checkpoint$
+    .flatMapConcat(request => kefir.fromPromise(dispatch(request)))
+    .onError(e => {
+      console.error('cannot persist a checkpoint');
+      console.error(e);
+    });
 
   return input$
     .bufferWithTimeOrCount(2, 100)
