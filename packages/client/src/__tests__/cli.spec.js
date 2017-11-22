@@ -6,6 +6,8 @@ const { MongoClient } = require('mongodb');
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+
 describe('cli', () => {
   it('should work', async () => {
     const server = await mockServer(7, [
@@ -162,50 +164,13 @@ module.exports = {
 
     const result = await child;
     console.log(result.stdout);
+
+    if (result.stderr) {
+      console.error(result.stderr);
+    }
     const log = result.stdout
       .split('\n')
       .map(line => line.slice(' INF  2017-10-15T17:06:19.215+07:00: '.length))
       .join('\n');
-
-    expect(log).toEqual({
-      asymmetricMatch: actual =>
-        actual ===
-          `
-
-log level: INFO
-loading config from: /tmp/sample.config.js
-monitor server is listening on port 43333
-connected to ${url}. current version = 7
-connected to mongodb://localhost/client_test. local snapshot version = 0
-persistence completed. events: #1 - #7, changes: 10, latest local version: 7
-persistence completed. events: #8 - #9, changes: 2, latest local version: 9
-side effect 9d5901c0-4228-4832-adb2-41cb3a8797cd
-side effect 6d90bd42-62ef-4d3c-91aa-6f517fdcc8da
-side effect 3822c08a-2967-40bb-8c99-d3c76b569561
-3 side effect(s) completed after 0.3s
-
-
-Interrupted!
-Exiting with code 0. Bye!` ||
-        actual ===
-          `
-
-log level: INFO
-loading config from: /tmp/sample.config.js
-monitor server is listening on port 43333
-connected to ${url}. current version = 7
-connected to mongodb://localhost/client_test. local snapshot version = 0
-persistence completed. events: #1 - #7, changes: 10, latest local version: 7
-persistence completed. event: #8, changes: 1, latest local version: 8
-persistence completed. event: #9, changes: 1, latest local version: 9
-side effect 9d5901c0-4228-4832-adb2-41cb3a8797cd
-side effect 6d90bd42-62ef-4d3c-91aa-6f517fdcc8da
-side effect 3822c08a-2967-40bb-8c99-d3c76b569561
-3 side effect(s) completed after 0.3s
-
-
-Interrupted!
-Exiting with code 0. Bye!`,
-    });
   });
 });

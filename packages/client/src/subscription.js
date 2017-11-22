@@ -2,6 +2,7 @@ const { watch } = require('chokidar');
 const debounce = require('debounce');
 const subscriber = require('@events/subscriber');
 const path = require('path');
+const kefir = require('kefir');
 
 // FIXME: make transform package commonjs compatible
 const makeTransform = require('@events/transform').default;
@@ -96,6 +97,26 @@ module.exports = async function subscribeThread(config, emit, end) {
   let startTime = Date.now();
   raw$.take(1).observe(() => (startTime = Date.now()));
 
+  // checkpoint stream
+  const checkpoint$ = events$.throttle(1000).map(e => {
+    const updates = aggreateNameAndPVs.map(({ name, version }) => ({
+      __pv: '1.0.0',
+      op: {
+        update: {
+          where: { name, version },
+          changes: {},
+          upsert: true,
+        },
+      },
+    }));
+    return {
+      event: e,
+      projections: {
+        __snapshots: updates,
+      },
+    };
+  });
+
   events$.observe(e => {
     emit('DEBUG', 'SERVER/INCOMING_EVENT', { event: e });
   });
@@ -109,7 +130,10 @@ module.exports = async function subscribeThread(config, emit, end) {
     emit('DEBUG', 'TRANSFORM/PROJECTION', ctx);
   });
 
-  const p$ = await persist({ _: [store] }, projection$);
+  const p$ = await persist(
+    { _: [store] },
+    kefir.merge([projection$, checkpoint$])
+  );
 
   p$.observe(async out => {
     const { requests, changes } = out;

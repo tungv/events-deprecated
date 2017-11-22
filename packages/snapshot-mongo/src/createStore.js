@@ -142,7 +142,11 @@ export default async function createStore(url: string) {
 
     const results: Array<[string, number]> = await Promise.all(promises);
 
-    const changes = flow(map(1), sum)(results);
+    const changes = flow(
+      filter(([name]) => name !== '__snapshots_v1.0.0'),
+      map(1),
+      sum
+    )(results);
 
     return {
       requests: array,
