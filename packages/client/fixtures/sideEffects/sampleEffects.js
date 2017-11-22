@@ -18,7 +18,9 @@ module.exports = [
   },
   {
     when: (event, projections) => {
-      return event.type === 'USER_EMAIL_UPDATED' && event.payload === 'failing';
+      return (
+        event.type === 'USER_EMAIL_UPDATED' && event.payload.email === 'failing'
+      );
     },
     execute: async event => {
       throw new Error('must failed');
