@@ -21,15 +21,15 @@ const messageHandlers = {
     state.snapshot_connected = true;
     state.snapshot_connected_at = message.meta.ts;
 
-    const { snapshotVersion, explain } = message.payload;
+    const { snapshotVersion, snapshots } = message.payload;
     logger(
       'DEBUG',
       () =>
         'versions:\n' +
-        explain
+        snapshots
           .map(
-            ({ name, pv, version }) =>
-              ` - ${bold(name)} v${bold(pv)}: ${version}`
+            ({ name, __v, version }) =>
+              ` - ${bold(name)} v${bold(version)}: ${__v}`
           )
           .join('\n')
     );
