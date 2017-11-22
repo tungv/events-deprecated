@@ -14,7 +14,7 @@ export default (args, input$, aggreateNameAndPVs) => {
   const dispatch = lazify(createStore(url));
 
   // checkpoint stream
-  const checkpoint$ = input$.throttle(1000).map(e => {
+  const checkpoint$ = input$.throttle(1000).map(({ event }) => {
     const updates = aggreateNameAndPVs.map(({ name, version }) => ({
       __pv: '1.0.0',
       op: {
@@ -26,7 +26,7 @@ export default (args, input$, aggreateNameAndPVs) => {
       },
     }));
     return {
-      event: e,
+      event,
       projections: {
         __snapshots: updates,
       },
@@ -34,10 +34,12 @@ export default (args, input$, aggreateNameAndPVs) => {
   });
 
   checkpoint$
-    .flatMapConcat(request => kefir.fromPromise(dispatch(request)))
-    .onError(e => {
-      console.error('cannot persist a checkpoint');
-      console.error(e);
+    .flatMapConcat(request => kefir.fromPromise(dispatch([request])))
+    .observe({
+      error: e => {
+        console.error('cannot persist a checkpoint');
+        console.error(e);
+      },
     });
 
   return input$

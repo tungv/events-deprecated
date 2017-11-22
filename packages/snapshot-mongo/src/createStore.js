@@ -115,8 +115,6 @@ export default async function createStore(url: string) {
     });
   });
 
-  const versions = db.collection('versions');
-
   return async function dispatch(
     array: DispatchInput
   ): Promise<BatchDispatchOutput> {
