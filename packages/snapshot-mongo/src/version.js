@@ -14,8 +14,6 @@ export default async ({ store }, aggrAndPVs) => {
     })
     .toArray();
 
-  console.log('snapshots', snapshots);
-
   const snapshotVersion = flow(map('__v'), min)(snapshots) || 0;
 
   return { snapshotVersion, snapshots };
