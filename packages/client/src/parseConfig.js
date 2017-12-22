@@ -15,7 +15,12 @@ module.exports = async (config, configRoot) => {
     sideEffects = {},
     sideEffect = {},
     hotReload = {},
+    useBabel = false,
   } = config;
+
+  if (useBabel) {
+    require('babel-register');
+  }
 
   if (!subscribe) {
     throw new InvalidConfigError({

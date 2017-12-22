@@ -14,6 +14,7 @@
   "dependencies": {
     "@events/subscriber": "^2.2.3",
     "@events/transform": "^2.2.3",
+    "babel-register": "^6.26.0",
     "brighten": "^0.0.1",
     "chalk": "^2.1.0",
     "chokidar": "^1.7.0",

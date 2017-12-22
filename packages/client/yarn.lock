@@ -2,11 +2,11 @@
 # yarn lockfile v1
 
 
-"@events/snapshot-mongo@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@events/snapshot-mongo/-/snapshot-mongo-2.2.1.tgz#ae31734be772fd9a4170f2e2287a0ccf8447996d"
+"@events/snapshot-mongo@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@events/snapshot-mongo/-/snapshot-mongo-2.3.0.tgz#3fc721314d378ff081c922f4c9d2a6712d0a2907"
   dependencies:
-    kefir "^3.7.4"
+    kefir "3.8.0"
     lodash "^4.17.4"
     mongo-heartbeat "^1.1.0"
     mongodb "^2.2.31"
@@ -14,20 +14,21 @@
     p-lazy "^1.0.0"
     semver "^5.4.1"
 
-"@events/subscriber@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@events/subscriber/-/subscriber-2.2.0.tgz#5ab4e2ff5eebd4c5ed54f74bf642ff825ed76b61"
+"@events/subscriber@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@events/subscriber/-/subscriber-2.2.3.tgz#506e6a91c72dfb3b731dc844e0f4fb4c91932928"
   dependencies:
-    kefir "^3.7.4"
+    jest "^21.2.1"
+    kefir "3.8.0"
     request "^2.81.0"
 
-"@events/transform@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@events/transform/-/transform-2.2.1.tgz#be7b6bb21e6e9379050f843b8a22e02a6e50e6c6"
+"@events/transform@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@events/transform/-/transform-2.2.3.tgz#3b99ab7e18ea2952a9fb82b40286c2d700ac594f"
   dependencies:
     arrify "^1.0.1"
-    kefir "^3.7.4"
-    kefir-stdin-json "^2.2.0"
+    kefir "3.8.0"
+    kefir-stdin-json "^2.2.3"
     lodash "^4.17.4"
     mri "^1.1.0"
 
@@ -1728,21 +1729,15 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-kefir-stdin-json@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/kefir-stdin-json/-/kefir-stdin-json-2.2.0.tgz#6630bea53c5ce9f6b7d604389b8c870f8e1725ad"
+kefir-stdin-json@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/kefir-stdin-json/-/kefir-stdin-json-2.2.3.tgz#83035548ef98215dc5204280783e764d1e7dff43"
   dependencies:
-    kefir "^3.7.4"
+    kefir "3.8.0"
 
 kefir@3.8.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/kefir/-/kefir-3.8.0.tgz#63b5dce575f1a7ab3286788e771eb104b181b676"
-  dependencies:
-    symbol-observable "1.0.4"
-
-kefir@^3.7.4:
-  version "3.7.4"
-  resolved "https://registry.yarnpkg.com/kefir/-/kefir-3.7.4.tgz#edc6192f686be611ac5c882426f74bf0ee287ef7"
   dependencies:
     symbol-observable "1.0.4"
 
