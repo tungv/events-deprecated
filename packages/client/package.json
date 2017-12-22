@@ -1,6 +1,6 @@
 {
   "name": "@events/client",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "",
   "main": "src/index.js",
   "bin": {
@@ -14,7 +14,6 @@
   "dependencies": {
     "@events/subscriber": "^2.2.3",
     "@events/transform": "^2.2.3",
-    "babel-register": "^6.26.0",
     "brighten": "^0.0.1",
     "chalk": "^2.1.0",
     "chokidar": "^1.7.0",
@@ -30,7 +29,11 @@
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.35",
+    "@babel/register": "^7.0.0-beta.35",
     "@events/snapshot-mongo": "^2.3.0",
+    "babel-core": "^6.26.0",
+    "babel-register": "^6.26.0",
     "create-test-server": "^2.1.1",
     "execa": "^0.8.0",
     "is-ci": "^1.0.10",
