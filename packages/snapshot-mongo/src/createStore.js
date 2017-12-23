@@ -15,8 +15,8 @@ import {
   pickBy,
   isArray,
 } from 'lodash/fp';
-import { MongoClient } from 'mongodb';
-import MongoHeartbeat from 'mongo-heartbeat';
+
+import connect from './connect';
 
 export function mapToOperation<Doc>(
   version: number,
@@ -101,19 +101,7 @@ type BatchDispatchOutput = {
 };
 
 export default async function createStore(url: string) {
-  const db = await MongoClient.connect(url);
-  const hb = MongoHeartbeat(db, {
-    interval: 5000,
-    timeout: 10000,
-    tolerance: 2,
-  });
-
-  hb.on('error', err => {
-    console.error('mongodb didnt respond the heartbeat message');
-    process.nextTick(function() {
-      process.exit(1);
-    });
-  });
+  const db = await connect(url);
 
   return async function dispatch(
     array: DispatchInput
