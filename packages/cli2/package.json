@@ -28,9 +28,13 @@
   },
   "homepage": "https://github.com/tungv/events#readme",
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.35",
-    "@babel/preset-env": "^7.0.0-beta.35",
-    "@babel/register": "^7.0.0-beta.35",
+    "babel-jest": "^22.0.4",
     "jest": "^22.0.4"
+  },
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "sade": "^1.1.1"
   }
 }
