@@ -1,0 +1,36 @@
+{
+  "name": "heq",
+  "version": "1.0.0",
+  "description": "messy server cli",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tungv/events.git"
+  },
+  "keywords": [
+    "event",
+    "sourcing",
+    "event",
+    "driver",
+    "queue",
+    "hybrid",
+    "queue",
+    "message",
+    "queue"
+  ],
+  "author": "Tung <me@tungv.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tungv/events/issues"
+  },
+  "homepage": "https://github.com/tungv/events#readme",
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.35",
+    "@babel/preset-env": "^7.0.0-beta.35",
+    "@babel/register": "^7.0.0-beta.35",
+    "jest": "^22.0.4"
+  }
+}
