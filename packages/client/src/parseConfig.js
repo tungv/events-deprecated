@@ -19,7 +19,7 @@ module.exports = async (config, configRoot) => {
   } = config;
 
   if (useBabel) {
-    require('babel-register');
+    require(typeof useBabel === 'string' ? useBabel : 'babel-register');
   }
 
   if (!subscribe) {
