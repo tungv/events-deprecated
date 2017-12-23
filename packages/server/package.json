@@ -19,7 +19,7 @@
     "micro": "^8.0.3",
     "micro-boom": "^1.1.0",
     "micro-cors": "^0.0.4",
-    "microrouter": "^2.2.2",
+    "microrouter": "^3.0.0",
     "redis": "^2.8.0",
     "redis-functional": "^2.2.0"
   },
@@ -32,9 +32,9 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-3": "^6.24.1",
-    "jest": "^20.0.4",
-    "request": "^2.81.0",
-    "request-promise": "^4.2.1",
+    "jest": "^22.0.4",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
     "test-listen": "^1.0.2"
   },
   "babel": {
