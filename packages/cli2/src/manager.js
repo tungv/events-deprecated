@@ -66,6 +66,28 @@ export const startApp = async (name, args, workers, daemon) => {
               console.log(data);
             }
           });
+
+          bus.on('log:err', ({ data, process }) => {
+            if (data.slice(0, 7) !== '{"type"') {
+              log(LOG_LEVEL.ERROR, {
+                type: 'server-err',
+                payload: {
+                  process,
+                  error: data.split('\n')[1],
+                },
+              });
+
+              log(LOG_LEVEL.DEBUG, {
+                type: 'server-err-stack',
+                payload: {
+                  process,
+                  stack: data.split('\n').slice(2),
+                },
+              });
+            } else {
+              console.error(data);
+            }
+          });
         });
 
         const app = {

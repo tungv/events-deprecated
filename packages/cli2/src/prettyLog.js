@@ -40,6 +40,13 @@ const formatMsg = (type, { payload }) => {
     case 'child-process-started':
       return `${payload.instances} process(es) started`;
 
+    case 'server-err':
+      return `[${payload.process.pm_id}] error: ${payload.error}`;
+
+    case 'server-err-stack':
+      return `[${payload.process.pm_id}] stack:
+${payload.stack.join('\n')}`;
+
     case 'begin-shutdown':
       return `shutting down...`;
 
