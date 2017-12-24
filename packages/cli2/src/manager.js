@@ -1,4 +1,5 @@
 import pm2 from 'pm2';
+
 import path from 'path';
 
 export const connect = () =>
@@ -37,11 +38,31 @@ export const startApp = async (name, args, workers, daemon) => {
 
         resolve(app);
 
-        if (!daemon) {
+        if (daemon) {
           disconnect();
           return;
         }
+
+        process.on('SIGINT', async () => {
+          console.log('shutdown');
+          await stopApp(name);
+          disconnect();
+        });
       }
     );
+  });
+};
+
+export const stopApp = app => {
+  const fullName = `heq-server-${app}`;
+  return new Promise((resolve, reject) => {
+    // setTimeout(resolve, 500);
+    pm2.delete(fullName, err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
   });
 };
