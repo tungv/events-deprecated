@@ -29,6 +29,7 @@
   "homepage": "https://github.com/tungv/events#readme",
   "devDependencies": {
     "babel-jest": "^22.0.4",
+    "babel-preset-stage-3": "^6.24.1",
     "jest": "^22.0.4"
   },
   "dependencies": {

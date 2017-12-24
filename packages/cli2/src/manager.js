@@ -2,6 +2,8 @@ import pm2 from 'pm2';
 
 import path from 'path';
 
+import makeLogger, { LOG_LEVEL } from './logger';
+
 export const connect = () =>
   new Promise((resolve, reject) => {
     pm2.connect(err => {
@@ -15,6 +17,7 @@ export const connect = () =>
 
 export const startApp = async (name, args, workers, daemon) => {
   const disconnect = await connect();
+  const log = makeLogger(args.verbose);
   return new Promise((resolve, reject) => {
     pm2.start(
       {
@@ -24,12 +27,32 @@ export const startApp = async (name, args, workers, daemon) => {
         exec_mode: 'cluster',
         instances: workers || 1,
         max_memory_restart: '100M',
+        interpreterArgs: ['-r', 'babel-register'],
       },
       (err, apps) => {
         if (err) {
           reject(err);
           return;
         }
+
+        pm2.launchBus((err, bus) => {
+          bus.on('log:out', ({ data, process }) => {
+            if (data.slice(0, 7) !== '{"type"') {
+              log(LOG_LEVEL.INFO, {
+                type: 'server-log',
+                payload: {
+                  process,
+                  msg: data.replace(
+                    /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
+                    ''
+                  ),
+                },
+              });
+            } else {
+              console.log(data);
+            }
+          });
+        });
 
         const app = {
           name,
@@ -44,8 +67,9 @@ export const startApp = async (name, args, workers, daemon) => {
         }
 
         process.on('SIGINT', async () => {
-          console.log('shutdown');
+          log(LOG_LEVEL.INFO, { type: 'begin-shutdown', payload: { name } });
           await stopApp(name);
+          log(LOG_LEVEL.INFO, { type: 'complete-shutdown', payload: { name } });
           disconnect();
         });
       }
