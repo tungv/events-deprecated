@@ -1,9 +1,12 @@
+import { init } from './logger';
+import LOG_LEVEL from './logLevels';
 import { startApp } from './manager';
 import loadConfig from './loadConfig';
-import makeLogger, { LOG_LEVEL } from './logger';
+import prettyLog from './prettyLog';
 
 export default async function startCmd(opts) {
-  const log = makeLogger(opts.verbose);
+  const reporter = opts.json ? JSON.stringify : prettyLog;
+  const log = init(opts.verbose, reporter);
 
   log(LOG_LEVEL.INFO, { type: 'init-logger', level: opts.verbose });
 

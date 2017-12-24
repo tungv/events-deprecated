@@ -1,21 +1,17 @@
-const makeLogger = logLevel => {
-  return (level, msg) => {
+let logFn = () => {};
+
+export default () => logFn;
+
+export const init = (logLevel, reporter = JSON.stringify) => {
+  logFn = (level, msg) => {
     if (level > logLevel) {
       return;
     }
     msg._t = Date.now();
+    msg._l = level;
 
-    console.info(JSON.stringify(msg));
+    console.log(reporter(msg));
   };
-};
 
-export const LOG_LEVEL = {
-  FATAL: 0,
-  ERROR: 1,
-  WARN: 2,
-  INFO: 3,
-  DEBUG: 5,
-  SILLY: 10,
+  return logFn;
 };
-
-export default makeLogger;

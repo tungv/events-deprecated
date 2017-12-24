@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /* @flow */
 const factory = require('@events/server').default;
-const { default: makeLogger, LOG_LEVEL } = require('./logger');
+const { init, LOG_LEVEL } = require('./logger');
 
 const args = process.argv[2];
 
 const { port, name, redis, verbose } = JSON.parse(args);
 
-const log = makeLogger(verbose);
+const log = init(verbose);
 
 log(LOG_LEVEL.INFO, {
   type: 'before-app-start',

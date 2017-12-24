@@ -2,7 +2,8 @@ import pm2 from 'pm2';
 
 import path from 'path';
 
-import makeLogger, { LOG_LEVEL } from './logger';
+import getLogger from './logger';
+import LOG_LEVEL from './logLevels';
 
 export const connect = () =>
   new Promise((resolve, reject) => {
@@ -17,7 +18,7 @@ export const connect = () =>
 
 export const startApp = async (name, args, workers, daemon) => {
   const disconnect = await connect();
-  const log = makeLogger(args.verbose);
+  const log = getLogger();
   return new Promise((resolve, reject) => {
     pm2.start(
       {
