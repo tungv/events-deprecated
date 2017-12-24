@@ -1,3 +1,4 @@
+import prettyMs from 'pretty-ms';
 import sade from 'sade';
 
 import { version } from '../package.json';
@@ -44,4 +45,12 @@ prog
   .example('start -c custom.js --daemon')
   .action(startCmd);
 
-prog.parse(process.argv);
+const startAt = Date.now();
+prog.parse(process.argv).then(
+  () => {
+    console.log('✨ done in', prettyMs(Date.now() - startAt));
+  },
+  err => {
+    console.error(err);
+  }
+);

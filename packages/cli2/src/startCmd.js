@@ -8,7 +8,10 @@ export default async function startCmd(opts) {
   const reporter = opts.json ? JSON.stringify : prettyLog;
   const log = init(opts.verbose, reporter);
 
-  log(LOG_LEVEL.INFO, { type: 'init-logger', level: opts.verbose });
+  log(LOG_LEVEL.INFO, {
+    type: 'init-logger',
+    payload: { level: opts.verbose },
+  });
 
   log(LOG_LEVEL.SILLY, {
     type: 'command-begin',

@@ -37,7 +37,10 @@
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
+    "chalk": "^2.3.0",
+    "date-fns": "^1.29.0",
     "pm2": "^2.9.1",
+    "pretty-ms": "^3.1.0",
     "sade": "^1.1.1"
   }
 }

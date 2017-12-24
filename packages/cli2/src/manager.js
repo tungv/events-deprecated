@@ -60,18 +60,19 @@ export const startApp = async (name, args, workers, daemon) => {
           instances: apps,
         };
 
-        resolve(app);
-
         if (daemon) {
           disconnect();
+          resolve(app);
           return;
         }
 
         process.on('SIGINT', async () => {
+          console.log('');
           log(LOG_LEVEL.INFO, { type: 'begin-shutdown', payload: { name } });
           await stopApp(name);
           log(LOG_LEVEL.INFO, { type: 'complete-shutdown', payload: { name } });
           disconnect();
+          resolve();
         });
       }
     );

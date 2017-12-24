@@ -6,4 +6,3 @@ export default {
   DEBUG: 5,
   SILLY: 10,
 };
-
