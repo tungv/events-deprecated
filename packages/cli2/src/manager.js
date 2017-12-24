@@ -19,6 +19,12 @@ export const connect = () =>
 export const startApp = async (name, args, workers, daemon) => {
   const disconnect = await connect();
   const log = getLogger();
+  log(LOG_LEVEL.DEBUG, {
+    type: 'child-process-starting',
+    payload: {
+      request: workers,
+    },
+  });
   return new Promise((resolve, reject) => {
     pm2.start(
       {
@@ -35,6 +41,13 @@ export const startApp = async (name, args, workers, daemon) => {
           reject(err);
           return;
         }
+
+        log(LOG_LEVEL.INFO, {
+          type: 'child-process-started',
+          payload: {
+            instances: apps.length,
+          },
+        });
 
         pm2.launchBus((err, bus) => {
           bus.on('log:out', ({ data, process }) => {

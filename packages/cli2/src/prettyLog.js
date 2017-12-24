@@ -34,6 +34,12 @@ const formatMsg = (type, { payload }) => {
   workers: ${chalk.italic(payload.workers)}
 `;
 
+    case 'child-process-starting':
+      return `trying to start ${payload.request} process(es)`;
+
+    case 'child-process-started':
+      return `${payload.instances} process(es) started`;
+
     case 'begin-shutdown':
       return `shutting down...`;
 
