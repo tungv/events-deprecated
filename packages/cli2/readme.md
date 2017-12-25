@@ -33,7 +33,7 @@ Running `heq start` will start a http server (or a cluster of servers) listening
     --port                  http servers will listen on this port. This will override `port` in config file
     --redis                 specify the backend redis or redis cluster connection string. This will override `redis` in config file
     --workers               specify the number of http processes to start. This will override `workers` in config file
-    -f, --overwrite    if set, command line options will persist to the config file  (default false)
+    -f, --overwrite         if set, command line options will persist to the config file  (default false)
     -D, --daemon            Run heq server in background  (default false)
     --json                  output logs in JSON format  (default false)
     --verbose               level of log, from 0 (no log) to 10 (log everything)  (default 2)
