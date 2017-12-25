@@ -3,11 +3,9 @@
   "version": "1.0.6",
   "description": "hybrid event queue",
   "bin": "./heq.js",
-  "files": [
-    "heq.js",
-    "build"
-  ],
+  "files": ["heq.js", "build"],
   "scripts": {
+    "dev": "yarn prepare && ./heq.js",
     "prepare": "babel src -d build",
     "test": "jest"
   },
