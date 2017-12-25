@@ -1,6 +1,6 @@
 {
   "name": "heq",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "messy server cli",
   "main": "src/index.js",
   "bin": "heq.js",
@@ -30,13 +30,13 @@
   "homepage": "https://github.com/tungv/events#readme",
   "devDependencies": {
     "babel-jest": "^22.0.4",
-    "babel-preset-stage-3": "^6.24.1",
     "jest": "^22.0.4"
   },
   "dependencies": {
     "@events/server": "^2.2.3",
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-3": "^6.24.1",
     "babel-register": "^6.26.0",
     "chalk": "^2.3.0",
     "date-fns": "^1.29.0",
