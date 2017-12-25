@@ -12,7 +12,7 @@ prog
   .option(
     '--verbose',
     'level of log, from 0 (no log) to 10 (log everything)',
-    2
+    3
   );
 
 prog
