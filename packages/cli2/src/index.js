@@ -8,7 +8,7 @@ const prog = sade('heq');
 
 prog
   .version(version)
-  .option('--json', 'output logs in JSON format')
+  .option('--json', 'output logs in JSON format', false)
   .option(
     '--verbose',
     'level of log, from 0 (no log) to 10 (log everything)',

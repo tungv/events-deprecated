@@ -27,7 +27,7 @@ export default async function startCmd(opts) {
 
   const insts = await startApp(
     name,
-    { port, name, redis, verbose: opts.verbose },
+    { port, name, redis, verbose: opts.verbose, json: opts.json },
     workers,
     opts.daemon
   );

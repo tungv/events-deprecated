@@ -56,14 +56,13 @@ export const startApp = async (name, args, workers, daemon) => {
                 type: 'server-log',
                 payload: {
                   process,
-                  msg: data.replace(
-                    /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
-                    ''
-                  ),
+                  msg: data.trim(),
                 },
               });
             } else {
-              console.log(data);
+              const original = JSON.parse(data);
+              original.payload.process = process;
+              log(original._l, original);
             }
           });
 

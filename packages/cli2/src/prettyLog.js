@@ -47,6 +47,15 @@ const formatMsg = (type, { payload }) => {
       return `[${payload.process.pm_id}] stack:
 ${payload.stack.join('\n')}`;
 
+    case 'before-app-start':
+      return `starting new server on port ${payload.port}`;
+
+    case 'child-process-param':
+      return `[${payload.process.pm_id}]: param: ${payload.args}`;
+
+    case 'server-log':
+      return `[${payload.process.pm_id}]: ${payload.msg}`;
+
     case 'begin-shutdown':
       return `shutting down...`;
 
