@@ -1,6 +1,6 @@
 {
   "name": "heq",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "messy server cli",
   "main": "src/index.js",
   "bin": "heq.js",
