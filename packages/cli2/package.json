@@ -1,9 +1,12 @@
 {
   "name": "heq",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "hybrid event queue",
   "bin": "./heq.js",
-  "files": ["heq.js", "build"],
+  "files": [
+    "heq.js",
+    "build"
+  ],
   "scripts": {
     "prepare": "babel src -d build",
     "test": "jest"
