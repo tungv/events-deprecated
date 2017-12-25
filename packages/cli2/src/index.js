@@ -36,7 +36,7 @@ prog
     'specify the number of http processes to start. This will override `workers` in config file'
   )
   .option(
-    '-f, --force-overwrite',
+    '-f, --overwrite',
     'if set, command line options will persist to the config file',
     false
   )
@@ -45,12 +45,14 @@ prog
   .example('start -c custom.js --daemon')
   .action(startCmd);
 
-const startAt = Date.now();
-prog.parse(process.argv).then(
-  () => {
+start();
+
+async function start() {
+  const startAt = Date.now();
+  try {
+    await prog.parse(process.argv);
     console.log('✨ done in', prettyMs(Date.now() - startAt));
-  },
-  err => {
+  } catch (err) {
     console.error(err);
   }
-);
+}
