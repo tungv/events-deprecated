@@ -50,6 +50,9 @@ ${payload.stack.join('\n')}`;
     case 'before-app-start':
       return `starting new server on port ${payload.port}`;
 
+    case 'app-started':
+      return `new server stared. id = ${payload.process.pm_id}`;
+
     case 'child-process-param':
       return `[${payload.process.pm_id}]: param: ${payload.args}`;
 
