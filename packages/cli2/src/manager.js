@@ -49,6 +49,17 @@ export const startApp = async (name, args, workers, daemon) => {
           },
         });
 
+        const app = {
+          name,
+          instances: apps,
+        };
+
+        if (daemon) {
+          disconnect();
+          resolve(app);
+          return;
+        }
+
         pm2.launchBus((err, bus) => {
           bus.on('log:out', ({ data, process }) => {
             if (data.slice(0, 7) !== '{"type"') {
@@ -88,17 +99,6 @@ export const startApp = async (name, args, workers, daemon) => {
             }
           });
         });
-
-        const app = {
-          name,
-          instances: apps,
-        };
-
-        if (daemon) {
-          disconnect();
-          resolve(app);
-          return;
-        }
 
         process.on('SIGINT', async () => {
           console.log('');
