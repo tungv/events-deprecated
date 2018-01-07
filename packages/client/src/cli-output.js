@@ -14,6 +14,14 @@ const messageHandlers = {
       })}`,
       message.meta.ts
     );
+
+    // FIXME: too nested
+    logger(
+      message.meta.level,
+      `retryFn: ${chalk.italic(
+        message.payload.config.subscribe.retryFn.toString()
+      )}`
+    );
     return;
   },
 
@@ -114,8 +122,9 @@ const messageHandlers = {
             )}`;
           }
           if (change.op.insert) {
-            return `${prefix}: inserting ${change.op.insert
-              .length} document(s)`;
+            return `${prefix}: inserting ${
+              change.op.insert.length
+            } document(s)`;
           }
         })
       )
@@ -147,7 +156,9 @@ const messageHandlers = {
 
       state.latest_persistence_created_at = message.meta.ts;
 
-      const result = `${batchString}, changes: ${documents}, latest local version: ${event.id}`;
+      const result = `${batchString}, changes: ${documents}, latest local version: ${
+        event.id
+      }`;
 
       const msg = `persistence completed. ${bold.bgBlue(result)}`;
       logger(message.meta.level, msg, message.meta.ts);
@@ -171,7 +182,8 @@ const messageHandlers = {
     if (successfulEffects) {
       logger(
         message.meta.level,
-        `${successfulEffects} side effect(s) completed after ${(duration / 1000
+        `${successfulEffects} side effect(s) completed after ${(
+          duration / 1000
         ).toFixed(1)}s`,
         message.meta.ts
       );
@@ -182,8 +194,9 @@ const messageHandlers = {
   'SIDE_EFFECTS/HOT_RELOAD_ENABLED': (message, logger, state) => {
     logger(
       message.meta.level,
-      `hot reload enabled. Watching ${message.payload.watchPaths
-        .length} file(s):
+      `hot reload enabled. Watching ${
+        message.payload.watchPaths.length
+      } file(s):
   - ${message.payload.watchPaths.slice(0, 10).join('\n - ')}
   `,
       message.meta.ts
@@ -195,8 +208,9 @@ const messageHandlers = {
   'SIDE_EFFECTS/FILE_CHANGED': (message, logger, state) => {
     logger(
       message.meta.level,
-      `File changes at ${message.payload
-        .location}. Hot reloading side effects...`,
+      `File changes at ${
+        message.payload.location
+      }. Hot reloading side effects...`,
       message.meta.ts
     );
     return;
