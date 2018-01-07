@@ -45,10 +45,20 @@ function observeAndLog(finalConfig, logger, state) {
   const stream$ = subscribe(finalConfig);
 
   stream$.onEnd(() => {
-    const { retry, retryBackoff } = finalConfig.subscribe;
-    const nextRetry = retry + state.retry_count * retryBackoff;
+    const { retryFn, maxRetry } = finalConfig.subscribe;
+    const nextRetry = retryFn(state.retry_count);
 
     state.retry_count++;
+
+    if (state.retry_count > maxRetry) {
+      logger(
+        'FATAL',
+        `cannot connect to event server after ${maxRetry} times. Exiting...`
+      );
+      process.exit(1);
+      return;
+    }
+
     state.next_retry = Date.now() + nextRetry;
 
     logger('INFO', `reconnecting in ${nextRetry}ms...`);
