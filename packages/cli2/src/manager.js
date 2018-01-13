@@ -126,3 +126,20 @@ export const stopApp = app => {
     });
   });
 };
+
+export const listApps = async () => {
+  const disconnect = await connect();
+  return new Promise((resolve, reject) => {
+    pm2.list((err, apps) => {
+      if (err) {
+        reject(err);
+      } else {
+        const eventsServerApps = apps.filter(({ name }) =>
+          name.startsWith('heq-server-')
+        );
+        resolve(eventsServerApps);
+        disconnect();
+      }
+    });
+  });
+};

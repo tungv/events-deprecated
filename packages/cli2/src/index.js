@@ -2,6 +2,7 @@ import prettyMs from 'pretty-ms';
 import sade from 'sade';
 
 import { version } from '../package.json';
+import listCmd from './listCmd';
 import startCmd from './startCmd';
 
 const prog = sade('heq');
@@ -44,6 +45,11 @@ prog
   .example('start -c custom.js')
   .example('start -c custom.js --daemon')
   .action(startCmd);
+
+prog
+  .command('ls')
+  .describe('list all running heq servers')
+  .action(listCmd);
 
 start();
 

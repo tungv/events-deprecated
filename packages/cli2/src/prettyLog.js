@@ -1,6 +1,8 @@
 import chalk from 'chalk';
 import format from 'date-fns/format';
 
+import renderASCIIList from './ascii-list.js';
+
 const PREFIXES = {
   10: chalk.bgWhite.black.bold.dim(' SLY '),
   5: chalk.bgWhite.black.bold(' DBG '),
@@ -64,6 +66,13 @@ ${payload.stack.join('\n')}`;
 
     case 'complete-shutdown':
       return `bye!`;
+
+    case 'list-received':
+      return renderASCIIList({
+        appsCount: payload.appsCount,
+        instancesCount: payload.instancesCount,
+        apps: payload.apps,
+      });
 
     default:
       return `${type} ${JSON.stringify(payload)}`;

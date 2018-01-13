@@ -16,7 +16,12 @@ const loadConfig = ({ config, name, redis, port, workers }) => {
 
 const tryParseConfig = configFilePath => {
   const absPath = path.resolve(process.cwd(), configFilePath);
-  const stats = fs.statSync(absPath);
+  try {
+    fs.statSync(absPath);
+  } catch (ex) {
+    // console.warn('file not found', absPath);
+    return {};
+  }
 
   try {
     const config = require(absPath);
