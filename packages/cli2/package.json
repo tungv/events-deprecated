@@ -1,11 +1,11 @@
 {
   "name": "heq",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "hybrid event queue",
   "bin": "./dist/index.js",
   "scripts": {
     "dev": "node -r babel-register ./src/index",
-    "prepare": "babel src -o dist",
+    "prepare": "babel src -d dist",
     "test": "jest"
   },
   "repository": {
