@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import prettyMs from 'pretty-ms';
 import sade from 'sade';
 
