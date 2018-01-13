@@ -1,6 +1,6 @@
 {
   "name": "heq",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "hybrid event queue",
   "bin": "./heq.js",
   "files": [
@@ -8,7 +8,7 @@
     "src"
   ],
   "scripts": {
-    "dev": "node -r babel-register ./heq.js",
+    "dev": "./heq.js",
     "test": "jest"
   },
   "repository": {
