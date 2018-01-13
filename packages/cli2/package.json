@@ -1,12 +1,8 @@
 {
   "name": "heq",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "hybrid event queue",
   "bin": "./heq.js",
-  "files": [
-    "heq.js",
-    "src"
-  ],
   "scripts": {
     "dev": "./heq.js",
     "test": "jest"
