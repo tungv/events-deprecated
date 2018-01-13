@@ -1,6 +1,6 @@
 {
   "name": "heq",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "hybrid event queue",
   "bin": "./heq.js",
   "files": [
