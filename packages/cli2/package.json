@@ -1,6 +1,6 @@
 {
   "name": "heq",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "hybrid event queue",
   "bin": "./heq.js",
   "scripts": {
@@ -29,14 +29,14 @@
   },
   "homepage": "https://github.com/tungv/events#readme",
   "devDependencies": {
-    "babel-core": "^6.26.0",
     "babel-jest": "^22.0.4",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-3": "^6.24.1",
     "jest": "^22.0.4"
   },
   "dependencies": {
     "@events/server": "^2.2.3",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-3": "^6.24.1",
     "babel-register": "^6.26.0",
     "brighten": "^0.0.1",
     "chalk": "^2.3.0",
