@@ -6,6 +6,7 @@ import sade from 'sade';
 import { version } from '../package.json';
 import listCmd from './listCmd';
 import startCmd from './startCmd';
+import stopCmd from './stopCmd';
 
 const prog = sade('heq');
 
@@ -47,6 +48,16 @@ prog
   .example('start -c custom.js')
   .example('start -c custom.js --daemon')
   .action(startCmd);
+
+prog
+  .command('stop [server-name]')
+  .option('-c, --config', 'Provide path to custom config', 'heq.config.js')
+  .describe(
+    'stop a heq server. If server-name is omitted, stop command will resolve config file to get the name.'
+  )
+  .example('stop local-server')
+  .example('stop -c config.js')
+  .action(stopCmd);
 
 prog
   .command('ls')

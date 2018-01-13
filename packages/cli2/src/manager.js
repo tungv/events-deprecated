@@ -60,7 +60,28 @@ export const startApp = async (name, args, workers, daemon) => {
           return;
         }
 
+        let manuallyStopping = false;
+
         pm2.launchBus((err, bus) => {
+          bus.on('process:event', args => {
+            if (manuallyStopping) {
+              return;
+            }
+            if (args.event === 'exit' && args.process.status === 'stopping') {
+              log(LOG_LEVEL.FATAL, {
+                type: 'begin-shutdown',
+                payload: { name, forced: true },
+              });
+            }
+
+            if (args.event === 'exit' && args.process.status === 'stopped') {
+              log(LOG_LEVEL.FATAL, {
+                type: 'complete-shutdown',
+                payload: { name, forced: true },
+              });
+              process.exit(1);
+            }
+          });
           bus.on('log:out', ({ data, process }) => {
             if (data.slice(0, 7) !== '{"type"') {
               log(LOG_LEVEL.INFO, {
@@ -102,6 +123,7 @@ export const startApp = async (name, args, workers, daemon) => {
 
         process.on('SIGINT', async () => {
           console.log('');
+          manuallyStopping = true;
           log(LOG_LEVEL.INFO, { type: 'begin-shutdown', payload: { name } });
           await stopApp(name);
           log(LOG_LEVEL.INFO, { type: 'complete-shutdown', payload: { name } });
@@ -113,13 +135,29 @@ export const startApp = async (name, args, workers, daemon) => {
   });
 };
 
-export const stopApp = app => {
+export const stopApp = async app => {
+  const log = getLogger();
   const fullName = `heq-server-${app}`;
+  const disconnect = await connect();
   return new Promise((resolve, reject) => {
     // setTimeout(resolve, 500);
     pm2.delete(fullName, err => {
+      disconnect();
       if (err) {
-        reject(err);
+        if (err.message == 'process name not found') {
+          log(LOG_LEVEL.ERROR, {
+            type: 'cannot-stop',
+            payload: { reason: 'DID_NOT_START', app },
+          });
+          return;
+        }
+
+        log(LOG_LEVEL.ERROR, {
+          type: 'cannot-stop',
+          payload: { reason: 'UNEXPECTED', message: err.message, app },
+        });
+
+        resolve();
       } else {
         resolve();
       }

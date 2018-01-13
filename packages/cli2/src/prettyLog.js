@@ -36,7 +36,7 @@ const formatMsg = (type, { payload }) => {
     case 'command-begin':
       return `command = ${payload.cmd}`;
 
-    case 'config-ready':
+    case 'start-config-ready':
       return `config:
   name:    ${chalk.italic(payload.name)}
   port:    ${chalk.italic(payload.port)}
@@ -70,7 +70,7 @@ ${payload.stack.join('\n')}`;
       return `[${payload.process.pm_id}]: ${payload.msg}`;
 
     case 'begin-shutdown':
-      return `shutting down...`;
+      return payload.forced ? `forcedfully shutting down` : `shutting down...`;
 
     case 'complete-shutdown':
       return `bye!`;
@@ -81,6 +81,19 @@ ${payload.stack.join('\n')}`;
         instancesCount: payload.instancesCount,
         apps: payload.apps,
       });
+
+    case 'app-stopping':
+      return `Stopping app ${chalk.bold(payload.app)}...`;
+
+    case 'app-stopped':
+      return `App ${chalk.bold(payload.app)} stopped!`;
+
+    case 'cannot-stop':
+      return payload.app
+        ? `Cannot stop app ${payload.app}. Reason: ${chalk.italic.red(
+            payload.reason
+          )}`
+        : `Cannot stop an unspecified app`;
 
     default:
       return `${type} ${JSON.stringify(payload)}`;

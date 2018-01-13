@@ -21,7 +21,7 @@ export default async function startCmd(opts) {
   const { name, workers, port, redis } = loadConfig(opts);
 
   log(LOG_LEVEL.DEBUG, {
-    type: 'config-ready',
+    type: 'start-config-ready',
     payload: { cmd: 'start', name, workers, port, redis },
   });
 
