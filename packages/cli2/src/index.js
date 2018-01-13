@@ -13,7 +13,7 @@ prog
   .version(version)
   .option('--json', 'output logs in JSON format', false)
   .option(
-    '--verbose',
+    '--verbose, -x',
     'level of log, from 0 (no log) to 10 (log everything)',
     3
   );
@@ -50,6 +50,11 @@ prog
 
 prog
   .command('ls')
+  .describe('list all running heq servers')
+  .action(listCmd);
+
+prog
+  .command('list')
   .describe('list all running heq servers')
   .action(listCmd);
 

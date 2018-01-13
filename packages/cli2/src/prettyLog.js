@@ -3,6 +3,11 @@ import format from 'date-fns/format';
 
 import renderASCIIList from './ascii-list.js';
 
+const fillHoles = obj => {
+  obj[9] = obj[8] = obj[7] = obj[6] = obj[5];
+  obj[4] = obj[3];
+};
+
 const PREFIXES = {
   10: chalk.bgWhite.black.bold.dim(' SLY '),
   5: chalk.bgWhite.black.bold(' DBG '),
@@ -20,6 +25,9 @@ const INVERSED_LOG_LEVELS = {
   1: 'ERROR',
   0: 'FATAL',
 };
+
+fillHoles(PREFIXES);
+fillHoles(INVERSED_LOG_LEVELS);
 
 const formatMsg = (type, { payload }) => {
   switch (type) {
