@@ -16,6 +16,7 @@ import {
   isArray,
 } from 'lodash/fp';
 
+import bulkWrite from './bulkWrite';
 import connect from './connect';
 
 export function mapToOperation<Doc>(
@@ -113,14 +114,10 @@ export default async function createStore(url: string) {
     const promises = flow(
       toPairs,
       map(async ([collectionName, ops]) => {
-        const coll = db.collection(collectionName);
-
-        const {
-          nInserted,
-          nUpserted,
-          nModified,
-          nRemoved,
-        } = await coll.bulkWrite(ops);
+        const { nInserted, nUpserted, nModified, nRemoved } = await bulkWrite(
+          db.collection(collectionName),
+          ops
+        );
 
         return [collectionName, nInserted + nUpserted + nModified + nRemoved];
       })
