@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`helpers: loadConfig should load file and let cli opts override it: cli options override bare config from file 1`] = `
+Object {
+  "name": "override",
+  "port": 8081,
+  "redis": "redis://localhost:6379",
+  "workers": 0,
+}
+`;
+
+exports[`helpers: loadConfig should load file specified by --config: bare config from file 1`] = `
+Object {
+  "name": "test-1",
+  "port": 8081,
+  "redis": "redis://localhost:6379",
+  "workers": 4,
+}
+`;

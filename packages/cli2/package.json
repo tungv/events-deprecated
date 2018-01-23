@@ -1,0 +1,51 @@
+{
+  "name": "heq",
+  "version": "1.2.0",
+  "description": "hybrid event queue",
+  "bin": "./dist/index.js",
+  "scripts": {
+    "dev": "node -r babel-register ./src/index",
+    "prepare": "babel src -d dist",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tungv/events.git"
+  },
+  "keywords": [
+    "event",
+    "sourcing",
+    "event",
+    "driver",
+    "queue",
+    "hybrid",
+    "queue",
+    "message",
+    "queue"
+  ],
+  "author": "Tung <me@tungv.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tungv/events/issues"
+  },
+  "homepage": "https://github.com/tungv/events#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.0.4",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "jest": "^22.0.4"
+  },
+  "dependencies": {
+    "@events/server": "^2.2.3",
+    "brighten": "^0.0.1",
+    "chalk": "^2.3.0",
+    "cli-table2": "^0.2.0",
+    "date-fns": "^1.29.0",
+    "pm2": "^2.9.1",
+    "pretty-ms": "^3.1.0",
+    "sade": "^1.1.1"
+  }
+}
