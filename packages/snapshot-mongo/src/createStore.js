@@ -21,15 +21,25 @@ import connect from './connect';
 
 export function mapToOperation<Doc>(
   version: number,
-  op: any
+  op: any,
+  opCounter: number
 ): Operation<Doc>[] {
   if (op.insert) {
     return op.insert.map(doc => {
-      const setOnInsert: WithVersion<Doc> = { __v: version, ...doc };
+      const setOnInsert: WithVersion<Doc> = {
+        __v: version,
+        __op: opCounter,
+        ...doc,
+      };
 
       return {
         updateOne: {
-          filter: { __v: { $gte: version } },
+          filter: {
+            $or: [
+              { __v: { $gte: version } },
+              { __v: version, __op: { $gte: opCounter } },
+            ],
+          },
           update: {
             $setOnInsert: setOnInsert,
           },
@@ -41,8 +51,25 @@ export function mapToOperation<Doc>(
 
   if (op.update) {
     const { changes, where, upsert = false } = op.update;
-    const update = set('$set.__v', version, changes);
-    const filter = set('__v.$lt', version, where);
+    const enhanceUpdate = flow(
+      set('$set.__v', version),
+      set('$set.__op', opCounter)
+    );
+
+    const update = enhanceUpdate(changes);
+
+    const filter = {
+      $and: [
+        {
+          $or: [
+            { __v: { $lt: version } },
+            { __v: version, __op: { $lt: opCounter } },
+          ],
+        },
+        where,
+      ],
+    };
+
     return [
       {
         updateMany: {
@@ -69,9 +96,9 @@ const getCollectionNameAndOpFromRequest = flow(
 
 const getEventId = path('event.id');
 
-const mapCollectionOpToMongoOp = v => ([collection, op]) => [
+const mapCollectionOpToMongoOp = v => ([collection, op], index) => [
   collection,
-  mapToOperation(v, op),
+  mapToOperation(v, op, index + 1),
 ];
 
 const mapRequestToMongoOps = map(
