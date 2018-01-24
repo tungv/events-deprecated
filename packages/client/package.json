@@ -1,6 +1,6 @@
 {
   "name": "@events/client",
-  "version": "2.5.0",
+  "version": "2.6.0-0",
   "description": "",
   "main": "src/index.js",
   "bin": {
@@ -31,7 +31,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.35",
     "@babel/register": "^7.0.0-beta.35",
-    "@events/snapshot-mongo": "^2.3.0",
+    "@events/snapshot-mongo": "^2.4.0-0",
     "babel-core": "^6.26.0",
     "babel-register": "^6.26.0",
     "create-test-server": "^2.1.1",
