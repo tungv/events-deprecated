@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "lerna": "^2.0.0-rc.5"
+    "lerna": "^2.8.0"
   },
   "license": "ISC",
   "devDependencies": {
