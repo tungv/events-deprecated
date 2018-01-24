@@ -20,7 +20,10 @@ const dropDB = async url => {
 const getPersistenceResults = async ({
   config = { _: [MONGO_TEST], buffer: { enabled: false } },
   projections = [],
-  collections = [],
+  collections = [
+    { name: 'col1', version: '1.0.0' },
+    { name: 'col2', version: '1.0.0' },
+  ],
 }) => {
   const persistence$ = await persist(config, fromArray(projections), [
     { name: 'col1', version: '1.0.0' },
@@ -49,12 +52,7 @@ describe('persist', () => {
       },
     ];
 
-    const collections = [
-      { name: 'col1', version: '1.0.0' },
-      { name: 'col2', version: '1.0.0' },
-    ];
-
-    const out = await getPersistenceResults({ projections, collections });
+    const out = await getPersistenceResults({ projections });
 
     // snapshot, col1, col2
     expect(bulkWriteSpy).toHaveBeenCalledTimes(3);
@@ -124,12 +122,7 @@ describe('persist', () => {
       },
     ];
 
-    const collections = [
-      { name: 'col1', version: '1.0.0' },
-      { name: 'col2', version: '1.0.0' },
-    ];
-
-    const out = await getPersistenceResults({ projections, collections });
+    const out = await getPersistenceResults({ projections });
 
     const spyCalls = bulkWriteSpy.mock.calls;
 
