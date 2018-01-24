@@ -1,5 +1,5 @@
 import PLazy from 'p-lazy';
-import kefir from 'kefir';
+import { fromPromise } from 'kefir';
 
 import createStore from './createStore';
 
@@ -10,6 +10,11 @@ const lazify = factoryPromise => (...args) =>
 
 export default (args, input$, aggreateNameAndPVs) => {
   const url = args._[0];
+  const buffer = args.buffer || {
+    enabled: true,
+    count: 100,
+    time: 2,
+  };
 
   const dispatch = lazify(createStore(url));
 
@@ -34,7 +39,7 @@ export default (args, input$, aggreateNameAndPVs) => {
   });
 
   checkpoint$
-    .flatMapConcat(request => kefir.fromPromise(dispatch([request])))
+    .flatMapConcat(request => fromPromise(dispatch([request])))
     .observe({
       error: e => {
         console.error('cannot persist a checkpoint');
@@ -42,8 +47,13 @@ export default (args, input$, aggreateNameAndPVs) => {
       },
     });
 
-  return input$
-    .bufferWithTimeOrCount(2, 100)
-    .filter(buf => buf.length)
-    .flatMapConcat(request => kefir.fromPromise(dispatch(request)));
+  const bufferedInput$ = buffer.enabled
+    ? input$
+        .bufferWithTimeOrCount(buffer.time, buffer.count)
+        .filter(buf => buf.length)
+    : input$.map(r => [r]);
+
+  return bufferedInput$.flatMapConcat(request =>
+    fromPromise(dispatch(request))
+  );
 };
