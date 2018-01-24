@@ -161,4 +161,101 @@ describe('persist', () => {
       },
     ]);
   });
+
+  it('should persist events with multiple changes for one document', async () => {
+    await dropDB(MONGO_TEST);
+
+    const projections = [
+      {
+        event: { id: 1 },
+        projections: {
+          col1: [
+            { __pv: '1.0.0', op: { insert: [{ id: 1, array: [1, 2, 3] }] } },
+          ],
+        },
+      },
+      {
+        event: { id: 2 },
+        projections: {
+          col1: [
+            {
+              __pv: '1.0.0',
+              op: {
+                update: {
+                  where: { id: 1 },
+                  changes: { $addToSet: { array: 4 } },
+                },
+              },
+            },
+            {
+              __pv: '1.0.0',
+              op: {
+                update: {
+                  where: { id: 1 },
+                  changes: { $pull: { array: 1 } },
+                },
+              },
+            },
+          ],
+        },
+      },
+    ];
+
+    const out = await getPersistenceResults({ projections });
+
+    const spyCalls = bulkWriteSpy.mock.calls;
+
+    expect(spyCalls.map(args => args[0].collectionName)).toEqual([
+      '__snapshots_v1.0.0',
+      'col1_v1.0.0',
+      'col1_v1.0.0',
+    ]);
+
+    expect(spyCalls[1][1]).toEqual([
+      {
+        updateOne: {
+          filter: {
+            $or: [{ __v: { $gte: 1 } }, { __v: 1, __op: { $gte: 1 } }],
+          },
+          update: {
+            $setOnInsert: { __v: 1, __op: 1, array: [1, 2, 3], id: 1 },
+          },
+          upsert: true,
+        },
+      },
+    ]);
+    expect(spyCalls[2][1]).toEqual([
+      {
+        updateMany: {
+          filter: {
+            $and: [
+              { $or: [{ __v: { $lt: 2 } }, { __v: 2, __op: { $lt: 1 } }] },
+              { id: 1 },
+            ],
+          },
+          update: { $addToSet: { array: 4 }, $set: { __v: 2, __op: 1 } },
+          upsert: false,
+        },
+      },
+      {
+        updateMany: {
+          filter: {
+            $and: [
+              { $or: [{ __v: { $lt: 2 } }, { __v: 2, __op: { $lt: 2 } }] },
+              { id: 1 },
+            ],
+          },
+          update: { $pull: { array: 1 }, $set: { __v: 2, __op: 2 } },
+          upsert: false,
+        },
+      },
+    ]);
+
+    expect(out.map(r => r.changes)).toEqual([1, 2]);
+
+    const client = await MongoClient.connect(MONGO_TEST);
+    const doc = await client.collection('col1_v1.0.0').findOne({ id: 1 });
+
+    expect(doc.array).toEqual([2, 3, 4]);
+  });
 });
