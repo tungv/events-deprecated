@@ -3,7 +3,9 @@ import execa from 'execa';
 
 export default async ({ json, verbose, config }) => {
   // start a subscribe worker
-  const params = JSON.stringify({ json, verbose, config });
+  const configPath = path.resolve(process.cwd(), config);
+
+  const params = JSON.stringify({ json, verbose, configPath });
   const executable = path.resolve(__dirname, './subscribe.js');
 
   const worker = execa('node', ['-r', 'babel-register', executable], {

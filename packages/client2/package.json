@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node index",
-    "test":
-      "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest"
+    "test": "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest"
   },
   "author": "",
   "license": "ISC",
@@ -31,6 +30,7 @@
     "sade": "^1.3.1"
   },
   "devDependencies": {
+    "@events/snapshot-mongo": "^2.4.0-0",
     "babel-jest": "^22.1.0",
     "create-test-server": "^2.1.1",
     "jest": "^22.1.4",
