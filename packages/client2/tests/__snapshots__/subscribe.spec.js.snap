@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`heq-client subscribe should log 1`] = `
+Array [
+  Object {
+    "_l": "INFO",
+    "payload": Object {
+      "path": "<ROOT>/fixtures/config/sample.config.js",
+    },
+    "type": "load-config-begin",
+  },
+  Object {
+    "_l": "DEBUG",
+    "payload": Object {
+      "config": Object {
+        "hotReload": Object {
+          "watchPaths": Array [
+            "<ROOT>",
+          ],
+        },
+        "monitor": Object {
+          "port": 43333,
+        },
+        "persist": Object {
+          "driver": "@events/snapshot-mongo",
+          "seedFilePath": false,
+          "store": "mongodb://localhost/client_test",
+        },
+        "sideEffects": Object {
+          "sideEffectsPath": "<ROOT>/fixtures/sideEffects/sampleEffects.js",
+        },
+        "subscribe": Object {
+          "burstCount": 20,
+          "burstTime": 500,
+          "maxRetry": 20,
+          "serverUrl": "http://localhost:43322",
+        },
+        "transform": Object {
+          "rulePath": "<ROOT>/fixtures/rules/user_management.js",
+        },
+      },
+    },
+    "type": "load-config-end",
+  },
+]
+`;
