@@ -77,7 +77,7 @@ describe('heq-client subscribe', () => {
     server.close();
   });
 
-  it('should log', async () => {
+  test('happy path', async () => {
     const { stdout } = await subscribe({
       configPath: './fixtures/config/test.config.js',
       keepAlive: 2000,

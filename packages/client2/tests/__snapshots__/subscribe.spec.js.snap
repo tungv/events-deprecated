@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`heq-client subscribe should log: app events sequence 1`] = `
+exports[`heq-client subscribe happy path: app events sequence 1`] = `
 Array [
   "load-config-begin",
   "load-config-end",
@@ -35,7 +35,7 @@ Array [
 ]
 `;
 
-exports[`heq-client subscribe should log: departments collection must match 1`] = `
+exports[`heq-client subscribe happy path: departments collection must match 1`] = `
 Array [
   Object {
     "__op": 2,
@@ -54,7 +54,7 @@ Array [
 ]
 `;
 
-exports[`heq-client subscribe should log: incoming-event 1 must match 1`] = `
+exports[`heq-client subscribe happy path: incoming-event 1 must match 1`] = `
 Object {
   "_l": "DEBUG",
   "payload": Object {
@@ -76,7 +76,7 @@ Object {
 }
 `;
 
-exports[`heq-client subscribe should log: incoming-event 2 must match 1`] = `
+exports[`heq-client subscribe happy path: incoming-event 2 must match 1`] = `
 Object {
   "_l": "DEBUG",
   "payload": Object {
@@ -101,7 +101,7 @@ Object {
 }
 `;
 
-exports[`heq-client subscribe should log: incoming-event 3 must match 1`] = `
+exports[`heq-client subscribe happy path: incoming-event 3 must match 1`] = `
 Object {
   "_l": "DEBUG",
   "payload": Object {
@@ -126,7 +126,7 @@ Object {
 }
 `;
 
-exports[`heq-client subscribe should log: incoming-event 4 must match 1`] = `
+exports[`heq-client subscribe happy path: incoming-event 4 must match 1`] = `
 Object {
   "_l": "DEBUG",
   "payload": Object {
@@ -148,7 +148,7 @@ Object {
 }
 `;
 
-exports[`heq-client subscribe should log: incoming-event 5 must match 1`] = `
+exports[`heq-client subscribe happy path: incoming-event 5 must match 1`] = `
 Object {
   "_l": "DEBUG",
   "payload": Object {
@@ -170,7 +170,7 @@ Object {
 }
 `;
 
-exports[`heq-client subscribe should log: incoming-event 6 must match 1`] = `
+exports[`heq-client subscribe happy path: incoming-event 6 must match 1`] = `
 Object {
   "_l": "DEBUG",
   "payload": Object {
@@ -195,7 +195,7 @@ Object {
 }
 `;
 
-exports[`heq-client subscribe should log: incoming-event 7 must match 1`] = `
+exports[`heq-client subscribe happy path: incoming-event 7 must match 1`] = `
 Object {
   "_l": "DEBUG",
   "payload": Object {
@@ -212,7 +212,7 @@ Object {
 }
 `;
 
-exports[`heq-client subscribe should log: incoming-event 8 must match 1`] = `
+exports[`heq-client subscribe happy path: incoming-event 8 must match 1`] = `
 Object {
   "_l": "DEBUG",
   "payload": Object {
@@ -229,7 +229,7 @@ Object {
 }
 `;
 
-exports[`heq-client subscribe should log: incoming-event 9 must match 1`] = `
+exports[`heq-client subscribe happy path: incoming-event 9 must match 1`] = `
 Object {
   "_l": "DEBUG",
   "payload": Object {
@@ -246,7 +246,7 @@ Object {
 }
 `;
 
-exports[`heq-client subscribe should log: users collection must match 1`] = `
+exports[`heq-client subscribe happy path: users collection must match 1`] = `
 Array [
   Object {
     "__op": 1,
