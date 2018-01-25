@@ -5,7 +5,7 @@ Array [
   Object {
     "_l": "INFO",
     "payload": Object {
-      "path": "<ROOT>/fixtures/config/sample.config.js",
+      "path": "<ROOT>/fixtures/config/test.config.js",
     },
     "type": "load-config-begin",
   },
@@ -33,7 +33,7 @@ Array [
           "burstCount": 20,
           "burstTime": 500,
           "maxRetry": 20,
-          "serverUrl": "http://localhost:43322",
+          "serverUrl": "http://localhost:43366",
         },
         "transform": Object {
           "rulePath": "<ROOT>/fixtures/rules/user_management.js",
