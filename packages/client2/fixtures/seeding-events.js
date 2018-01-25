@@ -1,6 +1,5 @@
 module.exports = [
   {
-    id: 1,
     type: 'DEPARTMENT_CREATED',
     payload: {
       id: 'c95803b4-b29c-40a9-923e-fc2225e001f8',
@@ -13,7 +12,6 @@ module.exports = [
     },
   },
   {
-    id: 2,
     type: 'USER_REGISTERED',
     payload: {
       uid: '9d5901c0-4228-4832-adb2-41cb3a8797cd',
@@ -29,7 +27,6 @@ module.exports = [
     },
   },
   {
-    id: 3,
     type: 'USER_REGISTERED',
     payload: {
       uid: '6d90bd42-62ef-4d3c-91aa-6f517fdcc8da',
@@ -45,7 +42,6 @@ module.exports = [
     },
   },
   {
-    id: 4,
     type: 'DEPARTMENT_CREATED',
     payload: {
       id: 'f7a094c4-dd60-40c1-bcfd-1650b5a57cc8',
@@ -58,7 +54,6 @@ module.exports = [
     },
   },
   {
-    id: 5,
     type: 'USER_EMAIL_UPDATED',
     payload: {
       uid: '9d5901c0-4228-4832-adb2-41cb3a8797cd',
@@ -71,7 +66,6 @@ module.exports = [
     },
   },
   {
-    id: 6,
     type: 'USER_REGISTERED',
     payload: {
       uid: '3822c08a-2967-40bb-8c99-d3c76b569561',
@@ -88,7 +82,6 @@ module.exports = [
   },
 
   {
-    id: 7,
     type: 'USER_EMAIL_UPDATED',
     payload: {
       uid: '9d5901c0-4228-4832-adb2-41cb3a8797cd',
@@ -96,7 +89,6 @@ module.exports = [
     },
   },
   {
-    id: 8,
     type: 'USER_EMAIL_UPDATED',
     payload: {
       uid: '9d5901c0-4228-4832-adb2-41cb3a8797cd',
@@ -104,7 +96,6 @@ module.exports = [
     },
   },
   {
-    id: 9,
     type: 'USER_EMAIL_UPDATED',
     payload: {
       uid: '9d5901c0-4228-4832-adb2-41cb3a8797cd',

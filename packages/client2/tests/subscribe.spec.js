@@ -56,6 +56,7 @@ describe('heq-client subscribe', () => {
       redis: 'redis://localhost:6379/6',
       port: 43366,
       namespc: 'client-e2e-test',
+      clean: true,
     });
 
     const seedingEvents = require('../fixtures/seeding-events');
