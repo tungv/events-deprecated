@@ -2,10 +2,11 @@
 
 import sade from 'sade';
 
-import { version } from '../package.json';
+import { version, bin } from '../package.json';
 import subscribeCommand from './subscribeCommand';
 
-const program = sade('heq-client');
+const binName = Object.keys(bin)[0];
+const program = sade(binName);
 
 program
   .version(version)
