@@ -79,7 +79,7 @@ Array [
   Object {
     "_l": "INFO",
     "payload": Object {
-      "snapshotVersion": 9,
+      "snapshotVersion": 0,
     },
     "type": "connect-snapshot-end",
   },
@@ -87,7 +87,6 @@ Array [
     "_l": "DEBUG",
     "payload": Object {
       "retryCount": 0,
-      "snapshotVersion": 9,
     },
     "type": "connect-events-begin",
   },

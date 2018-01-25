@@ -106,7 +106,6 @@ async function loop({ config, state, ruleMeta }) {
     type: 'connect-events-begin',
     payload: {
       retryCount: state.retryCount,
-      snapshotVersion,
     },
   });
 
