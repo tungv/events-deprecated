@@ -122,6 +122,16 @@ async function loop({ config, state, ruleMeta, transform }) {
   });
 
   const distance = latestEvent.id - snapshotVersion;
+  let caughtup = distance === 0;
+
+  if (caughtup) {
+    write('INFO', {
+      type: 'subscription-catchup',
+      payload: {
+        time: 0,
+      },
+    });
+  }
 
   const projection$ = events$.map(e => ({
     event: e,
@@ -158,13 +168,18 @@ async function loop({ config, state, ruleMeta, transform }) {
       payload: { event, documents: changes, batch },
     });
 
-    // if (!caughtup && event.id >= serverLatest) {
-    //   caughtup = true;
-    //   write('INFO', 'SUBSCRIPTION/CATCH_UP', {
-    //     count: serverLatest - clientSnapshotVersion + 1,
-    //     time: Date.now() - startTime,
-    //   });
-    // }
+    if (!caughtup && event.id >= latestEvent.id) {
+      caughtup = true;
+      const endTime = Date.now();
+      const startTime = await ready;
+      write('INFO', {
+        type: 'subscription-catchup',
+        payload: {
+          time: endTime - startTime,
+          count: latestEvent.id - snapshotVersion,
+        },
+      });
+    }
 
     // if (changes && sideEffectsPath) {
     //   const { successfulEffects, duration } = await applySideEffect(requests);

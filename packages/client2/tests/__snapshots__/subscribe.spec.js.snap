@@ -29,6 +29,7 @@ Array [
   "incoming-event",
   "incoming-projection",
   "persistence-complete",
+  "subscription-catchup",
   "process-interrupted",
   "process-exit",
 ]

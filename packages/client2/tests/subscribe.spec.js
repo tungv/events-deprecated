@@ -92,6 +92,10 @@ describe('heq-client subscribe', () => {
       expect(e).toMatchSnapshot(`incoming-event ${index + 1} must match`);
     });
 
+    appEvents.filter(e => e.type === 'subscription-catchup').forEach(e => {
+      expect(e.payload.count).toBe(9);
+    });
+
     const users = await db
       .collection('users_v1.0.0')
       .find()
