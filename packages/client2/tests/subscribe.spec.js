@@ -2,7 +2,12 @@ import execa from 'execa';
 import path from 'path';
 import startServer from '../fixtures/startServer';
 
-const subscribe = async ({ loglevel = 'DEBUG', configPath, json = true }) => {
+const subscribe = async ({
+  loglevel = 'DEBUG',
+  configPath,
+  json = true,
+  keepAlive,
+}) => {
   const child = execa('node', ['-r', 'babel-register', './src/subscribe'], {
     env: {
       params: JSON.stringify({
@@ -12,6 +17,10 @@ const subscribe = async ({ loglevel = 'DEBUG', configPath, json = true }) => {
       }),
     },
   });
+
+  setTimeout(() => {
+    child.kill('SIGINT');
+  }, keepAlive);
 
   const { stdout, stderr } = await child;
 
@@ -53,8 +62,13 @@ describe('heq-client subscribe', () => {
   it('should log', async () => {
     const { stdout } = await subscribe({
       configPath: './fixtures/config/test.config.js',
+      keepAlive: 1000,
     });
 
-    expect(normalize(stdout.split('\n'))).toMatchSnapshot();
+    const appEvents = normalize(stdout.split('\n'));
+
+    expect(appEvents).toMatchSnapshot();
+
+    console.log(appEvents.map(e => e.type));
   });
 });

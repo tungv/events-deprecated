@@ -65,5 +65,47 @@ Array [
     },
     "type": "load-transform-end",
   },
+  Object {
+    "_l": "DEBUG",
+    "payload": Object {
+      "persistenceConfig": Object {
+        "driver": "@events/snapshot-mongo",
+        "seedFilePath": false,
+        "store": "mongodb://localhost/client_test",
+      },
+    },
+    "type": "connect-snapshot-begin",
+  },
+  Object {
+    "_l": "INFO",
+    "payload": Object {
+      "snapshotVersion": 9,
+    },
+    "type": "connect-snapshot-end",
+  },
+  Object {
+    "_l": "DEBUG",
+    "payload": Object {
+      "retryCount": 0,
+      "snapshotVersion": 9,
+    },
+    "type": "connect-events-begin",
+  },
+  Object {
+    "_l": "INFO",
+    "payload": Object {},
+    "type": "connect-events-end",
+  },
+  Object {
+    "_l": "INFO",
+    "type": "process-interrupted",
+  },
+  Object {
+    "_l": "INFO",
+    "payload": Object {
+      "code": 0,
+    },
+    "type": "process-exit",
+  },
 ]
 `;
