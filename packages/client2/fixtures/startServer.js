@@ -1,6 +1,7 @@
 import factory from '@events/server';
 import nodeRedis from 'redis';
 import flushdb from 'redis-functional/flushdb';
+import enableDestroy from 'server-destroy';
 
 export default function({ namespc, redis, port, clean = false }) {
   let p = Promise.resolve(true);
@@ -23,6 +24,8 @@ export default function({ namespc, redis, port, clean = false }) {
           history: { size: 10 },
           debug: false,
         });
+
+        enableDestroy(server);
 
         server.listen(port, () => {
           resolve(server);

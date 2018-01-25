@@ -6,6 +6,8 @@ import path from 'path';
 
 import startServer from '../fixtures/startServer';
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 const subscribe = async ({
   loglevel = 'DEBUG',
   configPath,
@@ -25,6 +27,8 @@ const subscribe = async ({
   setTimeout(() => {
     child.kill('SIGINT');
   }, keepAlive);
+
+  child.stdout.pipe(process.stdout);
 
   const { stdout, stderr } = await child;
 
@@ -112,5 +116,68 @@ describe('heq-client subscribe', () => {
     expect(
       departments.map(({ _id, ...department }) => department),
     ).toMatchSnapshot('departments collection must match');
+  });
+
+  test.only('retry', async () => {
+    const server1 = await startServer({
+      redis: 'redis://localhost:6379/6',
+      port: 43377,
+      namespc: 'client-e2e-test-retry',
+      clean: true,
+    });
+
+    const subscriberPromise = subscribe({
+      configPath: './fixtures/config/retry.config.js',
+      keepAlive: 2000,
+    });
+
+    // wait until subscriber is ready
+    await sleep(1000);
+
+    await got.post(`http://localhost:43377/commit`, {
+      body: {
+        type: 'test-before-destroy',
+        payload: {},
+      },
+      json: true,
+    });
+
+    // destroy server and all of its connections
+    server1.destroy();
+
+    // wait for retries
+    await sleep(200);
+
+    const server2 = await startServer({
+      redis: 'redis://localhost:6379/6',
+      port: 43377,
+      namespc: 'client-e2e-test-retry',
+    });
+
+    await got.post(`http://localhost:43377/commit`, {
+      body: {
+        type: 'test-reconnection',
+        payload: {},
+      },
+      json: true,
+    });
+
+    server2.destroy();
+
+    const { stdout } = await subscriberPromise;
+    const appEvents = normalize(stdout.split('\n'));
+    expect(appEvents.map(e => e.type)).toEqual([
+      'load-config-begin',
+      'load-config-end',
+      'load-transform-begin',
+      'load-transform-end',
+      'connect-snapshot-begin',
+      'connect-snapshot-end',
+      'connect-events-begin',
+      'connect-events-end',
+      'err-server-disconnected',
+      'process-interrupted',
+      'process-exit',
+    ]);
   });
 });

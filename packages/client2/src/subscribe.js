@@ -1,5 +1,5 @@
 import makeTransform, { getMeta } from '@events/transform';
-
+import kefir from 'kefir';
 import path from 'path';
 
 import { setLogLevel, shouldLog, write } from './logger';
@@ -187,6 +187,31 @@ async function loop({ config, state, ruleMeta, transform }) {
     //   write('INFO', 'SIDE_EFFECTS/COMPLETE', { successfulEffects, duration });
     // }
   });
+
+  const EMPTY = {};
+
+  const endValue = await kefir
+    .merge([persistence$, kefir.constant(EMPTY)])
+    .toPromise();
+
+  write('ERROR', {
+    type: 'err-server-disconnected',
+    payload: {
+      isEmpty: endValue === EMPTY,
+      reason: `connection to ${config.subscribe.serverUrl} interrupted`,
+    },
+  });
+
+  // persistence$.onEnd(() => {
+  //   write('ERROR', {
+  //     type: 'err-server-disconnected',
+  //     payload: {
+  //       reason: `connection to ${config.subscribe.serverUrl} interrupted`,
+  //     },
+  //   });
+  //
+  //   // retry
+  // });
 }
 
 async function handleErrors(ex) {

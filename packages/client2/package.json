@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node index",
-    "test":
-      "EVENT_STORE_URL=http://localhost:43366 MONGO_TEST=mongodb://localhost/client_test jest"
+    "test": "EVENT_STORE_URL=http://localhost:43366 MONGO_TEST=mongodb://localhost/client_test jest"
   },
   "author": "",
   "license": "ISC",
@@ -37,7 +36,8 @@
     "babel-jest": "^22.1.0",
     "create-test-server": "^2.1.1",
     "jest": "^22.1.4",
-    "kefir": "^3.8.1"
+    "kefir": "^3.8.1",
+    "server-destroy": "^1.0.1"
   },
   "babel": {
     "presets": [
