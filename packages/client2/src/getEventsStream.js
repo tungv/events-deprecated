@@ -16,6 +16,10 @@ export default async function getEventsStream({
     };
   }
 
+  if (!latestEvent.id) {
+    latestEvent.id = 0;
+  }
+
   const { raw$, events$, abort } = subscriber(`${serverUrl}/subscribe`, {
     'Last-Event-ID': from,
     'burst-count': burstCount,
