@@ -44,7 +44,24 @@ async function prepare() {
   });
 
   const configDir = path.resolve(configPath, '..');
-  const config = await parseConfig(require(configPath), configDir);
+  let config;
+  try {
+    config = await parseConfig(require(configPath), configDir);
+  } catch (e) {
+    const shouldLogStack = shouldLog('DEBUG');
+    const data = {
+      type: 'load-config-failed',
+      payload: {
+        message: e.message,
+      },
+    };
+
+    if (shouldLogStack) {
+      data.payload.stack = e.stack;
+    }
+    write('FATAL', data);
+    process.exit(1);
+  }
 
   write('DEBUG', {
     type: 'load-config-end',
