@@ -42,5 +42,28 @@ Array [
     },
     "type": "load-config-end",
   },
+  Object {
+    "_l": "DEBUG",
+    "payload": Object {
+      "rulePath": "<ROOT>/fixtures/rules/user_management.js",
+    },
+    "type": "load-transform-begin",
+  },
+  Object {
+    "_l": "DEBUG",
+    "payload": Object {
+      "ruleMeta": Array [
+        Object {
+          "name": "users",
+          "version": "1.0.0",
+        },
+        Object {
+          "name": "departments",
+          "version": "1.0.0",
+        },
+      ],
+    },
+    "type": "load-transform-end",
+  },
 ]
 `;

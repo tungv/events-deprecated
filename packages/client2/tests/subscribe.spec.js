@@ -13,16 +13,26 @@ const subscribe = async ({ loglevel = 'DEBUG', configPath, json = true }) => {
     },
   });
 
-  const { stdout } = await child;
+  const { stdout, stderr } = await child;
+
+  if (stderr) {
+    throw stderr;
+  }
+
   return { stdout };
 };
 
 const normalize = array =>
   array.map(item => {
-    const obj = JSON.parse(item.split(process.cwd()).join('<ROOT>'));
-    delete obj._t;
+    try {
+      const obj = JSON.parse(item.split(process.cwd()).join('<ROOT>'));
+      delete obj._t;
 
-    return obj;
+      return obj;
+    } catch (ex) {
+      console.error(item);
+      throw ex;
+    }
   });
 
 describe('heq-client subscribe', () => {
