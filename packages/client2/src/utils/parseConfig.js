@@ -34,7 +34,7 @@ module.exports = async (config, configRoot) => {
     serverUrl,
     burstCount = 20,
     burstTime = 500,
-    retryFn = count => 10 + 500 * (2 << (count - 1)),
+    retryFn = count => 10 + 10 * (2 << (count - 1)),
     maxRetry = 20,
   } = subscribe;
 

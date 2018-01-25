@@ -12,10 +12,15 @@ let CURRENT_LOG_LEVEL;
 let USE_JSON = true;
 
 const JSONReporter = (level, data) => {
-  data._l = level;
-  data._t = Date.now();
-
-  return JSON.stringify(data);
+  return JSON.stringify(
+    Object.assign(
+      {
+        _t: Date.now(),
+        _l: level,
+      },
+      data,
+    ),
+  );
 };
 
 export const setLogLevel = nextLevel => (CURRENT_LOG_LEVEL = nextLevel);

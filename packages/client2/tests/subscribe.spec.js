@@ -13,6 +13,7 @@ const subscribe = async ({
   configPath,
   json = true,
   keepAlive,
+  debug = false,
 }) => {
   const child = execa('node', ['-r', 'babel-register', './src/subscribe'], {
     env: {
@@ -28,7 +29,9 @@ const subscribe = async ({
     child.kill('SIGINT');
   }, keepAlive);
 
-  child.stdout.pipe(process.stdout);
+  if (debug) {
+    child.stdout.pipe(process.stdout);
+  }
 
   const { stdout, stderr } = await child;
 
@@ -78,7 +81,7 @@ describe('heq-client subscribe', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server.destroy();
   });
 
   test('happy path', async () => {
@@ -118,7 +121,7 @@ describe('heq-client subscribe', () => {
     ).toMatchSnapshot('departments collection must match');
   });
 
-  test.only('retry', async () => {
+  test('retry', async () => {
     const server1 = await startServer({
       redis: 'redis://localhost:6379/6',
       port: 43377,
@@ -128,7 +131,7 @@ describe('heq-client subscribe', () => {
 
     const subscriberPromise = subscribe({
       configPath: './fixtures/config/retry.config.js',
-      keepAlive: 2000,
+      keepAlive: 3000,
     });
 
     // wait until subscriber is ready
@@ -146,7 +149,7 @@ describe('heq-client subscribe', () => {
     server1.destroy();
 
     // wait for retries
-    await sleep(200);
+    await sleep(100);
 
     const server2 = await startServer({
       redis: 'redis://localhost:6379/6',
@@ -176,8 +179,40 @@ describe('heq-client subscribe', () => {
       'connect-events-begin',
       'connect-events-end',
       'err-server-disconnected',
+      'await-retry',
+      'connect-snapshot-begin',
+      'connect-snapshot-end',
+      'connect-events-begin',
+      'err-server-disconnected',
+      'await-retry',
+      'connect-snapshot-begin',
+      'connect-snapshot-end',
+      'connect-events-begin',
+      'err-server-disconnected',
+      'await-retry',
+      'connect-snapshot-begin',
+      'connect-snapshot-end',
+      'connect-events-begin',
+      'err-server-disconnected',
+      'await-retry',
+      'connect-snapshot-begin',
+      'connect-snapshot-end',
+      'connect-events-begin',
+      'err-server-disconnected',
+      'await-retry',
+      'connect-snapshot-begin',
+      'connect-snapshot-end',
+      'connect-events-begin',
+      'err-server-disconnected',
+      'await-retry',
       'process-interrupted',
       'process-exit',
     ]);
+
+    expect(
+      appEvents
+        .filter(e => e.type === 'await-retry')
+        .map(e => e.payload.retryAfter),
+    ).toEqual([10, 30, 50, 90, 170, 330]);
   });
 });

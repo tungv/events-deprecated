@@ -40,7 +40,10 @@ async function getLatest(url) {
       type: 'inspect',
       payload: url,
     });
-    const resp = await got(`${url}/events/latest`, { json: true });
+    const resp = await got(`${url}/events/latest`, {
+      json: true,
+      timeout: 300,
+    });
     return resp.body;
   } catch (ex) {
     return null;

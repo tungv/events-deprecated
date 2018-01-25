@@ -11,6 +11,7 @@ import parseConfig from './utils/parseConfig';
 const { params } = process.env;
 
 const { json, verbose, configPath } = JSON.parse(params);
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 setLogLevel(verbose);
 
@@ -109,17 +110,31 @@ async function loop({ config, state, ruleMeta, transform }) {
     },
   });
 
-  const { latestEvent, ready, events$ } = await getEventsStream({
-    subscriptionConfig: config.subscribe,
-    from: snapshotVersion,
-  });
+  let latestEvent, ready, events$;
 
-  write('INFO', {
-    type: 'connect-events-end',
-    payload: {
-      serverLatest: latestEvent.id,
-    },
-  });
+  try {
+    const resp = await getEventsStream({
+      subscriptionConfig: config.subscribe,
+      from: snapshotVersion,
+    });
+
+    latestEvent = resp.latestEvent;
+    ready = resp.ready;
+    events$ = resp.events$;
+
+    // reset count
+    state.retryCount = 0;
+
+    write('INFO', {
+      type: 'connect-events-end',
+      payload: {
+        serverLatest: latestEvent.id,
+      },
+    });
+  } catch (ex) {
+    write('ERROR', ex);
+    return attemptRetry({ config, state, ruleMeta, transform });
+  }
 
   const distance = latestEvent.id - snapshotVersion;
   let caughtup = distance === 0;
@@ -202,17 +217,41 @@ async function loop({ config, state, ruleMeta, transform }) {
     },
   });
 
-  // persistence$.onEnd(() => {
-  //   write('ERROR', {
-  //     type: 'err-server-disconnected',
-  //     payload: {
-  //       reason: `connection to ${config.subscribe.serverUrl} interrupted`,
-  //     },
-  //   });
-  //
-  //   // retry
-  // });
+  return attemptRetry({ config, state, ruleMeta, transform });
 }
+
+const attemptRetry = async ({ config, state, ruleMeta, transform }) => {
+  // retry
+  const { retryFn, maxRetry } = config.subscribe;
+
+  if (state.retryCount > maxRetry) {
+    write('FATAL', {
+      type: 'err-cannot-retry',
+      payload: {
+        max: maxRetry,
+        count: state.retryCount,
+      },
+    });
+
+    process.exit(1);
+  }
+
+  const nextRetry = retryFn(state.retryCount);
+
+  state.retryCount++;
+  state.nextRetryAt = Date.now() + nextRetry;
+
+  write('INFO', {
+    type: 'await-retry',
+    payload: {
+      retryAfter: nextRetry,
+      retryAt: state.nextRetryAt,
+    },
+  });
+
+  await sleep(nextRetry);
+  return loop({ config, state, ruleMeta, transform });
+};
 
 async function handleErrors(ex) {
   console.error(ex);
