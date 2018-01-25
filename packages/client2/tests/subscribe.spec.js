@@ -1,6 +1,9 @@
 import execa from 'execa';
-import path from 'path';
+import got from 'got';
+
 import { MongoClient } from 'mongodb';
+import path from 'path';
+
 import startServer from '../fixtures/startServer';
 
 const subscribe = async ({
@@ -54,6 +57,17 @@ describe('heq-client subscribe', () => {
       port: 43366,
       namespc: 'client-e2e-test',
     });
+
+    const seedingEvents = require('../fixtures/seeding-events');
+
+    await Promise.all(
+      seedingEvents.map(event => {
+        return got.post(`http://localhost:43366/commit`, {
+          body: event,
+          json: true,
+        });
+      }),
+    );
 
     const db = await MongoClient.connect(process.env.MONGO_TEST);
     await db.dropDatabase();

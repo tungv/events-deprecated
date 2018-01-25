@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "node index",
-    "test": "EVENT_STORE_URL=http://localhost:43322 MONGO_TEST=mongodb://localhost/client_test jest"
+    "test":
+      "EVENT_STORE_URL=http://localhost:43366 MONGO_TEST=mongodb://localhost/client_test jest"
   },
   "author": "",
   "license": "ISC",

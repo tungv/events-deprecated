@@ -92,7 +92,9 @@ Array [
   },
   Object {
     "_l": "INFO",
-    "payload": Object {},
+    "payload": Object {
+      "serverLatest": 9,
+    },
     "type": "connect-events-end",
   },
   Object {

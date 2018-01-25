@@ -40,7 +40,8 @@ async function getLatest(url) {
       type: 'inspect',
       payload: url,
     });
-    return await got(`${url}/events/latest`, { json: true });
+    const resp = await got(`${url}/events/latest`, { json: true });
+    return resp.body;
   } catch (ex) {
     return null;
   }
