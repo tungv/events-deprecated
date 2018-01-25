@@ -2,7 +2,7 @@ import makeTransform, { getMeta } from '@events/transform';
 
 import path from 'path';
 
-import { setLogLevel, write } from './logger';
+import { setLogLevel, shouldLog, write } from './logger';
 import connectSnapshot from './connectSnapshot';
 import getEventsStream from './getEventsStream';
 import loadModule from './utils/loadModule';
@@ -77,10 +77,10 @@ async function prepare() {
     retryCount: 0,
   };
 
-  return { config, ruleMeta, state };
+  return { config, ruleMeta, state, transform };
 }
 
-async function loop({ config, state, ruleMeta }) {
+async function loop({ config, state, ruleMeta, transform }) {
   const persistenceConfig = config.persist;
 
   write('DEBUG', {
@@ -119,6 +119,58 @@ async function loop({ config, state, ruleMeta }) {
     payload: {
       serverLatest: latestEvent.id,
     },
+  });
+
+  const distance = latestEvent.id - snapshotVersion;
+
+  const projection$ = events$.map(e => ({
+    event: e,
+    projections: transform(e),
+  }));
+
+  if (shouldLog('DEBUG')) {
+    events$.observe(e => {
+      write('DEBUG', {
+        type: 'incoming-event',
+        payload: {
+          event: e,
+        },
+      });
+    });
+    projection$.observe(ctx => {
+      write('DEBUG', {
+        type: 'incoming-projection',
+        payload: ctx,
+      });
+    });
+  }
+
+  const persistence$ = getPersistenceStream(projection$);
+
+  persistence$.observe(async out => {
+    const { requests, changes } = out;
+    const { event } = requests[requests.length - 1];
+    const { event: firstEvent } = requests[0];
+    const batch = [firstEvent.id, event.id];
+
+    write('INFO', {
+      type: 'persistence-complete',
+      payload: { event, documents: changes, batch },
+    });
+
+    // if (!caughtup && event.id >= serverLatest) {
+    //   caughtup = true;
+    //   write('INFO', 'SUBSCRIPTION/CATCH_UP', {
+    //     count: serverLatest - clientSnapshotVersion + 1,
+    //     time: Date.now() - startTime,
+    //   });
+    // }
+
+    // if (changes && sideEffectsPath) {
+    //   const { successfulEffects, duration } = await applySideEffect(requests);
+    //
+    //   write('INFO', 'SIDE_EFFECTS/COMPLETE', { successfulEffects, duration });
+    // }
   });
 }
 

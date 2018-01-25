@@ -50,6 +50,7 @@ const normalize = array =>
 
 describe('heq-client subscribe', () => {
   let server;
+  let db;
 
   beforeAll(async () => {
     server = await startServer({
@@ -61,16 +62,14 @@ describe('heq-client subscribe', () => {
 
     const seedingEvents = require('../fixtures/seeding-events');
 
-    await Promise.all(
-      seedingEvents.map(event => {
-        return got.post(`http://localhost:43366/commit`, {
-          body: event,
-          json: true,
-        });
-      }),
-    );
+    for (const event of seedingEvents) {
+      await got.post(`http://localhost:43366/commit`, {
+        body: event,
+        json: true,
+      });
+    }
 
-    const db = await MongoClient.connect(process.env.MONGO_TEST);
+    db = await MongoClient.connect(process.env.MONGO_TEST);
     await db.dropDatabase();
   });
 
@@ -81,13 +80,33 @@ describe('heq-client subscribe', () => {
   it('should log', async () => {
     const { stdout } = await subscribe({
       configPath: './fixtures/config/test.config.js',
-      keepAlive: 1000,
+      keepAlive: 2000,
     });
 
     const appEvents = normalize(stdout.split('\n'));
 
-    expect(appEvents).toMatchSnapshot();
+    expect(appEvents.map(e => e.type)).toMatchSnapshot('app events sequence');
 
-    console.log(appEvents.map(e => e.type));
+    appEvents.filter(e => e.type === 'incoming-event').forEach((e, index) => {
+      expect(e.payload.event.id).toBe(index + 1);
+      expect(e).toMatchSnapshot(`incoming-event ${index + 1} must match`);
+    });
+
+    const users = await db
+      .collection('users_v1.0.0')
+      .find()
+      .toArray();
+
+    const departments = await db
+      .collection('departments_v1.0.0')
+      .find()
+      .toArray();
+
+    expect(users.map(({ _id, ...user }) => user)).toMatchSnapshot(
+      'users collection must match',
+    );
+    expect(
+      departments.map(({ _id, ...department }) => department),
+    ).toMatchSnapshot('departments collection must match');
   });
 });
