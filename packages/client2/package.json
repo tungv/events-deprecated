@@ -42,6 +42,7 @@
     "jest": "^22.1.4",
     "kefir": "^3.8.1",
     "mongodb": "^2",
+    "redis": "^2.8.0",
     "server-destroy": "^1.0.1"
   },
   "babel": {

@@ -135,7 +135,7 @@ describe('heq-client subscribe', () => {
     });
 
     // wait until subscriber is ready
-    await sleep(1000);
+    await sleep(1500);
 
     await got.post(`http://localhost:43377/commit`, {
       body: {
@@ -146,7 +146,7 @@ describe('heq-client subscribe', () => {
     });
 
     // await for first persistence complete
-    await sleep(20);
+    await sleep(200);
 
     // destroy server and all of its connections
     server1.destroy();
