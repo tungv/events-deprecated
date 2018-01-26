@@ -43,6 +43,7 @@
     "kefir": "^3.8.1",
     "mongodb": "^2",
     "redis": "^2.8.0",
+    "redis-functional": "^2.2.0",
     "server-destroy": "^1.0.1"
   },
   "babel": {
