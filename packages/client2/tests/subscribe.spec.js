@@ -4,7 +4,7 @@ import got from 'got';
 import { MongoClient } from 'mongodb';
 import path from 'path';
 
-import startServer from '../fixtures/startServer';
+import seedingEvents from '../fixtures/seeding-events';
 import startServer, { cleanup } from '../fixtures/startServer';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -68,8 +68,6 @@ describe('heq-client subscribe', () => {
       clean: true,
     });
 
-    const seedingEvents = require('../fixtures/seeding-events');
-
     for (const event of seedingEvents) {
       await got.post(`http://localhost:43366/commit`, {
         body: event,
@@ -115,10 +113,10 @@ describe('heq-client subscribe', () => {
       .toArray();
 
     expect(users.map(({ _id, ...user }) => user)).toMatchSnapshot(
-      'users collection must match',
+      'users collection must match'
     );
     expect(
-      departments.map(({ _id, ...department }) => department),
+      departments.map(({ _id, ...department }) => department)
     ).toMatchSnapshot('departments collection must match');
   });
 
@@ -134,7 +132,6 @@ describe('heq-client subscribe', () => {
     const subscriberPromise = subscribe({
       configPath: './fixtures/config/retry.config.js',
       keepAlive: 3000,
-      debug: true,
     });
 
     // wait until subscriber is ready
@@ -162,8 +159,6 @@ describe('heq-client subscribe', () => {
       port: 43377,
       namespc: 'client-e2e-test-retry',
     });
-
-    console.log('connected', Date.now());
 
     await sleep(20);
 
@@ -221,7 +216,100 @@ describe('heq-client subscribe', () => {
     expect(
       appEvents
         .filter(e => e.type === 'await-retry')
-        .map(e => e.payload.retryAfter),
+        .map(e => e.payload.retryAfter)
     ).toEqual([10, 30]);
+  });
+
+  test('side-effects', async () => {
+    await db.dropDatabase();
+
+    const server = await startServer({
+      redis: 'redis://localhost:6379/6',
+      port: 43388,
+      namespc: 'client-e2e-test-side-effect',
+      clean: true,
+    });
+
+    for (const event of seedingEvents) {
+      await got.post(`http://localhost:43388/commit`, {
+        body: event,
+        json: true,
+      });
+    }
+
+    const { stdout } = await subscribe({
+      configPath: './fixtures/config/sideEffect.config.js',
+      keepAlive: 2000,
+    });
+
+    server.destroy();
+
+    const lines = stdout.split('\n');
+
+    const appLogs = lines.filter(line => line[0] === '{');
+    const sideEffectsLogs = lines.filter(line => line[0] !== '{');
+
+    const appEvents = normalize(appLogs);
+
+    expect(appEvents.map(e => e.type)).toEqual([
+      'load-config-begin',
+      'load-config-end',
+      'load-transform-begin',
+      'load-transform-end',
+      'connect-snapshot-begin',
+      'connect-snapshot-end',
+      'connect-events-begin',
+      'connect-events-end',
+      'incoming-event',
+      'incoming-projection',
+      'incoming-event',
+      'incoming-projection',
+      'incoming-event',
+      'incoming-projection',
+      'incoming-event',
+      'incoming-projection',
+      'incoming-event',
+      'incoming-projection',
+      'incoming-event',
+      'incoming-projection',
+      'incoming-event',
+      'incoming-projection',
+      'incoming-event',
+      'incoming-projection',
+      'incoming-event',
+      'incoming-projection',
+      'persistence-complete',
+      'subscription-catchup',
+      'err-side-effect-failed', // this fails immediately
+      'side-effects-complete', // batch of 3 side-effects-complete's
+      'process-interrupted',
+      'process-exit',
+    ]);
+
+    expect(appEvents.filter(e => e.type === 'err-side-effect-failed')).toEqual([
+      {
+        _l: 'WARN',
+        payload: {
+          error: {
+            message: 'must fail',
+            stack: `Error: must fail
+    at execute (<ROOT>/fixtures/sideEffects/sampleEffects.js:26:13)
+    at safely (<ROOT>/src/makeSideEffects.js:56:11)
+    at <ROOT>/src/makeSideEffects.js:8:13
+    at array.forEach.sideEffect (<ROOT>/src/makeSideEffects.js:62:32)
+    at Array.forEach (<anonymous>)
+    at requests.forEach.ctx (<ROOT>/src/makeSideEffects.js:48:13)
+    at Array.forEach (<anonymous>)
+    at Object.applySideEffect (<ROOT>/src/makeSideEffects.js:47:14)
+    at Object.persistence$.observe [as value] (<ROOT>/src/subscribe.js:228:60)
+    at <anonymous>
+    at process._tickCallback (internal/process/next_tick.js:188:7)`,
+          },
+        },
+        type: 'err-side-effect-failed',
+      },
+    ]);
+
+    expect(sideEffectsLogs).toMatchSnapshot('sideEffectsLogs must match');
   });
 });

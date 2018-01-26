@@ -277,3 +277,11 @@ Array [
   },
 ]
 `;
+
+exports[`heq-client subscribe side-effects: sideEffectsLogs must match 1`] = `
+Array [
+  "------------------------------------ side effect 9d5901c0-4228-4832-adb2-41cb3a8797cd",
+  "------------------------------------ side effect 6d90bd42-62ef-4d3c-91aa-6f517fdcc8da",
+  "------------------------------------ side effect 3822c08a-2967-40bb-8c99-d3c76b569561",
+]
+`;
