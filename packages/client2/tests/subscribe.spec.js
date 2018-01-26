@@ -5,6 +5,7 @@ import { MongoClient } from 'mongodb';
 import path from 'path';
 
 import startServer from '../fixtures/startServer';
+import startServer, { cleanup } from '../fixtures/startServer';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -79,8 +80,8 @@ describe('heq-client subscribe', () => {
     db = await MongoClient.connect(process.env.MONGO_TEST);
   });
 
-  afterAll(() => {
-    server.destroy();
+  afterEach(() => {
+    cleanup();
   });
 
   test('happy path', async () => {
