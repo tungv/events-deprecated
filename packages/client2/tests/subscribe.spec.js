@@ -77,7 +77,6 @@ describe('heq-client subscribe', () => {
     }
 
     db = await MongoClient.connect(process.env.MONGO_TEST);
-    await db.dropDatabase();
   });
 
   afterAll(() => {
@@ -85,6 +84,7 @@ describe('heq-client subscribe', () => {
   });
 
   test('happy path', async () => {
+    await db.dropDatabase();
     const { stdout } = await subscribe({
       configPath: './fixtures/config/test.config.js',
       keepAlive: 2000,
@@ -122,6 +122,7 @@ describe('heq-client subscribe', () => {
   });
 
   test('retry', async () => {
+    await db.dropDatabase();
     const server1 = await startServer({
       redis: 'redis://localhost:6379/6',
       port: 43377,
@@ -132,6 +133,7 @@ describe('heq-client subscribe', () => {
     const subscriberPromise = subscribe({
       configPath: './fixtures/config/retry.config.js',
       keepAlive: 3000,
+      debug: true,
     });
 
     // wait until subscriber is ready
@@ -145,11 +147,14 @@ describe('heq-client subscribe', () => {
       json: true,
     });
 
+    // await for first persistence complete
+    await sleep(20);
+
     // destroy server and all of its connections
     server1.destroy();
 
     // wait for retries
-    await sleep(100);
+    await sleep(200);
 
     const server2 = await startServer({
       redis: 'redis://localhost:6379/6',
@@ -157,7 +162,11 @@ describe('heq-client subscribe', () => {
       namespc: 'client-e2e-test-retry',
     });
 
-    await got.post(`http://localhost:43377/commit`, {
+    console.log('connected', Date.now());
+
+    await sleep(20);
+
+    const resp = await got.post(`http://localhost:43377/commit`, {
       body: {
         type: 'test-reconnection',
         payload: {},
@@ -165,9 +174,8 @@ describe('heq-client subscribe', () => {
       json: true,
     });
 
-    server2.destroy();
-
     const { stdout } = await subscriberPromise;
+    server2.destroy();
     const appEvents = normalize(stdout.split('\n'));
     expect(appEvents.map(e => e.type)).toEqual([
       'load-config-begin',
@@ -178,33 +186,33 @@ describe('heq-client subscribe', () => {
       'connect-snapshot-end',
       'connect-events-begin',
       'connect-events-end',
+      'subscription-catchup',
+      'incoming-event',
+      'incoming-projection',
+      'persistence-complete',
+
+      /* server1.destroy() */
+
       'err-server-disconnected',
-      'await-retry',
+
+      'await-retry', // retry after 10ms
       'connect-snapshot-begin',
       'connect-snapshot-end',
-      'connect-events-begin',
+      'connect-events-begin', // takes 300ms to timeout
       'err-server-disconnected',
-      'await-retry',
+
+      'await-retry', // retry after 30ms
       'connect-snapshot-begin',
       'connect-snapshot-end',
-      'connect-events-begin',
-      'err-server-disconnected',
-      'await-retry',
-      'connect-snapshot-begin',
-      'connect-snapshot-end',
-      'connect-events-begin',
-      'err-server-disconnected',
-      'await-retry',
-      'connect-snapshot-begin',
-      'connect-snapshot-end',
-      'connect-events-begin',
-      'err-server-disconnected',
-      'await-retry',
-      'connect-snapshot-begin',
-      'connect-snapshot-end',
-      'connect-events-begin',
-      'err-server-disconnected',
-      'await-retry',
+
+      /* server2 connected at +200ms */
+
+      'connect-events-begin', // current at +340ms
+      'connect-events-end', // reconnected
+      'incoming-event',
+      'incoming-projection',
+      'persistence-complete',
+      'subscription-catchup',
       'process-interrupted',
       'process-exit',
     ]);
@@ -213,6 +221,6 @@ describe('heq-client subscribe', () => {
       appEvents
         .filter(e => e.type === 'await-retry')
         .map(e => e.payload.retryAfter),
-    ).toEqual([10, 30, 50, 90, 170, 330]);
+    ).toEqual([10, 30]);
   });
 });
