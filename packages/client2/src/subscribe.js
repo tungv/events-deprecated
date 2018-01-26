@@ -1,4 +1,5 @@
 import makeTransform, { getMeta } from '@events/transform';
+
 import kefir from 'kefir';
 import path from 'path';
 
@@ -6,13 +7,14 @@ import { setLogLevel, shouldLog, write } from './logger';
 import connectSnapshot from './connectSnapshot';
 import getEventsStream from './getEventsStream';
 import loadModule from './utils/loadModule';
+import makeSideEffects from './makeSideEffects';
 import parseConfig from './utils/parseConfig';
 
 const { params } = process.env;
 
 const { json, verbose, configPath } = JSON.parse(params);
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
+const noop = () => {};
 setLogLevel(verbose);
 
 process.on('exit', code => {
@@ -94,6 +96,13 @@ async function prepare() {
   const state = {
     retryCount: 0,
   };
+
+  const { sideEffects: { sideEffectsPath } } = config;
+
+  // prepare sideEffects
+  config.applySideEffect = sideEffectsPath
+    ? makeSideEffects(loadModule(sideEffectsPath))
+    : noop;
 
   return { config, ruleMeta, state, transform };
 }
@@ -213,11 +222,18 @@ async function loop({ config, state, ruleMeta, transform }) {
       });
     }
 
-    // if (changes && sideEffectsPath) {
-    //   const { successfulEffects, duration } = await applySideEffect(requests);
-    //
-    //   write('INFO', 'SIDE_EFFECTS/COMPLETE', { successfulEffects, duration });
-    // }
+    const { sideEffects: { sideEffectsPath } } = config;
+
+    if (changes && sideEffectsPath) {
+      const { successfulEffects, duration } = await config.applySideEffect(
+        requests
+      );
+
+      write('INFO', {
+        type: 'side-effects-complete',
+        payload: { successfulEffects, duration },
+      });
+    }
   });
 
   const EMPTY = {};
