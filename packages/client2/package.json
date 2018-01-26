@@ -41,6 +41,7 @@
     "create-test-server": "^2.1.1",
     "jest": "^22.1.4",
     "kefir": "^3.8.1",
+    "mongodb": "^2",
     "server-destroy": "^1.0.1"
   },
   "babel": {
