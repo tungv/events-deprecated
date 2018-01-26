@@ -8,9 +8,6 @@ module.exports = {
   transform: {
     rulePath: '../rules/user_management.js',
   },
-  sideEffects: {
-    sideEffectsPath: '../sideEffects/sampleEffects.js',
-  },
   hotReload: {
     enabled: true,
   },
