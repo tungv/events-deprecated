@@ -286,29 +286,10 @@ describe('heq-client subscribe', () => {
       'process-exit',
     ]);
 
-    expect(appEvents.filter(e => e.type === 'err-side-effect-failed')).toEqual([
-      {
-        _l: 'WARN',
-        payload: {
-          error: {
-            message: 'must fail',
-            stack: `Error: must fail
-    at execute (<ROOT>/fixtures/sideEffects/sampleEffects.js:26:13)
-    at safely (<ROOT>/src/makeSideEffects.js:56:11)
-    at <ROOT>/src/makeSideEffects.js:8:13
-    at array.forEach.sideEffect (<ROOT>/src/makeSideEffects.js:62:32)
-    at Array.forEach (<anonymous>)
-    at requests.forEach.ctx (<ROOT>/src/makeSideEffects.js:48:13)
-    at Array.forEach (<anonymous>)
-    at Object.applySideEffect (<ROOT>/src/makeSideEffects.js:47:14)
-    at Object.persistence$.observe [as value] (<ROOT>/src/subscribe.js:228:60)
-    at <anonymous>
-    at process._tickCallback (internal/process/next_tick.js:188:7)`,
-          },
-        },
-        type: 'err-side-effect-failed',
-      },
-    ]);
+    expect(
+      appEvents.filter(e => e.type === 'err-side-effect-failed')[0].payload
+        .error.message
+    ).toBe('must fail');
 
     expect(sideEffectsLogs).toMatchSnapshot('sideEffectsLogs must match');
   });

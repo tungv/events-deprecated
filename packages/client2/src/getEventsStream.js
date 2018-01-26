@@ -6,7 +6,7 @@ export default async function getEventsStream({
   subscriptionConfig: { serverUrl, burstCount, burstTime },
   from,
 }) {
-  const latestEvent = await getLatest(serverUrl);
+  const latestEvent = await getLatestEvent(serverUrl);
   if (!latestEvent) {
     throw {
       type: 'err-server-disconnected',
@@ -38,7 +38,7 @@ export default async function getEventsStream({
   };
 }
 
-async function getLatest(url) {
+async function getLatestEvent(url) {
   try {
     write('SILLY', {
       type: 'inspect',

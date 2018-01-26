@@ -72,6 +72,7 @@ async function prepare() {
     },
   });
 
+  // prepare transform
   const { transform: { rulePath } } = config;
 
   write('DEBUG', {
@@ -200,16 +201,16 @@ async function loop({ config, state, ruleMeta, transform }) {
 
   persistence$.observe(async out => {
     const { requests, changes } = out;
-    const { event } = requests[requests.length - 1];
     const { event: firstEvent } = requests[0];
-    const batch = [firstEvent.id, event.id];
+    const { event: lastEvent } = requests[requests.length - 1];
+    const batch = [firstEvent.id, lastEvent.id];
 
     write('INFO', {
       type: 'persistence-complete',
-      payload: { event, documents: changes, batch },
+      payload: { event: lastEvent, documents: changes, batch },
     });
 
-    if (!caughtup && event.id >= latestEvent.id) {
+    if (!caughtup && lastEvent.id >= latestEvent.id) {
       caughtup = true;
       const endTime = Date.now();
       const startTime = await ready;
