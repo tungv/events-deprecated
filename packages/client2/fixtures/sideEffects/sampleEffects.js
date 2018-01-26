@@ -23,7 +23,7 @@ module.exports = [
       );
     },
     execute: async event => {
-      throw new Error('must failed');
+      throw new Error('must fail');
     },
   },
 ];
