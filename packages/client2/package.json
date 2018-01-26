@@ -8,8 +8,7 @@
   },
   "scripts": {
     "dev": "node index",
-    "test":
-      "EVENT_STORE_URL=http://localhost:43366 MONGO_TEST=mongodb://localhost/client_test jest"
+    "test": "EVENT_STORE_URL=http://localhost:43366 MONGO_TEST=mongodb://localhost/client_test jest"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +24,7 @@
     "date-fns": "^1.29.0",
     "debounce": "^1.1.0",
     "execa": "^0.9.0",
+    "filtr": "^0.3.0",
     "got": "^8.0.3",
     "micro": "^9.1.0",
     "pkg-dir": "^2.0.0",
