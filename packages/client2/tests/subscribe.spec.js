@@ -17,6 +17,7 @@ const subscribe = async ({
   debug = false,
 }) => {
   const child = execa('node', ['-r', 'babel-register', './src/subscribe'], {
+    silent: true,
     env: {
       params: JSON.stringify({
         json,
@@ -86,7 +87,7 @@ describe('heq-client subscribe', () => {
     await db.dropDatabase();
     const { stdout } = await subscribe({
       configPath: './fixtures/config/test.config.js',
-      keepAlive: 2000,
+      keepAlive: 3000,
     });
 
     const appEvents = normalize(stdout.split('\n'));
