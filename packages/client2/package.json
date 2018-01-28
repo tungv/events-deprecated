@@ -1,13 +1,13 @@
 {
   "name": "heq-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "bin": {
-    "heq-client": "index"
+    "heq-client": "index.js"
   },
   "scripts": {
-    "dev": "node index",
+    "dev": "export MONGODB_URL=\"mongodb://localhost/client_test_1\" && mongo $MONGODB_URL --eval \"db.dropDatabase()\" && node index --config fixtures/config/sample.config.js",
     "test": "EVENT_STORE_URL=http://localhost:43366 MONGO_TEST=mongodb://localhost/client_test jest"
   },
   "author": "",
