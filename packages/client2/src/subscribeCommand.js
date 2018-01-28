@@ -13,6 +13,7 @@ export default async ({ json, verbose, config }) => {
 
   const worker = execa('node', ['-r', 'babel-register', executable], {
     env: { params },
+    silent: true,
   });
 
   process.on('SIGINT', () => {

@@ -3,7 +3,7 @@ module.exports = {
     serverUrl: 'http://localhost:43322',
   },
   persist: {
-    store: 'mongodb://localhost/client_test_1',
+    store: process.env.MONGODB_URL,
   },
   transform: {
     rulePath: '../rules/user_management.js',
