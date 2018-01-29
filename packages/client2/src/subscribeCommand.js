@@ -11,21 +11,17 @@ export default async ({ json, verbose, config }) => {
   const params = JSON.stringify({ json, verbose, configPath });
   const executable = path.resolve(__dirname, './subscribe.js');
 
+  process.on('SIGINT', () => {
+    // maximum 1s for worker to cleanup
+    setTimeout(process.exit, 1000, 0);
+  });
+
   const worker = execa('node', ['-r', 'babel-register', executable], {
     env: { params },
     silent: true,
     stdio: 'inherit',
   });
 
-  process.on('SIGINT', () => {
-    console.log('\ninterrupting...');
-    worker.kill('SIGINT');
-    // maximum 1s for worker to cleanup
-    setTimeout(process.exit, 1000, 0);
-  });
-
-  // worker.stdout.pipe(process.stdout);
-  // worker.stderr.pipe(process.stderr);
   try {
     await worker;
   } catch (ex) {
