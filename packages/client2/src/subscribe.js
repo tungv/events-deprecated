@@ -87,7 +87,7 @@ async function prepare() {
   // prepare transform
   const { transform: { rulePath } } = config;
 
-  write('DEBUG', {
+  write('INFO', {
     type: 'load-transform-begin',
     payload: {
       rulePath,
@@ -123,7 +123,7 @@ async function prepare() {
 async function loop({ config, state, ruleMeta, transform }) {
   const persistenceConfig = config.persist;
 
-  write('DEBUG', {
+  write('INFO', {
     type: 'connect-snapshot-begin',
     payload: {
       persistenceConfig,
@@ -142,7 +142,7 @@ async function loop({ config, state, ruleMeta, transform }) {
     },
   });
 
-  write('DEBUG', {
+  write('INFO', {
     type: 'connect-events-begin',
     payload: {
       serverUrl: config.subscribe.serverUrl,
