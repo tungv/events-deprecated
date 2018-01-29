@@ -5,18 +5,21 @@ import prettyMs from 'pretty-ms';
 import { inspect } from 'util';
 
 let lastLogTime = 0;
+let lastFullTime = 0;
 
 export default (level, data) => {
   const prefix = PREFIXES[level] || PREFIXES.SILLY;
   const handler = handlers[data.type] || unknownTypeLogger;
-  const logTime = Date.now();
+  const now = Date.now();
+  const relativeClose = now - lastLogTime <= 1000;
+  const shouldLogDelta = relativeClose && now - lastFullTime <= 5000;
+  const timeStr = shouldLogDelta
+    ? ` +${prettyMs(now - lastLogTime)}`.padStart(29, '-')
+    : format(now);
 
-  const timeStr =
-    logTime - lastLogTime > 1000
-      ? format(logTime)
-      : `+${prettyMs(logTime - lastLogTime)}`.padStart(29, ' ');
+  if (!shouldLogDelta) lastFullTime = now;
 
-  lastLogTime = logTime;
+  lastLogTime = now;
 
   console.log(`${prefix} ${chalk.italic.dim(timeStr)}:`, handler(data.payload));
 };
