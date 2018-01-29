@@ -11,9 +11,9 @@ export default async url => {
 
     const db = await MongoClient.connect(url);
     const hb = MongoHeartbeat(db, {
-      interval: 5000,
-      timeout: 10000,
-      tolerance: 2,
+      interval: 5 * 60 * 1000,
+      timeout: 30000,
+      tolerance: 3,
     });
 
     hb.on('error', err => {
