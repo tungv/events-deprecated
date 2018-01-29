@@ -9,21 +9,10 @@ const LOG_LEVEL = {
 };
 
 let CURRENT_LOG_LEVEL;
-let USE_JSON = true;
-
-const JSONReporter = (level, data) => {
-  return JSON.stringify(
-    Object.assign(
-      {
-        _t: Date.now(),
-        _l: level,
-      },
-      data,
-    ),
-  );
-};
+let REPORTER = () => {};
 
 export const setLogLevel = nextLevel => (CURRENT_LOG_LEVEL = nextLevel);
+export const setReporter = reporter => (REPORTER = reporter);
 
 export const shouldLog = level => {
   const minLogLevel = LOG_LEVEL[CURRENT_LOG_LEVEL];
@@ -36,7 +25,5 @@ export const write = (level, content) => {
     return;
   }
 
-  const reporter = JSONReporter;
-
-  console.log(reporter(level, content));
+  REPORTER(level, content);
 };

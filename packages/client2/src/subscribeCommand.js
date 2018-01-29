@@ -14,6 +14,7 @@ export default async ({ json, verbose, config }) => {
   const worker = execa('node', ['-r', 'babel-register', executable], {
     env: { params },
     silent: true,
+    stdio: 'inherit',
   });
 
   process.on('SIGINT', () => {
@@ -23,7 +24,8 @@ export default async ({ json, verbose, config }) => {
     setTimeout(process.exit, 1000, 0);
   });
 
-  worker.stdout.pipe(process.stdout);
+  // worker.stdout.pipe(process.stdout);
+  // worker.stderr.pipe(process.stderr);
   try {
     await worker;
   } catch (ex) {

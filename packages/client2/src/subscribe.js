@@ -3,7 +3,9 @@ import makeTransform, { getMeta } from '@events/transform';
 import kefir from 'kefir';
 import path from 'path';
 
-import { setLogLevel, shouldLog, write } from './logger';
+import { setLogLevel, setReporter, shouldLog, write } from './logger';
+import JSONReporter from './logger/json-reporter';
+import ChalkReporter from './logger/chalk-reporter';
 import connectSnapshot from './connectSnapshot';
 import getEventsStream from './getEventsStream';
 import loadModule from './utils/loadModule';
@@ -15,7 +17,17 @@ const { params } = process.env;
 const { json, verbose, configPath } = JSON.parse(params);
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const noop = () => {};
+
+setReporter(json ? JSONReporter : ChalkReporter);
 setLogLevel(verbose);
+
+write('INFO', {
+  type: 'logger-ready',
+  payload: {
+    reporter: json ? 'json' : 'chalk',
+    level: verbose,
+  },
+});
 
 process.on('exit', code => {
   write('INFO', {
@@ -133,6 +145,7 @@ async function loop({ config, state, ruleMeta, transform }) {
   write('DEBUG', {
     type: 'connect-events-begin',
     payload: {
+      serverUrl: config.subscribe.serverUrl,
       retryCount: state.retryCount,
     },
   });
@@ -189,13 +202,26 @@ async function loop({ config, state, ruleMeta, transform }) {
         },
       });
     });
-    projection$.observe(ctx => {
-      write('DEBUG', {
+  }
+
+  projection$.observe(ctx => {
+    const { projections } = ctx;
+    const changingCollections = Object.keys(projections).filter(
+      key => projections[key].length
+    );
+    const hasChanges = changingCollections.length > 0;
+
+    if (hasChanges) {
+      write('INFO', {
         type: 'incoming-projection',
         payload: ctx,
       });
-    });
-  }
+    } else {
+      write('DEBUG', {
+        type: 'incoming-projection-empty',
+      });
+    }
+  });
 
   const persistence$ = getPersistenceStream(projection$);
 
