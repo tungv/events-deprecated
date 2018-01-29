@@ -13,8 +13,8 @@ program
   .option('--json', 'output logs in JSON format', false)
   .option(
     '--verbose, -x',
-    'level of log, from 0 (no log) to 10 (log everything)',
-    'INFO',
+    'level of log can be either SILLY, DEBUG, INFO, WARN, ERROR, or FATAL',
+    'INFO'
   );
 
 program
@@ -22,7 +22,7 @@ program
     default: true,
   })
   .describe(
-    'start to subscribe to an heq server and persist data to a datastore',
+    'start to subscribe to an heq server and persist data to a datastore'
   )
   .option('--config, -c', 'path to config file', 'events.config.js')
   .example('subscribe --config path/to/config.js')
