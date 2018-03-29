@@ -115,7 +115,7 @@ const factory = async userConfig => {
       });
     });
 
-  return start;
+  return { start };
 };
 
 const parseConfig = ({ queue: queueConfig = {}, http: httpConfig = {} }) => {
