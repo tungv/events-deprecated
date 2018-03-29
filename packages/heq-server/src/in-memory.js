@@ -9,7 +9,7 @@ const adapter = () => {
   const commit = event => {
     events[id] = event;
     event.id = ++id;
-    emitter.emit(event);
+    emitter.emit('data', event);
     return event;
   };
 

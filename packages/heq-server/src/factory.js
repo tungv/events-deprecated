@@ -1,5 +1,32 @@
 const micro = require('micro');
+const kefir = require('kefir');
 const { router, get, post } = require('microrouter');
+const {
+  getLastEventId,
+  getBurstCount,
+  getBurstTime,
+  getRetry,
+} = require('./utils');
+
+const over = arrayFns => param => arrayFns.map(fn => fn(param));
+const once = fn => {
+  let run = false;
+
+  return (...params) => {
+    if (run) {
+      return;
+    }
+
+    run = true;
+    fn(...params);
+  };
+};
+
+const toOutput = events => `id: ${events[events.length - 1].id}
+event: INCMSG
+data: ${JSON.stringify(events)}
+
+`;
 
 const factory = async userConfig => {
   const { queue, http } = await parseConfig(userConfig || {});
@@ -18,6 +45,54 @@ const factory = async userConfig => {
       }
 
       return queue.commit(body);
+    }),
+    get(http.subscribePath, (req, res) => {
+      const [lastEventId, count = 20, time = 1, retry = 10] = over([
+        getLastEventId,
+        getBurstCount,
+        getBurstTime,
+        getRetry,
+      ])(req);
+
+      const removeClient = once(() => {
+        // opts.debug && console.log('removing', req.url);
+        // subscription.unsubscribe();
+        res.end();
+      });
+
+      req.on('end', removeClient);
+      req.on('close', removeClient);
+      res.on('finish', removeClient);
+
+      req.socket.setTimeout(0);
+      req.socket.setNoDelay(true);
+      req.socket.setKeepAlive(true);
+
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream;charset=UTF-8',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      });
+
+      res.write(':ok\n\n');
+
+      flush(res);
+
+      const pastEvents = queue.query({ lastEventId });
+
+      const stream = kefir.concat([
+        kefir.sequentially(0, pastEvents),
+        queue.changes$,
+      ]);
+
+      stream
+        .bufferWithTimeOrCount(time, count)
+        .filter(b => b.length)
+        .map(toOutput)
+        .observe(block => {
+          // console.log('send to %s %s', req.url, block);
+          res.write(block);
+        });
     })
   );
 
@@ -71,3 +146,9 @@ const parseConfig = ({ queue: queueConfig = {}, http: httpConfig = {} }) => {
 };
 
 module.exports = factory;
+
+function flush(response) {
+  if (response.flush && response.flush.name !== 'deprecated') {
+    response.flush();
+  }
+}
