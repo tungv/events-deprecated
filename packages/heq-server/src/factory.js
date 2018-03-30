@@ -1,6 +1,8 @@
-const micro = require('micro');
-const kefir = require('kefir');
 const { router, get, post } = require('microrouter');
+const kefir = require('kefir');
+const micro = require('micro');
+const { handleErrors } = require('micro-boom');
+
 const {
   getLastEventId,
   getBurstCount,
@@ -28,6 +30,8 @@ data: ${JSON.stringify(events)}
 
 `;
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 const factory = async userConfig => {
   const { queue, http } = await parseConfig(userConfig || {});
 
@@ -35,7 +39,7 @@ const factory = async userConfig => {
     get(http.queryPath, async req => {
       const lastEventId = req.query.lastEventId;
 
-      return queue.query({ lastEventId });
+      return queue.query({ from: lastEventId });
     }),
     post(http.commitPath, async req => {
       const body = await micro.json(req);
@@ -46,7 +50,7 @@ const factory = async userConfig => {
 
       return queue.commit(body);
     }),
-    get(http.subscribePath, (req, res) => {
+    get(http.subscribePath, async (req, res) => {
       const [lastEventId, count = 20, time = 1, retry = 10] = over([
         getLastEventId,
         getBurstCount,
@@ -75,28 +79,35 @@ const factory = async userConfig => {
       });
 
       res.write(':ok\n\n');
-
       flush(res);
 
-      const pastEvents = queue.query({ lastEventId });
+      try {
+        // subscribe
+        const { events$, latest } = queue.subscribe();
 
-      const stream = kefir.concat([
-        kefir.sequentially(0, pastEvents),
-        queue.changes$,
-      ]);
-
-      stream
-        .bufferWithTimeOrCount(time, count)
-        .filter(b => b.length)
-        .map(toOutput)
-        .observe(block => {
-          // console.log('send to %s %s', req.url, block);
-          res.write(block);
+        const pastEvents = queue.query({
+          from: lastEventId,
+          to: latest,
         });
+
+        events$
+          .bufferWithTimeOrCount(time, count)
+          .filter(b => b.length)
+          .map(toOutput)
+          .observe(block => {
+            // console.log('send to %s %s', req.url, block);
+            res.write(block);
+          });
+
+        res.write(toOutput(pastEvents));
+      } catch (ex) {
+        console.error(ex);
+        res.end();
+      }
     })
   );
 
-  const server = micro(service);
+  const server = micro(handleErrors(service, true));
 
   const start = () =>
     new Promise((resolve, reject) => {

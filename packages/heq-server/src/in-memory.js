@@ -9,17 +9,25 @@ const adapter = () => {
   const commit = event => {
     events[id] = event;
     event.id = ++id;
+    // console.log('commit', id);
     emitter.emit('data', event);
     return event;
   };
 
-  const query = ({ lastEventId }) => {
-    return events.slice(lastEventId);
+  const query = ({ from, to = id }) => {
+    // console.log('query', { from, to });
+    return events.slice(from, to);
   };
 
-  const changes$ = kefir.fromEvents(emitter, 'data');
+  const subscribe = () => {
+    // console.log('subscribe', { id });
+    const events$ = kefir.fromEvents(emitter, 'data');
+    const latest = id;
 
-  return { commit, changes$, query };
+    return { latest, events$ };
+  };
+
+  return { commit, subscribe, query };
 };
 
 module.exports = adapter;

@@ -384,7 +384,7 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
-boom@4.x.x:
+boom@4.x.x, boom@^4.2.0:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/boom/-/boom-4.3.1.tgz#4f8a3005cb4a7e3889f749030fd25b96e01d2e31"
   dependencies:
@@ -2152,6 +2152,12 @@ merge@^1.1.3:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/merge/-/merge-1.2.0.tgz#7531e39d4949c281a66b8c5a6e0265e8b05894da"
 
+micro-boom@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/micro-boom/-/micro-boom-1.1.0.tgz#d263016f78aa72a54c3468358e8e8d8e743fac85"
+  dependencies:
+    boom "^4.2.0"
+
 micro@^9.1.4:
   version "9.1.4"
   resolved "https://registry.yarnpkg.com/micro/-/micro-9.1.4.tgz#dbe655f34bb3390509898ddf3fda12348f5cbaa9"
@@ -2586,6 +2592,10 @@ pkg-dir@^2.0.0:
 pn@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
+
+port-authority@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/port-authority/-/port-authority-1.0.3.tgz#5e07be43abcbc0fad36d48a581b815b0484dca7a"
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
