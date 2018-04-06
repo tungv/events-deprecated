@@ -130,7 +130,7 @@ const factory = async userConfig => {
 };
 
 const parseConfig = ({ queue: queueConfig = {}, http: httpConfig = {} }) => {
-  const adapterPkgName = queueConfig.driver || './in-memory';
+  const adapterPkgName = queueConfig.driver || './adapters/in-memory';
   const adapter = require(adapterPkgName);
 
   const {
