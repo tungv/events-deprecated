@@ -109,9 +109,9 @@ const factory = async userConfig => {
 
   const server = micro(handleErrors(service, true));
 
-  const start = () =>
+  const start = (port = http.port) =>
     new Promise((resolve, reject) => {
-      server.listen(http.port, err => {
+      server.listen(port, err => {
         if (err) {
           console.error(
             'cannot start on port %d. Error: %s',
