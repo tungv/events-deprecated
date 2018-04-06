@@ -19,6 +19,25 @@ const commitSomething = async ({ port }) => {
   return body;
 };
 
+const simpleParse = buffer => {
+  const chunks = buffer.split('\n\n').filter(x => x);
+
+  if (chunks[0] !== ':ok') {
+    throw new Error('not ok');
+  }
+
+  const events = chunks.map(ch => {
+    const lines = ch.split('\n');
+    if (lines[1] !== 'event: INCMSG') {
+      return [];
+    }
+
+    return JSON.parse(lines[2].slice('data: '.length));
+  });
+
+  return [].concat(...events);
+};
+
 describe('factory()', () => {
   it('should return start function', async () => {
     const port = await ports.find(30000);
@@ -115,13 +134,11 @@ describe('factory()', () => {
     });
 
     stream.on('end', () => {
-      expect(buffer.join('')).toEqual(`:ok
-
-id: 5
-event: INCMSG
-data: [{"type":"TEST","payload":{"key":"value"},"id":3},{"type":"TEST","payload":{"key":"value"},"id":4},{"type":"TEST","payload":{"key":"value"},"id":5}]
-
-`);
+      expect(simpleParse(buffer.join(''))).toEqual([
+        { id: 3, payload: { key: 'value' }, type: 'TEST' },
+        { id: 4, payload: { key: 'value' }, type: 'TEST' },
+        { id: 5, payload: { key: 'value' }, type: 'TEST' },
+      ]);
       done();
     });
   });
@@ -144,7 +161,6 @@ data: [{"type":"TEST","payload":{"key":"value"},"id":3},{"type":"TEST","payload"
       },
     });
 
-    await sleep(0);
     for (let i = 0; i < 5; ++i) await commitSomething({ port });
 
     const buffer = [];
@@ -154,42 +170,30 @@ data: [{"type":"TEST","payload":{"key":"value"},"id":3},{"type":"TEST","payload"
 
       buffer.push(msg);
 
-      // // stop after receiving event #5
-      // if (msg.slice(0, 5) === 'id: 10') {
-      //   server.destroy();
-      // }
+      // stop after receiving event #5
+
+      const chunks = msg.split('\n\n');
+
+      for (const chunk of chunks) {
+        if (chunk.slice(0, 6) === 'id: 10') {
+          server.destroy();
+        }
+      }
     });
 
-    setTimeout(() => server.destroy(), 100);
-
     stream.on('end', () => {
-      expect(buffer.join('')).toEqual(`:ok
+      const events = simpleParse(buffer.join(''));
 
-id: 5
-event: INCMSG
-data: [{\"type\":\"TEST\",\"payload\":{\"key\":\"value\"},\"id\":3},{\"type\":\"TEST\",\"payload\":{\"key\":\"value\"},\"id\":4},{\"type\":\"TEST\",\"payload\":{\"key\":\"value\"},\"id\":5}]
-
-id: 6
-event: INCMSG
-data: [{\"type\":\"TEST\",\"payload\":{\"key\":\"value\"},\"id\":6}]
-
-id: 7
-event: INCMSG
-data: [{\"type\":\"TEST\",\"payload\":{\"key\":\"value\"},\"id\":7}]
-
-id: 8
-event: INCMSG
-data: [{\"type\":\"TEST\",\"payload\":{\"key\":\"value\"},\"id\":8}]
-
-id: 9
-event: INCMSG
-data: [{\"type\":\"TEST\",\"payload\":{\"key\":\"value\"},\"id\":9}]
-
-id: 10
-event: INCMSG
-data: [{\"type\":\"TEST\",\"payload\":{\"key\":\"value\"},\"id\":10}]
-
-`);
+      expect(events).toEqual([
+        { id: 3, payload: { key: 'value' }, type: 'TEST' },
+        { id: 4, payload: { key: 'value' }, type: 'TEST' },
+        { id: 5, payload: { key: 'value' }, type: 'TEST' },
+        { id: 6, payload: { key: 'value' }, type: 'TEST' },
+        { id: 7, payload: { key: 'value' }, type: 'TEST' },
+        { id: 8, payload: { key: 'value' }, type: 'TEST' },
+        { id: 9, payload: { key: 'value' }, type: 'TEST' },
+        { id: 10, payload: { key: 'value' }, type: 'TEST' },
+      ]);
       done();
     });
   });
