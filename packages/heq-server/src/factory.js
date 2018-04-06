@@ -90,6 +90,8 @@ const factory = async userConfig => {
           to: latest,
         });
 
+        res.write(toOutput(pastEvents));
+
         events$
           .bufferWithTimeOrCount(time, count)
           .filter(b => b.length)
@@ -98,8 +100,6 @@ const factory = async userConfig => {
             // console.log('send to %s %s', req.url, block);
             res.write(block);
           });
-
-        res.write(toOutput(pastEvents));
       } catch (ex) {
         console.error(ex);
         res.end();
