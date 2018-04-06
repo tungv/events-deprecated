@@ -197,4 +197,20 @@ describe('factory()', () => {
       done();
     });
   });
+
+  it('should fallback to documentation page instead of 404', async () => {
+    const port = await ports.find(30000);
+    const { start } = await factory({
+      http: { port },
+    });
+
+    const server = await start();
+    enableDestroy(server);
+
+    const { body } = await got(`http://localhost:${port}/`);
+
+    server.destroy();
+
+    expect(body).toMatchSnapshot('documentation content');
+  });
 });

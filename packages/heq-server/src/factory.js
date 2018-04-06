@@ -1,7 +1,8 @@
-const { router, get, post } = require('microrouter');
-const kefir = require('kefir');
-const micro = require('micro');
+const documentationPage = require('./documentationPage');
+
 const { handleErrors } = require('micro-boom');
+const { router, get, post } = require('microrouter');
+const micro = require('micro');
 
 const {
   getLastEventId,
@@ -104,7 +105,8 @@ const factory = async userConfig => {
         console.error(ex);
         res.end();
       }
-    })
+    }),
+    documentationPage({ http })
   );
 
   const server = micro(handleErrors(service, true));
@@ -120,7 +122,7 @@ const factory = async userConfig => {
           );
           reject(err);
         } else {
-          console.log('start listening on port %d', http.port);
+          // console.log('start listening on port %d', http.port);
           resolve(server);
         }
       });
