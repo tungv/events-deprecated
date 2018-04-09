@@ -33,6 +33,9 @@ return newArray
 
 const adapter = ({ url, ns = 'local' }) => {
   const redisClient = redis.createClient(url);
+  const subClient = redis.createClient(url);
+
+  subClient.subscribe(`${ns}::events`);
 
   const commit = async event => {
     delete event.id;
@@ -45,9 +48,13 @@ const adapter = ({ url, ns = 'local' }) => {
     return event;
   };
 
-  const emitter = mitt();
-  const events = [];
-  let id = 0;
+  const getLatest = () =>
+    new Promise((resolve, reject) => {
+      redisClient.get(
+        `{${ns}}::id`,
+        (err, value) => (err ? reject(err) : resolve(Number(value)))
+      );
+    });
 
   const query = async ({ from, to }) => {
     try {
@@ -72,10 +79,21 @@ const adapter = ({ url, ns = 'local' }) => {
     }
   };
 
-  const subscribe = () => {
-    // console.log('subscribe', { id });
-    const events$ = kefir.fromEvents(emitter, 'data');
-    const latest = id;
+  const subscribe = async () => {
+    const events$ = kefir
+      .fromEvents(subClient, 'message', (channel, message) => message)
+      .map(message => {
+        const rawId = message.split(':')[0];
+        const id = Number(rawId);
+        const rawEvent = message.slice(rawId.length + 1);
+
+        return {
+          ...JSON.parse(rawEvent),
+          id,
+        };
+      });
+
+    const latest = await getLatest();
 
     return { latest, events$ };
   };

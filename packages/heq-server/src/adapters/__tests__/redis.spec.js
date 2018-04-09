@@ -8,6 +8,8 @@ const clean = async config =>
     client.del([`{${config.ns}}::id`, `{${config.ns}}::events`], resolve);
   });
 
+exports.clean = clean;
+
 describe('redis adapter', () => {
   it('should commit', async () => {
     const queueConfig = {
@@ -91,5 +93,48 @@ describe('redis adapter', () => {
       { id: 9, type: 'test', payload: 9 },
       { id: 10, type: 'test', payload: 10 },
     ]);
+  });
+
+  it('should subscribe', async done => {
+    const queueConfig = {
+      driver: '@heq/redis-server',
+      url: 'redis://localhost:6379/2',
+      ns: '__test__',
+    };
+
+    await clean(queueConfig);
+
+    const queue = adapter(queueConfig);
+
+    for (let i = 0; i < 5; ++i) {
+      await queue.commit({ type: 'test', payload: i + 1 });
+    }
+
+    const { events$, latest } = await queue.subscribe();
+    expect(latest).toBe(5);
+
+    const next5 = [];
+
+    const subscription = events$.observe(v => {
+      next5.push(v);
+
+      if (next5.length === 5) {
+        subscription.unsubscribe();
+
+        expect(next5).toEqual([
+          { id: 6, payload: 6, type: 'test' },
+          { id: 7, payload: 7, type: 'test' },
+          { id: 8, payload: 8, type: 'test' },
+          { id: 9, payload: 9, type: 'test' },
+          { id: 10, payload: 10, type: 'test' },
+        ]);
+
+        done();
+      }
+    });
+
+    for (let i = 5; i < 10; ++i) {
+      await queue.commit({ type: 'test', payload: i + 1 });
+    }
   });
 });
