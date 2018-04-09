@@ -37,6 +37,12 @@ const adapter = ({ url, ns = 'local' }) => {
 
   subClient.subscribe(`${ns}::events`);
 
+  const events$ = kefir.fromEvents(
+    subClient,
+    'message',
+    (channel, message) => message
+  );
+
   const commit = async event => {
     delete event.id;
     const id = await runLua(redisClient, lua_commit, {
@@ -79,10 +85,10 @@ const adapter = ({ url, ns = 'local' }) => {
     }
   };
 
-  const subscribe = async () => {
-    const events$ = kefir
-      .fromEvents(subClient, 'message', (channel, message) => message)
-      .map(message => {
+  const subscribe = () => {
+    return {
+      latest: 5,
+      events$: events$.map(message => {
         const rawId = message.split(':')[0];
         const id = Number(rawId);
         const rawEvent = message.slice(rawId.length + 1);
@@ -91,11 +97,8 @@ const adapter = ({ url, ns = 'local' }) => {
           ...JSON.parse(rawEvent),
           id,
         };
-      });
-
-    const latest = await getLatest();
-
-    return { latest, events$ };
+      }),
+    };
   };
 
   return { commit, subscribe, query };

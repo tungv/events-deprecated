@@ -110,15 +110,19 @@ describe('redis adapter', () => {
       await queue.commit({ type: 'test', payload: i + 1 });
     }
 
-    const { events$, latest } = await queue.subscribe();
-    expect(latest).toBe(5);
+    const { events$ } = queue.subscribe();
 
     const next5 = [];
 
     const subscription = events$.observe(v => {
+      if (v.id <= 5) {
+        // doesn't care first 5
+        return;
+      }
+
       next5.push(v);
 
-      if (next5.length === 5) {
+      if (v.id === 10) {
         subscription.unsubscribe();
 
         expect(next5).toEqual([

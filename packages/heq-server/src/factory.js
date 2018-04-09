@@ -59,9 +59,12 @@ const factory = async userConfig => {
         getRetry,
       ])(req);
 
+      let ended = false;
+
       const removeClient = once(() => {
         // opts.debug && console.log('removing', req.url);
         // subscription.unsubscribe();
+        ended = true;
         res.end();
       });
 
@@ -86,20 +89,20 @@ const factory = async userConfig => {
         // subscribe
         const { events$, latest } = queue.subscribe();
 
-        const pastEvents = queue.query({
+        const pastEvents = await queue.query({
           from: lastEventId,
-          to: latest,
         });
 
         res.write(toOutput(pastEvents));
 
         events$
+          .filter(e => e.id > pastEvents[pastEvents.length - 1].id)
           .bufferWithTimeOrCount(time, count)
           .filter(b => b.length)
           .map(toOutput)
           .observe(block => {
             // console.log('send to %s %s', req.url, block);
-            res.write(block);
+            if (!ended) res.write(block);
           });
       } catch (ex) {
         console.error(ex);
