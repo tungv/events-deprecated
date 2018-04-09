@@ -1,0 +1,16 @@
+{
+  "name": "run-lua",
+  "version": "1.0.0",
+  "description": "run lua script agaist a redis client",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": ["lua", "redis"],
+  "author": "Tung Vu <me@tungv.com>",
+  "license": "MIT",
+  "repository": "https://github.com/tungv/events",
+  "dependencies": {
+    "es6-promisify": "^6.0.0"
+  }
+}
