@@ -1,6 +1,6 @@
 {
   "name": "@heq/server-redis",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Redis Adapter for heq-server",
   "main": "index.js",
   "engines": {
@@ -13,7 +13,13 @@
     "type": "git",
     "url": "git+https://github.com/tungv/events.git"
   },
-  "keywords": ["heq", "event", "sourcing", "redis", "adapter"],
+  "keywords": [
+    "heq",
+    "event",
+    "sourcing",
+    "redis",
+    "adapter"
+  ],
   "author": "Tung Vu <me@tungv.com>",
   "license": "MIT",
   "bugs": {
