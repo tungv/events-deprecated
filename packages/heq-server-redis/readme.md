@@ -1,4 +1,6 @@
-# Redis Adapter for [heq-server](https://npm.im/heq-server)
+# Redis Adapter for heq-server
+
+[heq-server](https://npm.im/heq-server) is a light-weight persistent and stateless message queue over http protocol. When starting heq-server with @heq/server-redis adapter, redis will be used as the persistence datastore
 
 ## Configuration
 
