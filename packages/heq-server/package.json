@@ -24,6 +24,7 @@
     "got": "^8.3.0",
     "jest": "^22.4.3",
     "port-authority": "^1.0.3",
+    "redis": "^2.8.0",
     "server-destroy": "^1.0.1"
   }
 }
