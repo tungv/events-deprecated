@@ -1,5 +1,3 @@
-const { clean } = require('../adapters/__tests__/redis.spec');
-
 const enableDestroy = require('server-destroy');
 const got = require('got');
 const http = require('http');
@@ -216,71 +214,5 @@ describe('factory()', () => {
     server.destroy();
 
     expect(body).toMatchSnapshot('documentation content');
-  });
-
-  it('should able to subscribe from a past event id with redis adapter', async done => {
-    const port = await ports.find(30000);
-    const { start } = await factory({
-      http: { port },
-      queue: {
-        driver: './adapters/redis',
-        url: 'redis://localhost:6379/2',
-        ns: '__test__',
-      },
-    });
-
-    await clean({
-      driver: './adapters/redis',
-      url: 'redis://localhost:6379/2',
-      ns: '__test__',
-    });
-
-    const server = await start();
-    enableDestroy(server);
-
-    for (let i = 0; i < 5; ++i) await commitSomething({ port });
-
-    const stream = got.stream(`http://localhost:${port}/subscribe`, {
-      headers: {
-        'Last-Event-ID': 2,
-        'Burst-Time': 1,
-      },
-    });
-
-    for (let i = 0; i < 5; ++i) await commitSomething({ port });
-
-    const buffer = [];
-
-    stream.on('data', data => {
-      const msg = String(data);
-
-      buffer.push(msg);
-
-      // stop after receiving event #5
-
-      const chunks = msg.split('\n\n');
-
-      for (const chunk of chunks) {
-        if (chunk.slice(0, 6) === 'id: 10') {
-          server.destroy();
-        }
-      }
-    });
-
-    stream.on('end', () => {
-      const events = simpleParse(buffer.join(''));
-
-      expect(events).toEqual([
-        { id: 3, payload: { key: 'value' }, type: 'TEST' },
-        { id: 4, payload: { key: 'value' }, type: 'TEST' },
-        { id: 5, payload: { key: 'value' }, type: 'TEST' },
-        { id: 6, payload: { key: 'value' }, type: 'TEST' },
-        { id: 7, payload: { key: 'value' }, type: 'TEST' },
-        { id: 8, payload: { key: 'value' }, type: 'TEST' },
-        { id: 9, payload: { key: 'value' }, type: 'TEST' },
-        { id: 10, payload: { key: 'value' }, type: 'TEST' },
-      ]);
-      done();
-    });
   });
 });
