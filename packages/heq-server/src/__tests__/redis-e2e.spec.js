@@ -49,7 +49,7 @@ const simpleParse = buffer => {
 };
 
 it('should able to subscribe from a past event id with redis adapter', async done => {
-  const port = await ports.find(30000);
+  const port = await ports.find(30100);
   const { start } = await factory({
     http: { port },
     queue: {
