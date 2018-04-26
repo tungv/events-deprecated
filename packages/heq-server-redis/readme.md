@@ -2,7 +2,7 @@
 
 [heq-server](https://npm.im/heq-server) is a light-weight persistent and stateless message queue over http protocol. When starting heq-server with @heq/server-redis adapter, redis will be used as the persistence datastore
 
-## Configuration
+## Usage
 
 ```js
 const adatper = require('@heq/server-redis')
@@ -27,3 +27,12 @@ const subscription = events$.observe(event => { /* ... */ });
 // unsubscribe
 subscription.unsubscribe()
 ```
+
+## Configuration
+
+This adapter requires 2 options
+
+| option name | data type                | description                                                                                              |
+| ----------- | ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| url         | `string` &#124; `object` | must be an valid option that [`redis.createClient` receives](http://redis.js.org/#api-rediscreateclient) |
+| ns          | `string`                 | a namespace to allowing multiple queues can be run in one instance of redis                              |
