@@ -70,15 +70,25 @@ describe('persist', () => {
     expect(spyCalls[0][1]).toEqual([
       {
         updateMany: {
-          filter: { __v: { $lt: 1 }, name: 'col1', version: '1.0.0' },
-          update: { $set: { __v: 1 } },
+          filter: {
+            $and: [
+              { $or: [{ __v: { $lt: 1 } }, { __op: { $lt: 1 }, __v: 1 }] },
+              { name: 'col1', version: '1.0.0' },
+            ],
+          },
+          update: { $set: { __op: 1, __v: 1 } },
           upsert: true,
         },
       },
       {
         updateMany: {
-          filter: { __v: { $lt: 1 }, name: 'col2', version: '1.0.0' },
-          update: { $set: { __v: 1 } },
+          filter: {
+            $and: [
+              { $or: [{ __v: { $lt: 1 } }, { __op: { $lt: 2 }, __v: 1 }] },
+              { name: 'col2', version: '1.0.0' },
+            ],
+          },
+          update: { $set: { __op: 2, __v: 1 } },
           upsert: true,
         },
       },
@@ -88,8 +98,10 @@ describe('persist', () => {
     expect(spyCalls[1][1]).toEqual([
       {
         updateOne: {
-          filter: { __v: { $gte: 1 } },
-          update: { $setOnInsert: { __v: 1, x: 1 } },
+          filter: {
+            $or: [{ __v: { $gte: 1 } }, { __op: { $gte: 1 }, __v: 1 }],
+          },
+          update: { $setOnInsert: { __op: 1, __v: 1, x: 1 } },
           upsert: true,
         },
       },
@@ -136,8 +148,10 @@ describe('persist', () => {
     expect(spyCalls[1][1]).toEqual([
       {
         updateOne: {
-          filter: { __v: { $gte: 1 } },
-          update: { $setOnInsert: { __v: 1, x: 1 } },
+          filter: {
+            $or: [{ __v: { $gte: 1 } }, { __op: { $gte: 1 }, __v: 1 }],
+          },
+          update: { $setOnInsert: { __op: 1, __v: 1, x: 1 } },
           upsert: true,
         },
       },
@@ -145,8 +159,10 @@ describe('persist', () => {
     expect(spyCalls[2][1]).toEqual([
       {
         updateOne: {
-          filter: { __v: { $gte: 1 } },
-          update: { $setOnInsert: { __v: 1, y: 2 } },
+          filter: {
+            $or: [{ __v: { $gte: 1 } }, { __op: { $gte: 2 }, __v: 1 }],
+          },
+          update: { $setOnInsert: { __op: 2, __v: 1, y: 2 } },
           upsert: true,
         },
       },
@@ -154,8 +170,13 @@ describe('persist', () => {
     expect(spyCalls[3][1]).toEqual([
       {
         updateMany: {
-          filter: { __v: { $lt: 2 }, x: 1 },
-          update: { $set: { __v: 2, x: 2 } },
+          filter: {
+            $and: [
+              { $or: [{ __v: { $lt: 2 } }, { __op: { $lt: 1 }, __v: 2 }] },
+              { x: 1 },
+            ],
+          },
+          update: { $set: { __op: 1, __v: 2, x: 2 } },
           upsert: false,
         },
       },

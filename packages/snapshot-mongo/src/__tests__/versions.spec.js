@@ -3,6 +3,7 @@ import { MongoClient } from 'mongodb';
 import getVerions from '../version';
 
 const getClient = () => MongoClient.connect(process.env.MONGO_TEST);
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 describe('get versions', () => {
   it('should fetch all collections and get the latest __v', async () => {
@@ -84,13 +85,11 @@ describe('get versions', () => {
       ]
     );
 
+    await sleep(100);
+
     expect(versions).toEqual({
-      snapshotVersion: 5,
-      explain: [
-        { name: 'users', pv: '1.0.0', version: 5 },
-        { name: 'users', pv: '2.0.0', version: 35 },
-        { name: 'with_v_in_name', pv: '3.0.0', version: 65 },
-      ],
+      snapshotVersion: 0,
+      snapshots: [],
     });
   });
 });

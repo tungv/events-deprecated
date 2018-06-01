@@ -25,10 +25,11 @@ export function mapToOperation<Doc>(
   opCounter: number
 ): Operation<Doc>[] {
   if (op.insert) {
-    return op.insert.map(doc => {
+    return op.insert.map((doc, index) => {
+      const insertingOpCounter = opCounter + index;
       const setOnInsert: WithVersion<Doc> = {
         __v: version,
-        __op: opCounter,
+        __op: insertingOpCounter,
         ...doc,
       };
 
@@ -37,7 +38,7 @@ export function mapToOperation<Doc>(
           filter: {
             $or: [
               { __v: { $gte: version } },
-              { __v: version, __op: { $gte: opCounter } },
+              { __v: version, __op: { $gte: insertingOpCounter } },
             ],
           },
           update: {

@@ -28,7 +28,7 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-3": "^6.24.1",
-    "jest": "^21.0.2"
+    "jest": "^23.1.0"
   },
   "bin": {
     "snapshot-mongo": "./build/index.js"

@@ -7,24 +7,38 @@ describe('mapToOperation()', () => {
       insert: [{ age: 21, name: 'User 1' }, { age: 22, name: 'User 2' }],
     };
 
-    const ops = mapToOperation(1000, cmd);
+    const ops = mapToOperation(1000, cmd, 1);
     expect(ops).toEqual([
       {
         updateOne: {
-          upsert: true,
-          filter: { __v: { $gte: 1000 } },
-          update: {
-            $setOnInsert: { age: 21, name: 'User 1', __v: 1000 },
+          filter: {
+            $or: [{ __v: { $gte: 1000 } }, { __op: { $gte: 1 }, __v: 1000 }],
           },
+          update: {
+            $setOnInsert: {
+              __op: 1,
+              __v: 1000,
+              age: 21,
+              name: 'User 1',
+            },
+          },
+          upsert: true,
         },
       },
       {
         updateOne: {
-          upsert: true,
-          filter: { __v: { $gte: 1000 } },
-          update: {
-            $setOnInsert: { age: 22, name: 'User 2', __v: 1000 },
+          filter: {
+            $or: [{ __v: { $gte: 1000 } }, { __op: { $gte: 2 }, __v: 1000 }],
           },
+          update: {
+            $setOnInsert: {
+              __op: 2,
+              __v: 1000,
+              age: 22,
+              name: 'User 2',
+            },
+          },
+          upsert: true,
         },
       },
     ]);
@@ -40,14 +54,19 @@ describe('mapToOperation()', () => {
       },
     };
 
-    const ops = mapToOperation(1000, cmd);
+    const ops = mapToOperation(1000, cmd, 1);
     expect(ops).toEqual([
       {
         updateMany: {
-          filter: { __v: { $lt: 1000 }, name: 'User 2' },
-          update: {
-            $set: { age: 32, __v: 1000 },
+          filter: {
+            $and: [
+              {
+                $or: [{ __v: { $lt: 1000 } }, { __op: { $lt: 1 }, __v: 1000 }],
+              },
+              { name: 'User 2' },
+            ],
           },
+          update: { $set: { __op: 1, __v: 1000, age: 32 } },
           upsert: false,
         },
       },
