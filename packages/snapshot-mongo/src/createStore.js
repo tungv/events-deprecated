@@ -105,7 +105,29 @@ const mapCollectionOpToMongoOp = v => ([collection, op], index) => [
 const mapRequestToMongoOps = map(
   flow(
     over([getCollectionNameAndOpFromRequest, getEventId]),
-    ([collectionOps, v]) => collectionOps.map(mapCollectionOpToMongoOp(v))
+    ([collectionOps, v]) => {
+      const fn = mapCollectionOpToMongoOp(v);
+
+      const a = collectionOps.reduce(
+        (accum, [collection, op]) => {
+          const out = fn([collection, op], accum.opCounter);
+
+          const numOfOps = op.insert ? op.insert.length : 1;
+          const nextCounter = accum.opCounter + numOfOps;
+
+          return {
+            mongoOps: accum.mongoOps.concat([out]),
+            opCounter: nextCounter,
+          };
+        },
+        {
+          mongoOps: [],
+          opCounter: 0,
+        }
+      );
+
+      return a.mongoOps;
+    }
   )
 );
 
