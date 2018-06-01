@@ -1,6 +1,6 @@
 {
   "name": "@events/snapshot-mongo",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "query/mutate mongo db snapshot for @events/subscriber-cli",
   "main": "build/index.js",
   "scripts": {
