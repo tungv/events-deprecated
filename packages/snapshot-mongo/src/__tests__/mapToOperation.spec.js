@@ -12,7 +12,7 @@ describe('mapToOperation()', () => {
       {
         updateOne: {
           filter: {
-            $or: [{ __v: { $gte: 1000 } }, { __op: { $gte: 1 }, __v: 1000 }],
+            $or: [{ __v: { $gt: 1000 } }, { __op: { $gt: 1 }, __v: 1000 }],
           },
           update: {
             $setOnInsert: {
@@ -28,7 +28,7 @@ describe('mapToOperation()', () => {
       {
         updateOne: {
           filter: {
-            $or: [{ __v: { $gte: 1000 } }, { __op: { $gte: 2 }, __v: 1000 }],
+            $or: [{ __v: { $gt: 1000 } }, { __op: { $gt: 2 }, __v: 1000 }],
           },
           update: {
             $setOnInsert: {

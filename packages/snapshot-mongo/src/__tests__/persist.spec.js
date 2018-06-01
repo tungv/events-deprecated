@@ -99,7 +99,7 @@ describe('persist', () => {
       {
         updateOne: {
           filter: {
-            $or: [{ __v: { $gte: 1 } }, { __op: { $gte: 1 }, __v: 1 }],
+            $or: [{ __v: { $gt: 1 } }, { __op: { $gt: 1 }, __v: 1 }],
           },
           update: { $setOnInsert: { __op: 1, __v: 1, x: 1 } },
           upsert: true,
@@ -149,7 +149,7 @@ describe('persist', () => {
       {
         updateOne: {
           filter: {
-            $or: [{ __v: { $gte: 1 } }, { __op: { $gte: 1 }, __v: 1 }],
+            $or: [{ __v: { $gt: 1 } }, { __op: { $gt: 1 }, __v: 1 }],
           },
           update: { $setOnInsert: { __op: 1, __v: 1, x: 1 } },
           upsert: true,
@@ -158,7 +158,7 @@ describe('persist', () => {
       {
         updateOne: {
           filter: {
-            $or: [{ __v: { $gte: 1 } }, { __op: { $gte: 2 }, __v: 1 }],
+            $or: [{ __v: { $gt: 1 } }, { __op: { $gt: 2 }, __v: 1 }],
           },
           update: { $setOnInsert: { __op: 2, __v: 1, x: 2 } },
           upsert: true,
@@ -169,7 +169,7 @@ describe('persist', () => {
       {
         updateOne: {
           filter: {
-            $or: [{ __v: { $gte: 1 } }, { __op: { $gte: 3 }, __v: 1 }],
+            $or: [{ __v: { $gt: 1 } }, { __op: { $gt: 3 }, __v: 1 }],
           },
           update: { $setOnInsert: { __op: 3, __v: 1, y: 2 } },
           upsert: true,
@@ -245,7 +245,7 @@ describe('persist', () => {
       {
         updateOne: {
           filter: {
-            $or: [{ __v: { $gte: 1 } }, { __v: 1, __op: { $gte: 1 } }],
+            $or: [{ __v: { $gt: 1 } }, { __v: 1, __op: { $gt: 1 } }],
           },
           update: {
             $setOnInsert: { __v: 1, __op: 1, array: [1, 2, 3], id: 1 },
@@ -319,7 +319,7 @@ describe('persist', () => {
       {
         updateOne: {
           filter: {
-            $or: [{ __v: { $gte: 10 } }, { __op: { $gte: 1 }, __v: 10 }],
+            $or: [{ __v: { $gt: 10 } }, { __op: { $gt: 1 }, __v: 10 }],
           },
           update: { $setOnInsert: { __op: 1, __v: 10, x: 1 } },
           upsert: true,
@@ -328,7 +328,7 @@ describe('persist', () => {
       {
         updateOne: {
           filter: {
-            $or: [{ __v: { $gte: 10 } }, { __op: { $gte: 2 }, __v: 10 }],
+            $or: [{ __v: { $gt: 10 } }, { __op: { $gt: 2 }, __v: 10 }],
           },
           update: { $setOnInsert: { __op: 2, __v: 10, x: 2 } },
           upsert: true,

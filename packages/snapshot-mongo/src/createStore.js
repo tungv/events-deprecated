@@ -37,8 +37,8 @@ export function mapToOperation<Doc>(
         updateOne: {
           filter: {
             $or: [
-              { __v: { $gte: version } },
-              { __v: version, __op: { $gte: insertingOpCounter } },
+              { __v: { $gt: version } },
+              { __v: version, __op: { $gt: insertingOpCounter } },
             ],
           },
           update: {
