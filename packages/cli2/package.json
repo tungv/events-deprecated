@@ -42,7 +42,7 @@
     "@events/server": "^2.2.3",
     "brighten": "^0.0.1",
     "chalk": "^2.3.0",
-    "cli-table2": "^0.2.0",
+    "cli-table3": "^0.5.0",
     "date-fns": "^1.29.0",
     "pm2": "^2.9.1",
     "pretty-ms": "^3.1.0",

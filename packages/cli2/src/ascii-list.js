@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import Table from 'cli-table2';
+import Table from 'cli-table3';
 
 export default function({ appsCount, instancesCount, apps }) {
   const msg = `
